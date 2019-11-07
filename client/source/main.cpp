@@ -16,6 +16,7 @@ int main() {
     sf::Texture red_car_texture;
     if (!red_car_texture.loadFromFile("res/red_car.png"))
         return EXIT_FAILURE;
+    // red_car_texture.SetCenter(57. / 2, 23. / 2);
     sf::Sprite red_car_sprite(red_car_texture);
     red_car_sprite.setPosition(start_red_car_x, start_red_car_y);
     
@@ -35,9 +36,11 @@ int main() {
             }
             
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                start_red_car_x--;
+            	red_car_sprite.rotate(10.f);
+                //start_red_car_x--;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                start_red_car_x++;
+                red_car_sprite.rotate(-10.f);
+                //start_red_car_x++;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
                 start_red_car_y--;
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
