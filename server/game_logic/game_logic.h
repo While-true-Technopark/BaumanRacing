@@ -1,3 +1,6 @@
+#ifndef PROJECT_GAME_LOGIC_H_
+#define PROJECT_GAME_LOGIC_H_
+
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp> // или лучше std::vector?
@@ -91,3 +94,5 @@ class solver final {
     	                        const vector<double>& init_cond);
     vector<double> adams(const vector<std::function<double(vector<double>)>>& rhs, const vector<double>& init_cond);
 };
+
+#endif  // PROJECT_GAME_LOGIC_H_
