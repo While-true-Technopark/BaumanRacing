@@ -80,3 +80,7 @@ Makefile
 venv
 *.log
 *-debug
+googletest/
+SFML/
+CMakeLists.txt
+README.md
