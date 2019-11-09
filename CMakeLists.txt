@@ -33,6 +33,9 @@ if(Boost_FOUND AND GTest_FOUND)
     target_link_libraries(game_manager_test.out _game_server)
     target_link_libraries(game_manager_test.out ${GTEST_LIBRARIES})
     target_link_libraries(game_manager_test.out pthread)
+    target_link_libraries(game_manager_test.out gmock)
+    target_link_libraries(game_manager_test.out ${Boost_LIBRARIES})
+    target_link_libraries(game_manager_test.out ${SFML_LIBRARIES})
 
 # link game_logic
     add_executable(game_logic_test.out server/game_logic/game_logic_test.cpp)
