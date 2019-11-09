@@ -3,7 +3,6 @@
 
 
 menu_builder::menu_builder() {
-    std::cout << "ZALUPA" << std::endl;
 }
 
 int menu_builder::main_menu() {
