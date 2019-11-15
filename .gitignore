@@ -80,3 +80,6 @@ Makefile
 venv
 *.log
 *-debug
+
+# sublime
+*.sublime*

@@ -1,20 +1,25 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include "base_module.hpp"
-#include "menu_builder.hpp"
-#include "game_builder.hpp"
 #include <SFML/Graphics.hpp>
+#include "renderer_abst.hpp"
 #include "event.hpp"
 
-class renderer : public base_module {
+class renderer : public renderer_abst {
  public:
-    renderer();
-    int on_event(const event & e) override;
+    renderer(sf::RenderWindow *win);
+    int build_game_scene(game_render_data data) override;
+    int car_choose_menu() override;
+    int end_game_menu() override;
+    int lobby_scene() override;
+    int main_menu() override;
+    int settings_menu() override;
+    int wait_scene() override;
  private:
-    sf::RenderWindow window;
-    menu_builder menu_bldr;
-    game_builder game_bldr;
+    int build_map();
+    int build_rating();
+    int build_car();
+    int build_cars();
 };
 
 #endif  // RENDERER_H_

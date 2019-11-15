@@ -1,6 +1,9 @@
 #include "loader.hpp"
 
+loader::loader() {
 
-int loader::on_event(const event & e) {
-    return 1;
+}
+
+int loader::load_all() {
+    return 0;
 }
