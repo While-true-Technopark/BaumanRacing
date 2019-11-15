@@ -88,14 +88,30 @@ class solver final {
     solver(solver&&) = delete;
     solver& operator=(solver&&) = delete;
 
-    static vector<double> linear(const matrix<double>& matrix, const vector<double>& rhs, const std::string& method);
-    static vector<double> nonlinear(const vector<std::function<double(vector<double>)>>& sistem, 
-                                        const std::string& method);
-    static vector<double> differential_equation(const vector<std::function<double(vector<double>)>>& rhs, 
-                                                const vector<double>& init_cond, const std::string& method);
+    static 
+    vector<double> linear(const matrix<double>& matrix, const vector<double>& rhs, const std::string& method) {
+        if (method == "gauss") {
+            gauss(matrix, rhs);
+        }
+        return vector<double>();
+    }
+    /*static
+    vector<double> nonlinear(const vector<std::function<double(vector<double>)>>& sistem, const std::string& method) {
+        return vector<double>();
+    }
+    static
+    vector<double> differential_equation(const vector<std::function<double(vector<double>)>>& rhs, 
+                                                const vector<double>& init_cond, const std::string& method) {
+        return vector<double>();                                                
+    }*/
+    friend class solve;
 
  private:
-    vector<double> gauss(const matrix<double>& matrix, const vector<double>& rhs);
+    static 
+    vector<double> gauss(const matrix<double>& matrix, const vector<double>& rhs) {
+        matrix(0, 0); rhs(0);
+        return vector<double>();//rhs;
+    }
     vector<double> qr(const matrix<double>& matrix, const vector<double>& rhs);
 
     vector<double> newton(const vector<std::function<double(vector<double>)>>& sistem);

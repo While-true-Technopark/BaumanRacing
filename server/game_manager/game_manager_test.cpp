@@ -9,8 +9,8 @@ using ::testing::SetArgReferee;
 
 class mock_game_manager : public game_manager {
  public:
- 	explicit mock_game_manager(const map& _map) : game_manager(_map) {};
- 	MOCK_METHOD1(throw_side_object, void(size_t));
+    explicit mock_game_manager(const map& _map) : game_manager(_map) {};
+    MOCK_METHOD1(throw_side_object, void(size_t));
     MOCK_METHOD2(make_move, void(const command& comm, size_t player_id));
 };
 
@@ -30,6 +30,6 @@ TEST(game_manager, game_builder) {
 
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
-  ::testing::InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleMock(&argc, argv);
+    return RUN_ALL_TESTS();
 }
