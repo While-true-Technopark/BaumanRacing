@@ -46,7 +46,7 @@ TEST(network_manager_test, on_event) {
     event e(type, data);
     network_mngr.on_event(e);
 
-    data = { .player = player };
+    data.player = player;
     type = car_chosen;
     event e2(type, data);
     network_mngr.on_event(e2);
