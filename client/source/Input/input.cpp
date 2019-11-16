@@ -1,16 +1,18 @@
 #include "input.hpp"
 
-int input::on_event(const event & e) {
-    return 1;
+input::input(sf::RenderWindow *win) {
+    window = nullptr;
 }
 
-event input::get_pressed_key() {
-    event ev;
-    return ev;
+struct keys_pressed input::get_pressed_key() {
+    struct keys_pressed keys;
+    return keys;
 }
 
-event input::throw_event() {
-    event empty;
-    return empty;
+void input::start_control() {
+    
 }
 
+void input::end_control() {
+
+}

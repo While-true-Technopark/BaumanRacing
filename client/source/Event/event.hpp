@@ -28,23 +28,23 @@ enum event_type {
 };
 
 struct car_choose_event {
-    //int car_id;
+    int car_id;
 };
 
-struct player_event {
+struct player_info {
     size_t player_id;
     size_t car_id;
 };
 
-struct players_event {
-    player_event player_1;
-    player_event player_2;
-    player_event player_3;
-    player_event player_4;
+struct players_info {
+    player_info player_1;
+    player_info player_2;
+    player_info player_3;
+    player_info player_4;
 };
 
 struct lobby_timer_event {
-    //int time;
+    int time;
 };
 
 struct start_game_timer_event {
@@ -64,13 +64,13 @@ struct players_positions_event {
     player_position_event player_4;
 };
 
-struct keys_event {
-    //        bool up;
-    //        bool down;
-    //        bool left;
-    //        bool right;
-    //        bool enter;
-    //        bool esc;
+struct keys_pressed {
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+    bool enter;
+    bool esc;
 };
 struct lap_event {
     size_t lap;
@@ -85,18 +85,18 @@ struct game_results_event {
     bool win;
 };
 struct empty_event {
-
+    
 };
 
 union event_data {
     car_choose_event         car_choose;
-    players_event            players;
-    player_event             player;
+    players_info            players;
+    player_info              player;
     lobby_timer_event        lobby_timer;
     start_game_timer_event   start_game_timer;
     players_positions_event  players_positions;
     player_position_event    players_position;
-    keys_event               keys;
+    keys_pressed             keys;
     lap_event                lap;
     players_rating_event     players_rating;
     game_results_event       game_results;

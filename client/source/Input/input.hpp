@@ -2,14 +2,14 @@
 #define INPUT_H_
 
 #include "event.hpp"
-#include "base_module.hpp"
-#include "event_throwable.hpp"
+#include "input_abst.hpp"
 
-class input : public base_module, event_throwable {
+class input : public input_abst {
  public:
-    int on_event(const event & e);
-    event get_pressed_key();
-    event throw_event();
+    input(sf::RenderWindow *win);
+    struct keys_pressed get_pressed_key();
+    void start_control();
+    void end_control();
  private:
     enum scene_types {
         main_menu,
@@ -22,6 +22,8 @@ class input : public base_module, event_throwable {
     };
     
     scene_types current_scene;
+    
+    
 };
 
 #endif // INPUT_H_

@@ -1,15 +1,14 @@
 #ifndef GAME_CONTEXT_H_
 #define GAME_CONTEXT_H_
 
-#include "base_module.hpp"
+#include "game_context_abst.hpp"
 #include "event.hpp"
 
-class game_context : public base_module {
+class game_context : public game_context_abst {
  public:
-    int on_event(const event & e);
-    int get_name_from_id();
-    int get_car_from_id();
-    int add_player();
+    int get_name_from_id(size_t id);
+    int get_car_from_id(size_t id);
+    int add_players(struct players_info);
  private:
     event positions;
     event players;

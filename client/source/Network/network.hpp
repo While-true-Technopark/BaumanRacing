@@ -2,14 +2,14 @@
 #define NETWORK_H_
 
 #include "event.hpp"
-#include "base_module.hpp"
+#include "network_abst.hpp"
 #include "event_throwable.hpp"
 
-class network : public base_module, event_throwable {
+class network : public network_abst {
  public:
-    int on_event(const event & e);
     event get_last_package();
-    event throw_event();
+    void keys_send(struct keys_pressed);
+    void name_car_send(struct player_info);
 };
 
 #endif // NETWORK_H_
