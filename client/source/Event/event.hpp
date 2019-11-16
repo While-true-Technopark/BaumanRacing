@@ -27,8 +27,8 @@ enum event_type {
     mouse_click
 };
 
-struct car_choose_event {
-    int car_id;
+struct player_id {
+    int id;
 };
 
 struct player_info {
@@ -51,17 +51,17 @@ struct start_game_timer_event {
     size_t time;
 };
 
-struct player_position_event {
+struct players_position_info {
     double x;
     double y;
     double angle;
 };
 
-struct players_positions_event {
-    player_position_event player_1;
-    player_position_event player_2;
-    player_position_event player_3;
-    player_position_event player_4;
+struct players_positions_info {
+    players_position_info player_1;
+    players_position_info player_2;
+    players_position_info player_3;
+    players_position_info player_4;
 };
 
 struct keys_pressed {
@@ -89,13 +89,13 @@ struct empty_event {
 };
 
 union event_data {
-    car_choose_event         car_choose;
-    players_info            players;
+    player_id                id;
+    players_info             players;
     player_info              player;
     lobby_timer_event        lobby_timer;
     start_game_timer_event   start_game_timer;
-    players_positions_event  players_positions;
-    player_position_event    players_position;
+    players_positions_info   players_positions;
+    players_position_info    players_position;
     keys_pressed             keys;
     lap_event                lap;
     players_rating_event     players_rating;

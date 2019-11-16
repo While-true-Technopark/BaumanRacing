@@ -4,11 +4,13 @@
 #include "event.hpp"
 #include "base_manager.hpp"
 #include "input_abst.hpp"
+#include "event_throwable.hpp"
 
-class input_manager : public base_manager {
+class input_manager : public base_manager, event_throwable {
  public:
     input_manager(input_abst *abst);
     int on_event(const event & e);
+    event throw_event();
     input_abst *module;
 };
 

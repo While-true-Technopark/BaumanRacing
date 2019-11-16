@@ -3,7 +3,6 @@
 
 #include "event.hpp"
 #include "network_abst.hpp"
-#include "event_throwable.hpp"
 
 class network : public network_abst {
  public:

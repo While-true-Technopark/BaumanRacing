@@ -9,6 +9,7 @@ class game_context : public game_context_abst {
     int get_name_from_id(size_t id);
     int get_car_from_id(size_t id);
     int add_players(struct players_info);
+    int update_positions(struct players_positions_info);
  private:
     event positions;
     event players;

@@ -22,8 +22,6 @@ class input : public input_abst {
     };
     
     scene_types current_scene;
-    
-    
 };
 
 #endif // INPUT_H_
