@@ -6,8 +6,10 @@
 class game_manager {
  public:
     enum {players_coord, side_objects_coord, all_coord};
-    explicit game_manager(const map& _map) : game_map(_map) {};
-    virtual ~game_manager() {};
+    explicit 
+    game_manager(const map& _map) : game_map(_map) {};
+    virtual 
+    ~game_manager() {};
     void game_builder(const command& comm, size_t player_id) {
         if (comm.forward || comm.back || comm.right_turn 
             || comm.left_turn || comm.run_sprint) {
@@ -35,10 +37,14 @@ class game_manager {
     }
  private:
     map game_map;
-    virtual void make_move(const command& comm, size_t player_id) = 0;
-    virtual void throw_side_object(size_t player_id) = 0;
-    virtual std::vector<point> get_players_coord() = 0;
-    virtual std::vector<point> get_side_objects_coord() = 0;
+    virtual 
+    void make_move(const command& comm, size_t player_id) = 0;
+    virtual 
+    void throw_side_object(size_t player_id) = 0;
+    virtual 
+    std::vector<point> get_players_coord() = 0;
+    virtual 
+    std::vector<point> get_side_objects_coord() = 0;
 };
 
 #endif  // PROJECT_GAME_MANAGER_H_

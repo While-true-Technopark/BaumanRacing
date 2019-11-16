@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/vector.hpp> // или лучше std::vector?
+#include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <functional>
 
@@ -54,31 +54,38 @@ struct command {
 
 class map {
  public:
-    map() {};
-    virtual ~map() {};
+    map() = default;
+    virtual 
+    ~map() {};
     std::vector<point> get_players_coord();
     std::vector<point> get_side_objects_coord();
     std::vector<size_t> get_rating();
-    std::vector<bool> player_finished();
-    void command_maker(const command& comm, size_t player_id);
+    bool player_finished(size_t player_id);
+    void make_move(const command& comm, size_t player_id) {
+        if (comm.forward) {}
+        on_pitstop(player_id);
+    }
+    void throw_side_object(size_t player_id) {
+        on_pitstop(player_id);
+    }
  private:
     std::vector<player> players;
     std::vector<side_object> side_objects;
     std::vector<point> road_coord;
     std::vector<point> pitstop_coords;
-    void on_pitstop(size_t player_id);
-    virtual void make_move(const command& comm, size_t player_id) {
-        player_id = comm.forward;
-        player_id++;
-    };
-    virtual void throw_side_object(size_t player_id) {
-        player_id++;
+    virtual 
+    bool on_pitstop(size_t player_id) {
+        if (!player_id) {
+            return true;
+        }
+        return false;
     }
 };
 
 class standard_maps final {
  public: 
-    static map get_map(size_t map_id) { 
+    static 
+    map get_map(size_t map_id) { 
         if (map_id) {  // TODO: сделать набор стандартных карт (Рома)
             return map();
         }
@@ -98,37 +105,48 @@ class solver final {
     solver& operator=(solver&&) = delete;
 
     static 
-    vector<double> linear(const matrix<double>& matrix, const vector<double>& rhs, const std::string& method) {
+    std::vector<double> linear(const matrix<double>& matrix, const std::vector<double>& rhs, const std::string& method) {
         if (method == "gauss") {
             gauss(matrix, rhs);
         }
-        return vector<double>();
-    }
-    /*static
-    vector<double> nonlinear(const vector<std::function<double(vector<double>)>>& sistem, const std::string& method) {
-        return vector<double>();
+        return std::vector<double>();
     }
     static
-    vector<double> differential_equation(const vector<std::function<double(vector<double>)>>& rhs, 
-                                                const vector<double>& init_cond, const std::string& method) {
-        return vector<double>();                                                
-    }*/
+    std::vector<double> nonlinear(const std::vector<std::function<double(const std::vector<double>&)>>& sistem, 
+                            const std::string& method) {
+        if (method == "newton") {
+            newton(sistem);
+        }
+        return std::vector<double>();
+    }
+    static
+    std::vector<double> differential_equation(const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs, 
+                                const std::vector<double>& init_cond, double dt, const std::string& method) {
+        if (method == "runge_kutta") {
+            runge_kutta(rhs, init_cond, dt);
+        }
+        return std::vector<double>();                                               
+    }
+
     friend class test_solver;
 
  private:
     static 
-    vector<double> gauss(const matrix<double>& matrix, const vector<double>& rhs) {
-        matrix(0, 0); rhs(0);
-        return vector<double>();//rhs;
+    std::vector<double> gauss(const matrix<double>& matrix, const std::vector<double>& rhs) {
+        matrix(0, 0); rhs[0]; // for -Werror=unused...
+        return std::vector<double>();
     }
-    vector<double> qr(const matrix<double>& matrix, const vector<double>& rhs);
-
-    vector<double> newton(const vector<std::function<double(vector<double>)>>& sistem);
-    vector<double> zeidel(const vector<std::function<double(vector<double>)>>& sistem);
-
-    vector<double> runge_kutta(const vector<std::function<double(vector<double>)>>& rhs, 
-                                const vector<double>& init_cond);
-    vector<double> adams(const vector<std::function<double(vector<double>)>>& rhs, const vector<double>& init_cond);
+    static
+    std::vector<double> newton(const std::vector<std::function<double(const std::vector<double>&)>>& sistem) {
+        sistem[0]; // for -Werror=unused...
+        return std::vector<double>();
+    }
+    static
+    std::vector<double> runge_kutta(const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs, 
+                                const std::vector<double>& init_cond, double dt) {
+        rhs[0]; init_cond[0]; dt++; // for -Werror=unused...
+        return std::vector<double>();
+    }
 };
 
 #endif  // PROJECT_GAME_LOGIC_H_
