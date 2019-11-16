@@ -23,10 +23,10 @@ bool operator==(const vector<double>& l, const vector<double>& r) {
     return true;
 }
 
-class solve {
+class test_solver {
  public:
-    solve() = default;
-    virtual ~solve() {};
+    test_solver() = default;
+    virtual ~test_solver() {};
     virtual 
     vector<double> linear(const matrix<double>& matrix, const vector<double>& rhs) {
         return solver::gauss(matrix, rhs);
@@ -42,9 +42,8 @@ class solve {
     }*/
 };
 
-class mock_solve : public solve {
+class mock_solve : public test_solver {
  public:
-    mock_solve() : solve() {};
     MOCK_METHOD2(linear, vector<double>(const matrix<double>&, const vector<double>&));
     /*MOCK_METHOD2(nonlinear, vector<double>(const vector<std::function<double(vector<double>)>>&, const std::string&));
     MOCK_METHOD3(differential_equation, vector<double>(const vector<std::function<double(vector<double>)>>&, 

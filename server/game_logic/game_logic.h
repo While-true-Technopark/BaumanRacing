@@ -48,29 +48,38 @@ struct command {
     bool back;
     bool right_turn;
     bool left_turn;
-    bool throw_side_object;
     bool run_sprint;
+    bool throw_side_object;
 };
 
-class map final {
+class map {
  public:
-    void make_move(const command& comm, size_t player_id);
+    map() {};
+    virtual ~map() {};
     std::vector<point> get_players_coord();
     std::vector<point> get_side_objects_coord();
     std::vector<size_t> get_rating();
     std::vector<bool> player_finished();
+    void command_maker(const command& comm, size_t player_id);
  private:
-    void on_pitstop(size_t player_id);
     std::vector<player> players;
     std::vector<side_object> side_objects;
     std::vector<point> road_coord;
     std::vector<point> pitstop_coords;
+    void on_pitstop(size_t player_id);
+    virtual void make_move(const command& comm, size_t player_id) {
+        player_id = comm.forward;
+        player_id++;
+    };
+    virtual void throw_side_object(size_t player_id) {
+        player_id++;
+    }
 };
 
 class standard_maps final {
- public:
+ public: 
     static map get_map(size_t map_id) { 
-        if (map_id) {  // TODO:
+        if (map_id) {  // TODO: сделать набор стандартных карт (Рома)
             return map();
         }
         return map();
@@ -104,7 +113,7 @@ class solver final {
                                                 const vector<double>& init_cond, const std::string& method) {
         return vector<double>();                                                
     }*/
-    friend class solve;
+    friend class test_solver;
 
  private:
     static 

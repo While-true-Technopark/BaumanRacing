@@ -19,13 +19,13 @@ set(LIB_GAME_SERVER
 add_library(_game_server STATIC ${LIB_GAME_SERVER})
 
 find_package(Boost REQUIRED)
-find_package(SFML COMPONENTS graphics audio network window system REQUIRED)
+#find_package(SFML COMPONENTS graphics audio network window system REQUIRED)
 find_package(GTest REQUIRED)
 
 if(Boost_FOUND AND GTest_FOUND)
 
-    include_directories(${SFML_INCLUDE_DIR})
     include_directories(${Boost_INCLUDE_DIR})
+    #include_directories(${SFML_INCLUDE_DIR})
     include_directories(${GTEST_INCLUDE_DIRS})
 
 # link game_manager
@@ -35,7 +35,7 @@ if(Boost_FOUND AND GTest_FOUND)
     target_link_libraries(game_manager_test.out pthread)
     target_link_libraries(game_manager_test.out gmock)
     target_link_libraries(game_manager_test.out ${Boost_LIBRARIES})
-    target_link_libraries(game_manager_test.out ${SFML_LIBRARIES})
+    #target_link_libraries(game_manager_test.out ${SFML_LIBRARIES})
 
 # link game_logic
     add_executable(game_logic_test.out server/game_logic/game_logic_test.cpp)
@@ -44,6 +44,6 @@ if(Boost_FOUND AND GTest_FOUND)
     target_link_libraries(game_logic_test.out pthread)
     target_link_libraries(game_logic_test.out gmock)
     target_link_libraries(game_logic_test.out ${Boost_LIBRARIES})
-    target_link_libraries(game_logic_test.out ${SFML_LIBRARIES})
+    #target_link_libraries(game_logic_test.out ${SFML_LIBRARIES})
     
 endif()
