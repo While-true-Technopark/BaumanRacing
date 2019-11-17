@@ -49,17 +49,17 @@ class test_solver {
     std::vector<double> nonlinear(const std::vector<std::function<double(const std::vector<double>&)>>& sistem) {
         return solver::newton(sistem);
     }
-
-    /*virtual vector<double> differential_equation(const vector<std::function<double(vector<double>)>>& rhs, 
-                                                const vector<double>& init_cond, const std::string& method) {
-        return solver::differential_equation(rhs, init_cond, method);
-    }*/
+    virtual
+    std::vector<double> differential_equation(const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs, 
+                                const std::vector<double>& init_cond, double dt) {
+        return solver::runge_kutta(rhs, init_cond, dt);
+    }
 };
 
 class mock_solver : public test_solver {
  public:
     MOCK_METHOD3(differential_equation, 
-    	std::vector<double>(const std::vector<std::function<double(const std::vector<double>&, double)>>&, 
+        std::vector<double>(const std::vector<std::function<double(const std::vector<double>&, double)>>&, 
                                 const std::vector<double>&, double));
     MOCK_METHOD2(linear, std::vector<double>(const matrix<double>&, const std::vector<double>&));
     MOCK_METHOD1(nonlinear, std::vector<double>(const std::vector<std::function<double(const std::vector<double>&)>>&));
@@ -86,11 +86,11 @@ TEST(solver, linear) {
 TEST(solver, nonlinear) {
     mock_solver sol;
     std::vector<std::function<double(const std::vector<double>&)>> sistem = {
-    	[](const std::vector<double>& x) {
-    		return x[0] * x[0] - x[1] * x[1] - 15;
+        [](const std::vector<double>& x) {
+            return x[0] * x[0] - x[1] * x[1] - 15;
         },
         [](const std::vector<double>& x) {
-    		return x[0] * x[1] + 4;
+            return x[0] * x[1] + 4;
         }
     };
     std::vector<double> res = {4, -1};
@@ -101,14 +101,14 @@ TEST(solver, nonlinear) {
 TEST(solver, differential_equation) {
     mock_solver sol;
     std::vector<std::function<double(const std::vector<double>&, double)>> rhs = {
-    	[](const std::vector<double>& u, double t) { // уравнение колебаний в нормальной форме
-    		t++; // for -Werror=unused...
-    		return u[1];
-    	},
-       	[](const std::vector<double>& u, double t) {
-       		t++;
-    		return -t * u[0];
-    	}
+        [](const std::vector<double>& u, double t) { // уравнение колебаний в нормальной форме
+        t++; // for -Werror=unused...
+            return u[1];
+        },
+        [](const std::vector<double>& u, double t) {
+            t++;
+            return -t * u[0];
+        }
     };
     std::vector<double> init_cond = {0, 0};
     double dt = 0.1;
