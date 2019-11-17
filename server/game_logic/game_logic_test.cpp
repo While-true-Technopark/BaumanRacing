@@ -51,7 +51,7 @@ class test_solver {
     }
     virtual
     std::vector<double> differential_equation(const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs, 
-                                const std::vector<double>& init_cond, double dt) {
+                                                const std::vector<double>& init_cond, double dt) {
         return solver::runge_kutta(rhs, init_cond, dt);
     }
 };
@@ -102,7 +102,7 @@ TEST(solver, differential_equation) {
     mock_solver sol;
     std::vector<std::function<double(const std::vector<double>&, double)>> rhs = {
         [](const std::vector<double>& u, double t) { // уравнение колебаний в нормальной форме
-        t++; // for -Werror=unused...
+            t++; // for -Werror=unused...
             return u[1];
         },
         [](const std::vector<double>& u, double t) {
