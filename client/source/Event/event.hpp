@@ -4,6 +4,7 @@
 #include <iostream>
 
 enum event_type {
+    application_run,
     main_menu,
     new_game,
     name_choose,
