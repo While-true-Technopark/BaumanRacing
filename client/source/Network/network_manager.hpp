@@ -9,7 +9,7 @@
 class network_manager : public base_manager, event_throwable {
  public:
     network_manager(network_abst *abst);
-    int on_event(const event & e);
+    int handle_event(const event & e);
     event throw_event();
     network_abst *module;
 };

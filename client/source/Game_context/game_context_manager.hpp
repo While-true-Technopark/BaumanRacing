@@ -8,7 +8,7 @@
 class game_context_manager : public base_manager {
  public:
     game_context_manager(game_context_abst *abst);
-    int on_event(const event & e);
+    int handle_event(const event & e);
     game_context_abst *module;
 };
 

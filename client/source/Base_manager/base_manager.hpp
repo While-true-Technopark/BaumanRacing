@@ -5,7 +5,7 @@
 
 class base_manager {
  public:
-    virtual int on_event(const event & e) = 0;
+    virtual int handle_event(const event & e) = 0;
 };
 
 #endif  // BASE_MANAGER_H_

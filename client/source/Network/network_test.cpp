@@ -32,39 +32,39 @@ bool operator==(const struct player_info & left, const struct player_info & righ
 TEST(network_manager_test, get_last_package) {
     mock_network m_network;
     EXPECT_CALL(m_network, get_last_package()).Times(AtLeast(1));
-    
+
     network_manager network_mngr(&m_network);
     network_mngr.throw_event();
 }
 
 TEST(network_manager_test, keys_send) {
     mock_network m_network;
-    
+
     struct keys_pressed keys = {
         .up = true, .down = false,
         .left = true, .right = true,
         .enter = true, .esc = true
     };
-    
+
     EXPECT_CALL(m_network, keys_send(keys)).Times(AtLeast(1));
     network_manager network_mngr(&m_network);
-    
+
     union event_data data = { .keys = keys };
     event_type type = key_pressed;
     event e(type, data);
-    EXPECT_EQ(network_mngr.on_event(e), 0);
+    EXPECT_EQ(network_mngr.handle_event(e), 0);
 }
 
 TEST(network_manager_test, name_car_send) {
     mock_network m_network;
-    
+
     struct player_info player = { .player_id = 1, .car_id = 1 };
-    
+
     EXPECT_CALL(m_network, name_car_send(player)).Times(AtLeast(1));
     network_manager network_mngr(&m_network);
-    
+
     union event_data data = { .player = player };
     event_type type = car_chosen;
     event e(type, data);
-    EXPECT_EQ(network_mngr.on_event(e), 0);
+    EXPECT_EQ(network_mngr.handle_event(e), 0);
 }

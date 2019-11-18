@@ -2,6 +2,7 @@
 #define EVENT_H_
 
 #include <iostream>
+#include <SFML/Graphics.hpp>
 
 enum event_type {
     application_run,
@@ -25,7 +26,8 @@ enum event_type {
     game_end,
     key_pressed,
     key_released,
-    mouse_click
+    mouse_click,
+    textures_loaded      // throw it to get all textures
 };
 
 struct player_id {
@@ -73,20 +75,27 @@ struct keys_pressed {
     bool enter;
     bool esc;
 };
+
 struct lap_event {
     size_t lap;
 };
+
 struct players_rating_event {
     size_t player_1;
     size_t player_2;
     size_t player_3;
     size_t player_4;
 };
+
 struct game_results_event {
     bool win;
 };
-struct empty_event {
-    
+
+struct empty_event {};
+
+struct textures_loaded_event {
+    sf::Texture * map;
+    size_t map_number;  //add textures
 };
 
 union event_data {
@@ -102,6 +111,7 @@ union event_data {
     players_rating_event     players_rating;
     game_results_event       game_results;
     empty_event              empty;
+    textures_loaded_event    textures;
 };
 
 class event {

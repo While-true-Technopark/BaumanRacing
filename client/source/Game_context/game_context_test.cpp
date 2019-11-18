@@ -53,67 +53,67 @@ bool operator==(const struct player_id & left, const struct player_id & right) {
 
 TEST(game_context_manager_test, update_positions) {
     mock_game_context m_game_context;
-    
+
     struct players_positions_info players = {
         .player_1 = { .x = 0.0, .y = 0.0, .angle = 0.0 },
         .player_2 = { .x = 0.0, .y = 0.0, .angle = 0.0 },
         .player_3 = { .x = 0.0, .y = 0.0, .angle = 0.0 },
         .player_4 = { .x = 0.0, .y = 0.0, .angle = 0.0 }
     };
-    
+
     EXPECT_CALL(m_game_context, update_positions(players)).Times(AtLeast(1));
     game_context_manager game_context_mngr(&m_game_context);
-    
+
     union event_data data = { .players_positions = players };
     event_type type = car_chosen;
     event e2(type, data);
-    EXPECT_EQ(game_context_mngr.on_event(e2), 0);
+    EXPECT_EQ(game_context_mngr.handle_event(e2), 0);
 }
 
 
 TEST(game_context_manager_test, add_players) {
     mock_game_context m_game_context;
-    
+
     struct players_info players = {
         .player_1 = { .player_id = 1, .car_id = 1 },
         .player_2 = { .player_id = 2, .car_id = 1 },
         .player_3 = { .player_id = 3, .car_id = 2 },
         .player_4 = { .player_id = 4, .car_id = 1 }
     };
-    
+
     EXPECT_CALL(m_game_context, add_players(players)).Times(AtLeast(1));
     game_context_manager game_context_mngr(&m_game_context);
-    
+
     union event_data data = { .players = players };
     event_type type = car_chosen;
     event e2(type, data);
-    EXPECT_EQ(game_context_mngr.on_event(e2), 0);
+    EXPECT_EQ(game_context_mngr.handle_event(e2), 0);
 }
 
 TEST(game_context_manager_test, get_name_from_id) {
     mock_game_context m_game_context;
-    
+
     struct player_id player = { .id = 1 };
-    
+
     EXPECT_CALL(m_game_context, get_name_from_id(1)).Times(AtLeast(1));
     game_context_manager game_context_mngr(&m_game_context);
-    
+
     union event_data data = { .id = player };
     event_type type = car_chosen;
     event e2(type, data);
-    EXPECT_EQ(game_context_mngr.on_event(e2), 0);
+    EXPECT_EQ(game_context_mngr.handle_event(e2), 0);
 }
 
 TEST(game_context_manager_test, get_car_from_id) {
     mock_game_context m_game_context;
-    
+
     struct player_id player = { .id = 1 };
-    
+
     EXPECT_CALL(m_game_context, get_car_from_id(1)).Times(AtLeast(1));
     game_context_manager game_context_mngr(&m_game_context);
-    
+
     union event_data data = { .id = player };
     event_type type = car_chosen;
     event e2(type, data);
-    EXPECT_EQ(game_context_mngr.on_event(e2), 0);
+    EXPECT_EQ(game_context_mngr.handle_event(e2), 0);
 }

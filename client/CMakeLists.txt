@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
-
-include_directories(${SOURCE_DIR})
+set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty")
+set(TINYXML_DIR "${3RDPARTY_DIR}/tinyxml2" )
 
 set(ALL_SOURCES
     ${SOURCE_DIR}/Application/application.cpp
@@ -22,6 +22,7 @@ set(ALL_SOURCES
     ${SOURCE_DIR}/Network/network_manager.cpp
     ${SOURCE_DIR}/Renderer/renderer.cpp
     ${SOURCE_DIR}/Renderer/renderer_manager.cpp
+    ${TINYXML_DIR}/tinyxml2.cpp
 )
 
 set(ALL_HEADERS
@@ -34,6 +35,7 @@ set(ALL_HEADERS
     ${SOURCE_DIR}/Loader/
     ${SOURCE_DIR}/Network/
     ${SOURCE_DIR}/Renderer/
+    ${TINYXML_DIR}
 
 )
 
@@ -73,13 +75,13 @@ if (Boost_FOUND AND SFML_FOUND)
     include_directories(${GTEST_INCLUDE_DIRS})
 
     add_executable(Client_test_internal.out ${SOURCE_DIR}/main_test_internal.cpp ${TEST_INTERNAL_SOURCES})
-    
+
     target_link_libraries(Client_test_internal.out ${GTEST_LIBRARIES})
     target_link_libraries(Client_test_internal.out pthread)
     target_link_libraries(Client_test_internal.out gmock)
     target_link_libraries(Client_test_internal.out ${Boost_LIBRARIES})
     target_link_libraries(Client_test_internal.out ${SFML_LIBRARIES})
-    
+
     add_executable(Client_tests_external.out ${SOURCE_DIR}/main_test_external.cpp ${TEST_EXTERNAL_SOURCES})
 
     target_link_libraries(Client_tests_external.out ${GTEST_LIBRARIES})

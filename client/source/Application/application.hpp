@@ -23,13 +23,12 @@ class application {
  private:
     application();
 
+    sf::RenderWindow window;
     game_context_manager game_context_mngr;
     input_manager input_mngr;
     loader_manager loader_mngr;
     network_manager network_mngr;
     renderer_manager renderer_mngr;
-
-    sf::RenderWindow window;
 };
 
 #endif // APPLICATION_H_

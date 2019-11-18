@@ -8,6 +8,7 @@
 
 class renderer_abst {
  public:
+    virtual int create_map(size_t map_number, sf::Texture* map_texture) = 0;
     virtual int build_game_scene(game_render_data data) = 0;
     virtual int car_choose_menu() = 0;
     virtual int end_game_menu() = 0;

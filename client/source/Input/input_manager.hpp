@@ -9,7 +9,7 @@
 class input_manager : public base_manager, event_throwable {
  public:
     input_manager(input_abst *abst);
-    int on_event(const event & e);
+    int handle_event(const event & e);
     event throw_event();
     input_abst *module;
 };

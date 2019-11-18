@@ -8,7 +8,7 @@
 class renderer_manager : public base_manager {
  public:
     renderer_manager(renderer_abst *abst);
-    int on_event(const event & e) override;
+    int handle_event(const event & e) override;
     renderer_abst *module;
 };
 
