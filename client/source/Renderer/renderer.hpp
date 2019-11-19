@@ -32,6 +32,8 @@ class renderer : public renderer_abst {
     std::vector<std::string> paths_to_xml_maps;
     float scale;
 
+    sf::View view;
+
     int parse_map();
     int build_map();
     int build_rating();

@@ -1,9 +1,11 @@
 #include "renderer.hpp"
 
-renderer::renderer(sf::RenderWindow *win) {
+renderer::renderer(sf::RenderWindow* win) {
     window = win;
+    scale = 1;
     paths_to_xml_maps.push_back("static/map.tmx");
-    scale = 0.12;
+    view = window->getView();
+    view.zoom(1.0f);
 }
 
 int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
@@ -47,10 +49,6 @@ int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
         cur_x += sprite_width;
     }
 
-    // for (int i = 0; i != block_sprites.size(); i++) {
-    //     window->draw(block_sprites[i]);
-    // }
-    // window->display();
     XMLElement * tile_xml = map_xml->FirstChildElement("layer")
                                    ->FirstChildElement("data")
                                    ->FirstChildElement("tile");
@@ -80,10 +78,15 @@ int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
 }
 
 int renderer::build_game_scene(game_render_data data) {
-    window->clear();
-    for (size_t i = 0; i != map.size(); i++) {
-        for (size_t j = 0; j != map[0].size(); j++) {
-            window->draw(map[i][j].sprite);
+    // window->clear();
+    sf::Vector2f center = view.getCenter();
+    center.x += 20.0f;
+    center.y += 20.0f;
+    view.setCenter(center);
+    window->setView(view);
+    for (const auto& block_stripe : map) {
+        for (const auto& block : block_stripe) {
+            window->draw(block.sprite);
         }
     }
     window->display();
