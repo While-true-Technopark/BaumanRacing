@@ -54,7 +54,7 @@ struct keys_pressed_variants input::get_pressed_keys() {
                     case sf::Keyboard::Right:
                         keys.keys.right = false;
                         break;
-                    case sf::Keyboard::Enter:
+                    case sf::Keyboard::Return:
                         keys.keys.enter = false;
                         break;
                     case sf::Keyboard::Escape:
