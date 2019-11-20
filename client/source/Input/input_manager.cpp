@@ -19,10 +19,10 @@ event input_manager::throw_event() {
     
     if (keys.closing == true) {
         ev_input.type = closing;
-        ev_input.data = { .empty = { } };
+        ev_input.data.empty = { };
     } else if (!nothing_pressed(keys.keys)) {
         ev_input.type = key_pressed;
-        ev_input.data = { .keys = keys.keys };
+        ev_input.data.keys = keys.keys;
     }
     
     return ev_input;
