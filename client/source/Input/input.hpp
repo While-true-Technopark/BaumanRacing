@@ -7,7 +7,7 @@
 class input : public input_abst {
  public:
     input(sf::RenderWindow *win);
-    struct keys_pressed get_pressed_key();
+    struct keys_pressed_variants get_pressed_keys();
     void start_control();
     void end_control();
  private:

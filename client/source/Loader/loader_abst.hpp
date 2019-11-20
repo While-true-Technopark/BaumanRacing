@@ -10,9 +10,10 @@
 class loader_abst {
  public:
     virtual int load_all() = 0;
-    virtual sf::Texture * get_texture(const std::string & name) = 0;
+    virtual sf::Texture* get_texture(const std::string & name) = 0;
+    virtual sf::Sprite* get_car(size_t id) = 0;
     // std::vector<sf::Sprite> backgrounds;
-    // std::vector<sf::Sprite> cars;
+    std::vector<sf::Sprite> cars;
     // sf::Sprite menu_button;
     // sf::Sprite left_button;
     // sf::Sprite right_button;

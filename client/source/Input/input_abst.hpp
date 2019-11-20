@@ -6,7 +6,7 @@
 
 class input_abst {
  public:
-    virtual struct keys_pressed get_pressed_key() = 0;
+    virtual struct keys_pressed_variants get_pressed_keys() = 0;
     virtual void start_control() = 0;
     virtual void end_control() = 0;
 protected:

@@ -16,6 +16,7 @@ class renderer_abst {
     virtual int main_menu() = 0;
     virtual int settings_menu() = 0;
     virtual int wait_scene() = 0;
+    std::vector<sf::Sprite*> players;
  protected:
     sf::RenderWindow *window;
 };

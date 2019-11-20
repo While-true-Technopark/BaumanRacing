@@ -25,7 +25,8 @@ enum event_type {
     update_position,
     game_end,
     key_pressed,
-    key_released,
+    closing,
+    nothing_keys,
     mouse_click,
     textures_loaded      // throw it to get all textures
 };
@@ -54,17 +55,17 @@ struct start_game_timer_event {
     size_t time;
 };
 
-struct players_position_info {
+struct player_position_info {
     double x;
     double y;
     double angle;
 };
 
 struct players_positions_info {
-    players_position_info player_1;
-    players_position_info player_2;
-    players_position_info player_3;
-    players_position_info player_4;
+    player_position_info player_1;
+    player_position_info player_2;
+    player_position_info player_3;
+    player_position_info player_4;
 };
 
 struct keys_pressed {
@@ -74,6 +75,11 @@ struct keys_pressed {
     bool right;
     bool enter;
     bool esc;
+};
+
+struct keys_pressed_variants {
+    struct keys_pressed keys;
+    bool closing;
 };
 
 struct lap_event {
@@ -94,8 +100,12 @@ struct game_results_event {
 struct empty_event {};
 
 struct textures_loaded_event {
-    sf::Texture * map;
+    sf::Texture* map;
     size_t map_number;  //add textures
+    sf::Sprite* player_1;
+    sf::Sprite* player_2;
+    sf::Sprite* player_3;
+    sf::Sprite* player_4;
 };
 
 union event_data {
@@ -105,7 +115,7 @@ union event_data {
     lobby_timer_event        lobby_timer;
     start_game_timer_event   start_game_timer;
     players_positions_info   players_positions;
-    players_position_info    players_position;
+    player_position_info     player_position;
     keys_pressed             keys;
     lap_event                lap;
     players_rating_event     players_rating;
