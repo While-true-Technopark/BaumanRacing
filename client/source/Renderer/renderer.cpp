@@ -79,7 +79,7 @@ int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
 
 int renderer::build_game_scene(game_render_data data) {
     window->clear();
-    //printf("%f ", data.players[0].position.x);
+
     sf::Vector2f center = view.getCenter();
     center.x = data.players[0].position.x;
     center.y = data.players[0].position.y;
@@ -94,13 +94,13 @@ int renderer::build_game_scene(game_render_data data) {
     players[0]->setRotation(data.players[0].position.angle);
     window->draw(*players[0]);
     players[1]->setPosition(data.players[1].position.x, data.players[1].position.y);
-    players[0]->setRotation(data.players[1].position.angle);
+    players[1]->setRotation(data.players[1].position.angle);
     window->draw(*players[1]);
     players[2]->setPosition(data.players[2].position.x, data.players[2].position.y);
-    players[0]->setRotation(data.players[2].position.angle);
+    players[2]->setRotation(data.players[2].position.angle);
     window->draw(*players[2]);
     players[3]->setPosition(data.players[3].position.x, data.players[3].position.y);
-    players[0]->setRotation(data.players[3].position.angle);
+    players[3]->setRotation(data.players[3].position.angle);
     window->draw(*players[3]);
     window->display();
     return 0;

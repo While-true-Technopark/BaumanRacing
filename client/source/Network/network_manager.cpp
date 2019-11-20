@@ -16,7 +16,10 @@ int network_manager::handle_event(const event & e) {
 }
 
 event network_manager::throw_event() {
-    event ev(update_position, { .players_positions = module->get_positions() });
+    event ev;
+    
+    ev.type = update_position;
+    ev.data.players_positions = module->get_positions();
     
     return ev;
 }
