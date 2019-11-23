@@ -2,17 +2,17 @@
 #include <string>
 #include <iostream>
 
-size_t port = 5555;
-std::string ip_local_host = "127.0.0.1";
+size_t PORT = 5550;
+std::string LOCAL_IP = "127.0.0.1";
 
 class client {
  public:
-    client(size_t port, const std::string& ip = ip_local_host)
+    client(size_t port = PORT, const std::string& ip = LOCAL_IP)
         : port{port}
         , ip{ip}
 
     {
-        if (socket.connect(ip_local_host, port) != sf::Socket::Done) {
+        if (socket.connect(ip, port) != sf::Socket::Done) {
             // throw std::runtime_error(std::strerror(errno));
         }
     }
@@ -21,10 +21,17 @@ class client {
         std::string msg = " hello from clt ";
         socket.send(msg.c_str(), msg.size() + 1);
     
-        char buff[1024];
-        std::size_t received = 0;
-        socket.receive(buff, sizeof(buff), received);
-        std::cout << buff << std::endl;
+
+        
+        while (true) {
+            char buff[1024];
+            std::size_t received = 0;
+            socket.receive(buff, sizeof(buff), received);
+            std::cout << buff << std::endl;
+            
+            std::getline(std::cin, msg);
+            socket.send(msg.c_str(), msg.size() + 1);
+        }
     }
     
     ~client() {}
@@ -36,7 +43,7 @@ class client {
 };
 
 int main() {
-    client clt(port);
+    client clt(PORT);
     clt.run();
     return 0;
 }
