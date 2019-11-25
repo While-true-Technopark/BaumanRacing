@@ -1,16 +1,46 @@
-#include <SFML/Network.hpp>
-#include <iostream>
-#include <list>
-#include <string>
 #include <memory>
+#include "network_data.hpp"
 
 //namespace srv {
     
-size_t PORT = 5550;
-std::string LOCAL_IP = "127.0.0.1";
-size_t MAX_CLTS = 4;
+
 
 // TODO: обработка исключений
+// TODO: написать класс massage
+// TODO: написать обработчики событий
+// TODO: написать разделение на комнаты
+
+class clients_room {
+ public:
+    clients_room(std::unique_ptr<sf::TcpSocket>&& first_clt, sf::SocketSelector& selector, size_t max_clients = MAX_CLTS)
+        : selector{selector}
+        , max_clients{max_clients}
+    {
+        // selector.add(*client);
+        clients.emplace_back(std::move(first_clt));
+    }
+    
+    virtual void event_handler() {
+        
+    }
+    
+    bool add_client(std::unique_ptr<sf::TcpSocket>&& client) {
+        if (clients.size() < max_clients || 
+            std::find(clients.begin(), clients.end(), client) != clients.end()) {
+            clients.emplace_back(std::move(client));
+            return true;
+        }
+        return false;
+    }
+    
+ private:
+     sf::SocketSelector& selector;
+     const size_t max_clients;
+     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
+     /*
+      game manager
+      */
+};
 
 class server {
  public:
@@ -23,43 +53,47 @@ class server {
             // throw std::runtime_error(std::strerror(errno));
         }
         selector.add(listener);
-        // listener.setBlocking(false); // non-blocking sockets
         std::cout << "Server is started. Waiting for clients" << std::endl;
     }
     
     void run() {
-        size_t clt_id = 0;
         while (true) {
             if (selector.wait()) {
                 if (selector.isReady(listener)) {
-                    std::shared_ptr<sf::TcpSocket> client = std::make_shared<sf::TcpSocket>();
-                    // std::sf::TcpSocket client;
+                    // join or create
+                    std::unique_ptr<sf::TcpSocket> client = std::make_unique<sf::TcpSocket>();
                     if (listener.accept(*client) == sf::Socket::Done) {
-                        clients.push_back(client);
                         selector.add(*client);
-                        ++clt_id;
+                        if (selector.isReady(*client)) {
+                            sf::Packet packet;
+                            client->receive(packet);
+                            json msg = message::packet_to_json(packet);
+                            auto head = msg[message::head];
+                            if (head == message::CREATE) {
+                                send_status(client, true);
+                                rooms.emplace(msg[message::body], clients_room(std::move(client), selector, max_clients));
+                                std::cout << "created" << std::endl; // TODO: logger
+                            } else if (head == message::JOIN) {
+                                send_status(client, true);
+                                rooms.at(msg[message::body]).add_client(std::move(client));
+                                std::cout << "joined" << std::endl; // TODO: logger
+                            } else {
+                                send_status(client, false);
+                                selector.remove(*client);
+                                std::cout << "fail in massage" << std::endl; // TODO: logger
+                            }
+                        } else {
+                            send_status(client, false);
+                            selector.remove(*client);
+                            std::cout << "selector id not ready" << std::endl; // TODO: logger
+                        }
+                        
                     } else {
                         // throw
                     }
                 } else {
-                    for(size_t id = 0; id < clients.size(); ++id) {
-                        // TODO: написать класс massage
-                        // TODO: написать обработчики событий
-                        // TODO: написать разделение на комнаты
-                        auto& curr_clt = *clients[id];
-                        if (selector.isReady(curr_clt)) {
-                            char buff[100];
-                            size_t received = 0;
-                            curr_clt.receive(buff, sizeof(buff), received);
-                            std::cout <<  buff <<  " him id: " << id << std::endl;
-                            
-                            std::string msg;// = "hello from srv, your id: " + std::to_string(id);
-                            puts(" print msg for clt: ");
-                            // test: уронить клиента в этот момент и проверить не зависнет ли сервер на send
-                            // все ок
-                            std::getline(std::cin, msg);
-                            curr_clt.send(msg.c_str(), msg.size() + 1);
-                        }
+                    for(auto& room : rooms) {
+                        room.second.event_handler();
                     }
                 }
             }
@@ -71,12 +105,21 @@ class server {
     }
     
  private:
-     size_t port;
-     std::string ip;
-     size_t max_clients;
-     sf::TcpListener listener;
-     sf::SocketSelector selector;
-     std::vector<std::shared_ptr<sf::TcpSocket>> clients;
+    const size_t port;
+    const std::string ip;
+    const size_t max_clients;
+    sf::TcpListener listener;
+    sf::SocketSelector selector;
+    std::map<std::string, clients_room> rooms;
+     
+    void send_status(const std::unique_ptr<sf::TcpSocket>& clt, bool status) {
+        json msg_status = message::get_message(message::STATUS);
+        if (status) {
+            msg_status[message::body] = true;
+        }
+        sf::Packet packet = message::json_to_packet(msg_status);
+        clt->send(packet);
+    }
 };
 
 // }

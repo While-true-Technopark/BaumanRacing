@@ -1,9 +1,4 @@
-#include <SFML/Network.hpp>
-#include <string>
-#include <iostream>
-
-size_t PORT = 5550;
-std::string LOCAL_IP = "127.0.0.1";
+#include "network_data.hpp"
 
 class client {
  public:
@@ -18,7 +13,12 @@ class client {
     }
     
     void run() {
-        std::string msg = " hello from clt ";
+        std::string clt_name, room_name;
+        std::cout << "name client: ";
+        std::getline(std::cin, clt_name);
+        std::cout << "name room: ";
+        std::getline(std::cin, room_name);
+        /*std::string msg = " hello from clt ";
         socket.send(msg.c_str(), msg.size() + 1);
     
 
@@ -31,7 +31,7 @@ class client {
             
             std::getline(std::cin, msg);
             socket.send(msg.c_str(), msg.size() + 1);
-        }
+        }*/
     }
     
     ~client() {}
