@@ -3,8 +3,6 @@
 
 //namespace srv {
     
-
-
 // TODO: обработка исключений
 // TODO: написать класс massage
 // TODO: написать обработчики событий
@@ -16,7 +14,6 @@ class clients_room {
         : selector{selector}
         , max_clients{max_clients}
     {
-        // selector.add(*client);
         clients.emplace_back(std::move(first_clt));
     }
     
@@ -32,14 +29,11 @@ class clients_room {
         }
         return false;
     }
-    
+        
  private:
-     sf::SocketSelector& selector;
-     const size_t max_clients;
-     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
-     /*
-      game manager
-      */
+    sf::SocketSelector& selector;
+    const size_t max_clients;
+    std::vector<std::unique_ptr<sf::TcpSocket>> clients;
 };
 
 class server {
@@ -65,27 +59,11 @@ class server {
                     if (listener.accept(*client) == sf::Socket::Done) {
                         selector.add(*client);
                         if (selector.isReady(*client)) {
-                            sf::Packet packet;
-                            client->receive(packet);
-                            json msg = message::packet_to_json(packet);
-                            auto head = msg[message::head];
-                            if (head == message::CREATE) {
-                                send_status(client, true);
-                                rooms.emplace(msg[message::body], clients_room(std::move(client), selector, max_clients));
-                                std::cout << "created" << std::endl; // TODO: logger
-                            } else if (head == message::JOIN) {
-                                send_status(client, true);
-                                rooms.at(msg[message::body]).add_client(std::move(client));
-                                std::cout << "joined" << std::endl; // TODO: logger
-                            } else {
-                                send_status(client, false);
-                                selector.remove(*client);
-                                std::cout << "fail in massage" << std::endl; // TODO: logger
-                            }
+                            init_event_handler(client);
                         } else {
                             send_status(client, false);
                             selector.remove(*client);
-                            std::cout << "selector id not ready" << std::endl; // TODO: logger
+                            std::cout << "selector is not ready" << std::endl; // TODO: logger
                         }
                         
                     } else {
@@ -97,6 +75,26 @@ class server {
                     }
                 }
             }
+        }
+    }
+    
+    virtual void init_event_handler(std::unique_ptr<sf::TcpSocket>& clt) {
+        sf::Packet packet;
+        clt->receive(packet);
+        json msg = message::packet_to_json(packet);
+        auto head = msg[message::head];
+        if (head == message::CREATE) {
+            send_status(clt, true);
+            rooms.emplace(msg[message::body], clients_room(std::move(clt), selector, max_clients));
+            std::cout << "created" << std::endl; // TODO: logger
+        } else if (head == message::JOIN) {
+            send_status(clt, true);
+            rooms.at(msg[message::body]).add_client(std::move(clt));
+            std::cout << "joined" << std::endl; // TODO: logger
+        } else {
+            send_status(clt, false);
+            selector.remove(*clt);
+            std::cout << "fail in massage" << std::endl; // TODO: logger
         }
     }
     
