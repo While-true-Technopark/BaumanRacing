@@ -4,9 +4,7 @@
 //namespace srv {
     
 // TODO: обработка исключений
-// TODO: написать класс massage
 // TODO: написать обработчики событий
-// TODO: написать разделение на комнаты
 
 class clients_room {
  public:
@@ -47,56 +45,101 @@ class server {
             // throw std::runtime_error(std::strerror(errno));
         }
         selector.add(listener);
-        std::cout << "Server is started. Waiting for clients" << std::endl;
+        std::cout << "server is started and waiting for clients" << std::endl;
     }
     
     void run() {
         while (true) {
-            if (selector.wait()) {
+            if (selector.wait(TIME_OUT)) {
                 if (selector.isReady(listener)) {
-                    // join or create
                     std::unique_ptr<sf::TcpSocket> client = std::make_unique<sf::TcpSocket>();
                     if (listener.accept(*client) == sf::Socket::Done) {
                         selector.add(*client);
-                        if (selector.isReady(*client)) {
-                            init_event_handler(client);
-                        } else {
-                            send_status(client, false);
-                            selector.remove(*client);
-                            std::cout << "selector is not ready" << std::endl; // TODO: logger
-                        }
-                        
+                        guests.emplace_back(std::move(client));
+                        std::cout << "add guest" << std::endl;
                     } else {
                         // throw
                     }
                 } else {
-                    for(auto& room : rooms) {
-                        room.second.event_handler();
-                    }
+                    rooms_event_handler();
+                    guests_event_handler();
                 }
+            } else {
+                ping_rooms();
+                ping_guests();
             }
         }
     }
     
-    virtual void init_event_handler(std::unique_ptr<sf::TcpSocket>& clt) {
-        sf::Packet packet;
-        clt->receive(packet);
-        json msg = message::packet_to_json(packet);
-        auto head = msg[message::head];
-        if (head == message::CREATE) {
-            send_status(clt, true);
-            rooms.emplace(msg[message::body], clients_room(std::move(clt), selector, max_clients));
-            std::cout << "created" << std::endl; // TODO: logger
-        } else if (head == message::JOIN) {
-            send_status(clt, true);
-            rooms.at(msg[message::body]).add_client(std::move(clt));
-            std::cout << "joined" << std::endl; // TODO: logger
-        } else {
-            send_status(clt, false);
-            selector.remove(*clt);
-            std::cout << "fail in massage" << std::endl; // TODO: logger
+    virtual void rooms_event_handler() {
+        for(auto& room : rooms) {
+            room.second.event_handler();
         }
     }
+    
+    virtual void guests_event_handler() {
+        for (size_t idx = 0; idx < guests.size(); ++idx) {
+            std::unique_ptr<sf::TcpSocket>& clt = guests[idx];
+            if (selector.isReady(*clt)) {
+                sf::Packet packet;
+                clt->receive(packet);
+                json msg = message::packet_to_json(packet);
+                auto head = msg[message::head];
+                if (head == message::CREATE) {
+                    send_status(clt, true);
+                    std::string room_name = msg[message::body];
+                    rooms.emplace(room_name, clients_room(std::move(clt), selector, max_clients));
+                    std::cout << "room " << room_name << " created" << std::endl; // TODO: logger
+                } else if (head == message::JOIN) {
+                    send_status(clt, true);
+                    std::string room_name = msg[message::body];
+                    rooms.at(room_name).add_client(std::move(clt));
+                    std::cout << "client joined in room " << room_name << std::endl; // TODO: logger
+                } else {
+                    send_status(clt, false);
+                    selector.remove(*clt);
+                    std::cout << "fail in massage" << std::endl; // TODO: logger
+                }
+                guests.erase(guests.begin() + idx);
+                --idx;
+            }
+        }
+    }
+    
+    virtual void ping_guests() {
+        std::cout << "ping guests" << std::endl; // TODO: logger
+    }
+    virtual void ping_rooms() {
+        std::cout << "ping rooms" << std::endl; // TODO: logger
+    }
+    /*virtual void ping_guests() {
+        for (size_t idx = 0; idx < guests.size(); ++idx) {
+            std::unique_ptr<sf::TcpSocket>& clt = guests[idx];
+            json msg = message::get_message(message::WAIT);
+            sf::Packet packet = message::json_to_packet(msg);
+            clt->send(packet);
+            std::cout << "send ping" << std::endl;
+            packet.clear();
+            if (clt->receive(packet) != sf::Socket::Done) {
+                std::cout << "fail ping" << std::endl;
+            }
+            json res = message::packet_to_json(packet);
+            if (msg != res) {
+                std::cout << "fail ping" << std::endl;
+            }
+            std::cout << "receive ping" << std::endl;
+            if ( != sf::Socket::Done) {
+                std::cout << "client shut down" << std::endl; // TODO: logger
+                selector.remove(*clt);
+                guests.erase(guests.begin() + idx);
+                --idx;
+            } else {
+                std::cout << packet;
+                std::cout << "ping sent" << std::endl; // TODO: logger
+            }
+        }
+    }*/
+
     
     ~server() {
         listener.close();
@@ -109,6 +152,7 @@ class server {
     sf::TcpListener listener;
     sf::SocketSelector selector;
     std::map<std::string, clients_room> rooms;
+    std::vector<std::unique_ptr<sf::TcpSocket>> guests; // клиенты, которые пока без комнаты
      
     void send_status(const std::unique_ptr<sf::TcpSocket>& clt, bool status) {
         json msg_status = message::get_message(message::STATUS);

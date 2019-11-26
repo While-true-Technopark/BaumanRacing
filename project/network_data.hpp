@@ -6,9 +6,10 @@
 
 using json = nlohmann::json;
 
-const size_t PORT = 5555;
+const size_t PORT = 5509;
 const std::string LOCAL_IP = "127.0.0.1";
 const size_t MAX_CLTS = 4;
+const sf::Time TIME_OUT = sf::seconds(10.0f);
 
 class message {
  public:
@@ -17,10 +18,12 @@ class message {
     enum header {
         CREATE = 100,
         JOIN,
+        EXIT,
         STATUS,
         WAIT,
-        SEL_MAP,
-        SEL_CAR,
+        PING,
+        GET_SETTING,
+        SET_SETTING,
     };
     
     inline static const std::string body = "body";
