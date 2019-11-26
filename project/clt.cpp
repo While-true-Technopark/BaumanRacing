@@ -2,14 +2,11 @@
 
 class client {
  public:
-    client(size_t port = PORT, const std::string& ip = LOCAL_IP)
-        : port{port}
-        , ip{ip}
-
-    {
+    client(size_t port = PORT, const std::string& ip = LOCAL_IP) {
         if (socket.connect(ip, port) != sf::Socket::Done) {
             // throw std::runtime_error(std::strerror(errno));
         }
+        // clt.setBlocking(false);
     }
     
     void run() {
@@ -30,8 +27,6 @@ class client {
     ~client() {}
 
  private:
-    size_t port;
-    std::string ip;
     sf::TcpSocket socket;
     
     bool init() {

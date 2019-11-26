@@ -37,11 +37,9 @@ class clients_room {
 class server {
  public:
     server(size_t port = PORT, const std::string& ip = LOCAL_IP, size_t max_clients = MAX_CLTS)
-        : port{port}
-        , ip{ip}
-        , max_clients{max_clients}
+        : max_clients{max_clients}
     {
-        if (listener.listen(port) != sf::Socket::Done) {
+        if (listener.listen(port, ip) != sf::Socket::Done) {
             // throw std::runtime_error(std::strerror(errno));
         }
         selector.add(listener);
@@ -95,6 +93,7 @@ class server {
                     std::string room_name = msg[message::body];
                     rooms.at(room_name).add_client(std::move(clt));
                     std::cout << "client joined in room " << room_name << std::endl; // TODO: logger
+                    //send_status(clt, false);
                 } else {
                     send_status(clt, false);
                     selector.remove(*clt);
@@ -146,8 +145,6 @@ class server {
     }
     
  private:
-    const size_t port;
-    const std::string ip;
     const size_t max_clients;
     sf::TcpListener listener;
     sf::SocketSelector selector;

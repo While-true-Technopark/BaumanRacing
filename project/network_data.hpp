@@ -6,7 +6,7 @@
 
 using json = nlohmann::json;
 
-const size_t PORT = 5509;
+const size_t PORT = 5555;
 const std::string LOCAL_IP = "127.0.0.1";
 const size_t MAX_CLTS = 4;
 const sf::Time TIME_OUT = sf::seconds(10.0f);
