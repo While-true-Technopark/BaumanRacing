@@ -6,18 +6,35 @@
 // TODO: обработка исключений
 // TODO: написать обработчики событий
 
-/*struct client {
-    std::unique_ptr<sf::TcpSocket>> socket;
-    bool status;
-    client(std::unique_ptr<sf::TcpSocket>>&& sock)
-        : socket{std::move(sock)}
-        , status{bool}
+struct client {
+    std::unique_ptr<sf::TcpSocket> socket;
+    sf::Clock clock; // time after last activity
+    
+    client() 
+        : socket{std::make_unique<sf::TcpSocket>()}
     {}
-}*/
+    
+    void send(message::header _header, const std::string body) {
+        json msg = message::get_message(_header);
+        msg[message::body] = body;
+        sf::Packet packet = message::json_to_packet(msg);
+        socket->send(packet);
+    }
+    
+    bool ping() {
+        if (clock.getElapsedTime() > 3.0f * TIME_OUT) {
+            return false;
+        } 
+        if (clock.getElapsedTime() > TIME_OUT) {
+            send(message::PING, "to");
+        }
+        return true;
+    }
+};
 
 class clients_room {
  public:
-    clients_room(std::unique_ptr<sf::TcpSocket>&& first_clt, sf::SocketSelector& selector, size_t max_clients = MAX_CLTS)
+    clients_room(client&& first_clt, sf::SocketSelector& selector, size_t max_clients = MAX_CLTS)
         : selector{selector}
         , max_clients{max_clients}
     {
@@ -25,13 +42,16 @@ class clients_room {
     }
     
     virtual void event_handler() {
-        
+        for (size_t idx = 0; idx < clients.size(); ++idx) {
+            client& clt = clients[idx];
+            if (selector.isReady(*(clt.socket))) {
+            }
+        }
     }
     
-    bool add_client(std::unique_ptr<sf::TcpSocket>&& client) {
-        if (clients.size() < max_clients || 
-            std::find(clients.begin(), clients.end(), client) != clients.end()) {
-            clients.emplace_back(std::move(client));
+    bool add_client(client&& clt) {
+        if (clients.size() < max_clients) {
+            clients.emplace_back(std::move(clt));
             return true;
         }
         return false;
@@ -40,7 +60,7 @@ class clients_room {
  private:
     sf::SocketSelector& selector;
     const size_t max_clients;
-    std::vector<std::unique_ptr<sf::TcpSocket>> clients;
+    std::vector<client> clients;
 };
 
 class server {
@@ -78,26 +98,30 @@ class server {
     
     virtual void guests_event_handler() {
         for (size_t idx = 0; idx < guests.size(); ++idx) {
-            std::unique_ptr<sf::TcpSocket>& clt = guests[idx];
-            if (selector.isReady(*clt)) {
+            client& clt = guests[idx];
+            if (selector.isReady(*(clt.socket))) {
                 sf::Packet packet;
-                clt->receive(packet);
+                clt.socket->receive(packet);
+                clt.clock.restart();
                 json msg = message::packet_to_json(packet);
                 auto head = msg[message::head];
                 if (head == message::CREATE) {
-                    send_status(clt, true);
+                    clt.send(message::STATUS, "ok");
                     std::string room_name = msg[message::body];
                     rooms.emplace(room_name, clients_room(std::move(clt), selector, max_clients));
                     std::cout << "room " << room_name << " created" << std::endl; // TODO: logger
                 } else if (head == message::JOIN) {
-                    send_status(clt, true);
+                    clt.send(message::STATUS, "ok");
                     std::string room_name = msg[message::body];
                     rooms.at(room_name).add_client(std::move(clt));
                     std::cout << "client joined in room " << room_name << std::endl; // TODO: logger
-                    //send_status(clt, false);
+                } else if (head == message::PING) {
+                    if (msg[message::body] == "to") {
+                        clt.send(message::PING, "back");
+                    }
                 } else {
-                    send_status(clt, false);
-                    selector.remove(*clt);
+                    clt.send(message::STATUS, "fail");
+                    selector.remove(*(clt.socket));
                     std::cout << "fail in massage" << std::endl; // TODO: logger
                 }
                 guests.erase(guests.begin() + idx);
@@ -107,39 +131,21 @@ class server {
     }
     
     void ping_guests() {
-        std::cout << "ping guests" << std::endl; // TODO: logger
+        for (size_t idx = 0; idx < guests.size(); ++idx) {
+            std::cout << "ping guest " << idx << std::endl; // TODO: logger
+            client& clt = guests[idx];
+            if (!clt.ping()) {
+                std::cout << "disconnect guest " << idx << std::endl; // TODO: logger
+                selector.remove(*(clt.socket));
+                guests.erase(guests.begin() + idx);
+                --idx;
+            }
+        }
     }
+    
     void ping_rooms() {
         std::cout << "ping rooms" << std::endl; // TODO: logger
     }
-    /*virtual void ping_guests() {
-        for (size_t idx = 0; idx < guests.size(); ++idx) {
-            std::unique_ptr<sf::TcpSocket>& clt = guests[idx];
-            json msg = message::get_message(message::WAIT);
-            sf::Packet packet = message::json_to_packet(msg);
-            clt->send(packet);
-            std::cout << "send ping" << std::endl;
-            packet.clear();
-            if (clt->receive(packet) != sf::Socket::Done) {
-                std::cout << "fail ping" << std::endl;
-            }
-            json res = message::packet_to_json(packet);
-            if (msg != res) {
-                std::cout << "fail ping" << std::endl;
-            }
-            std::cout << "receive ping" << std::endl;
-            if ( != sf::Socket::Done) {
-                std::cout << "client shut down" << std::endl; // TODO: logger
-                selector.remove(*clt);
-                guests.erase(guests.begin() + idx);
-                --idx;
-            } else {
-                std::cout << packet;
-                std::cout << "ping sent" << std::endl; // TODO: logger
-            }
-        }
-    }*/
-
     
     ~server() {
         listener.close();
@@ -150,23 +156,13 @@ class server {
     sf::TcpListener listener;
     sf::SocketSelector selector;
     std::map<std::string, clients_room> rooms;
-    std::vector<std::unique_ptr<sf::TcpSocket>> guests; // клиенты, которые пока без комнаты
-    std::vector<bool> pinged_guests;
-     
-    void send_status(const std::unique_ptr<sf::TcpSocket>& clt, bool status) {
-        json msg_status = message::get_message(message::STATUS);
-        if (status) {
-            msg_status[message::body] = true;
-        }
-        sf::Packet packet = message::json_to_packet(msg_status);
-        clt->send(packet);
-    }
+    std::vector<client> guests; // клиенты, которые пока без комнаты
     
     bool add_guest() {
-        std::unique_ptr<sf::TcpSocket> client = std::make_unique<sf::TcpSocket>();
-        if (listener.accept(*client) == sf::Socket::Done) {
-            selector.add(*client);
-            guests.emplace_back(std::move(client));
+        client clt;
+        if (listener.accept(*(clt.socket)) == sf::Socket::Done) {
+            selector.add(*(clt.socket));
+            guests.emplace_back(std::move(clt));
             std::cout << "add guest" << std::endl;
             return true;
         }

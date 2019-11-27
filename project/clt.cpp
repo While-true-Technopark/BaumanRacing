@@ -56,9 +56,24 @@ class client {
         socket.send(packet);
         packet.clear();
         
-        socket.receive(packet);
-        msg = message::packet_to_json(packet);
-        return msg[message::head] == message::STATUS && msg[message::body];
+        // цикл потому что он может получить тут PING
+        while (true) {
+            socket.receive(packet);
+            msg = message::packet_to_json(packet);
+            if (msg[message::head] == message::STATUS) {
+                break;
+            }
+            if (msg[message::head] == message::PING && msg[message::body] == "to") {
+                msg = message::get_message(message::PING);
+                msg[message::body] = "back";
+                packet = message::json_to_packet(msg);
+                socket.send(packet);
+                std::cout << "send on ping" << std::endl; // TODO: logger
+            }
+            packet.clear();
+        }
+        
+        return msg[message::body] == "ok";
     }
 };
 

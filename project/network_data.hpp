@@ -9,7 +9,7 @@ using json = nlohmann::json;
 const size_t PORT = 5555;
 const std::string LOCAL_IP = "127.0.0.1";
 const size_t MAX_CLTS = 4;
-const sf::Time TIME_OUT = sf::seconds(10.0f);
+const sf::Time TIME_OUT = sf::seconds(30.0f);
 
 class message {
  public:
@@ -18,12 +18,13 @@ class message {
     enum header {
         CREATE = 100,
         JOIN,
-        EXIT,
         STATUS,
-        WAIT,
         PING,
         GET_SETTING,
         SET_SETTING,
+        WAIT,
+        START,
+        STOP,
     };
     
     inline static const std::string body = "body";
@@ -45,6 +46,9 @@ class message {
             }
             case WAIT: {
                 return message_wait();
+            }
+            case PING: {
+                
             }
             default: {
                 return json();
@@ -69,13 +73,18 @@ class message {
     static json message_init(header _header) {
         return json{{head, _header}, {body, "zalupa"}}; // имя комнаты
         // TODO: авторизация: имя пользователя, пароль
-        /*{body, {{body_attr::client_name, "dick"}, {body_attr::room_name, "zalupa"}}}*/ 
     }
     static json message_wait() {
         return json{{head, WAIT}, {body, 0}}; // кол-во присоед игроков
-                                              // TODO: или имена присоединившихся игроков
+        // TODO: вместо кол-ва присоед игроков писать их имена
     }
     static json message_status() {
-        return json{{head, STATUS}, {body, false}};
+        return json{{head, STATUS}, {body, "ok"}}; // ok, fail
+    }
+    
+    static json message_ping() {
+        return json{{head, PING}, {body, "back"}};
+        // to - пинг этой тачки, на него нужно ответить иначе соединение буде разорвано
+        // back - запрашиваемая тачка ответила на пинг. можно ничего не отвечать
     }
 };
