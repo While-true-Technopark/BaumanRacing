@@ -6,6 +6,15 @@
 // TODO: обработка исключений
 // TODO: написать обработчики событий
 
+/*struct client {
+    std::unique_ptr<sf::TcpSocket>> socket;
+    bool status;
+    client(std::unique_ptr<sf::TcpSocket>>&& sock)
+        : socket{std::move(sock)}
+        , status{bool}
+    {}
+}*/
+
 class clients_room {
  public:
     clients_room(std::unique_ptr<sf::TcpSocket>&& first_clt, sf::SocketSelector& selector, size_t max_clients = MAX_CLTS)
@@ -50,22 +59,14 @@ class server {
         while (true) {
             if (selector.wait(TIME_OUT)) {
                 if (selector.isReady(listener)) {
-                    std::unique_ptr<sf::TcpSocket> client = std::make_unique<sf::TcpSocket>();
-                    if (listener.accept(*client) == sf::Socket::Done) {
-                        selector.add(*client);
-                        guests.emplace_back(std::move(client));
-                        std::cout << "add guest" << std::endl;
-                    } else {
-                        // throw
-                    }
+                    add_guest();
                 } else {
                     rooms_event_handler();
                     guests_event_handler();
                 }
-            } else {
-                ping_rooms();
-                ping_guests();
             }
+            ping_rooms();
+            ping_guests();
         }
     }
     
@@ -105,10 +106,10 @@ class server {
         }
     }
     
-    virtual void ping_guests() {
+    void ping_guests() {
         std::cout << "ping guests" << std::endl; // TODO: logger
     }
-    virtual void ping_rooms() {
+    void ping_rooms() {
         std::cout << "ping rooms" << std::endl; // TODO: logger
     }
     /*virtual void ping_guests() {
@@ -150,6 +151,7 @@ class server {
     sf::SocketSelector selector;
     std::map<std::string, clients_room> rooms;
     std::vector<std::unique_ptr<sf::TcpSocket>> guests; // клиенты, которые пока без комнаты
+    std::vector<bool> pinged_guests;
      
     void send_status(const std::unique_ptr<sf::TcpSocket>& clt, bool status) {
         json msg_status = message::get_message(message::STATUS);
@@ -158,6 +160,17 @@ class server {
         }
         sf::Packet packet = message::json_to_packet(msg_status);
         clt->send(packet);
+    }
+    
+    bool add_guest() {
+        std::unique_ptr<sf::TcpSocket> client = std::make_unique<sf::TcpSocket>();
+        if (listener.accept(*client) == sf::Socket::Done) {
+            selector.add(*client);
+            guests.emplace_back(std::move(client));
+            std::cout << "add guest" << std::endl;
+            return true;
+        }
+        return false;
     }
 };
 
