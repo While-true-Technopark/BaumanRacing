@@ -16,15 +16,15 @@ class message {
     
     inline static const std::string head = "head";
     enum header {
-        CREATE = 100,
-        JOIN,
-        STATUS,
-        PING,
-        GET_SETTING,
-        SET_SETTING,
-        WAIT,
-        START,
-        STOP,
+        create = 100,
+        join,
+        status,
+        ping,
+        get_setting,
+        set_setting,
+        wait,
+        start,
+        stop,
     };
     
     inline static const std::string body = "body";
@@ -35,19 +35,19 @@ class message {
 
     static json get_message(header _header) {
         switch (_header) {
-            case CREATE: {
-                return message_init(CREATE);
+            case create: {
+                return message_init(create);
             }
-            case JOIN: {
-                return message_init(JOIN);
+            case join: {
+                return message_init(join);
             }
-            case STATUS: {
+            case status: {
                 return message_status();
             }
-            case WAIT: {
+            case wait: {
                 return message_wait();
             }
-            case PING: {
+            case ping: {
                 
             }
             default: {
@@ -75,15 +75,15 @@ class message {
         // TODO: авторизация: имя пользователя, пароль
     }
     static json message_wait() {
-        return json{{head, WAIT}, {body, 0}}; // кол-во присоед игроков
+        return json{{head, wait}, {body, 0}}; // кол-во присоед игроков
         // TODO: вместо кол-ва присоед игроков писать их имена
     }
     static json message_status() {
-        return json{{head, STATUS}, {body, "ok"}}; // ok, fail
+        return json{{head, status}, {body, "ok"}}; // ok, fail
     }
     
     static json message_ping() {
-        return json{{head, PING}, {body, "back"}};
+        return json{{head, ping}, {body, "back"}};
         // to - пинг этой тачки, на него нужно ответить иначе соединение буде разорвано
         // back - запрашиваемая тачка ответила на пинг. можно ничего не отвечать
     }

@@ -44,9 +44,9 @@ class client {
             std::cin >> room_name;
        
             if (!tmp) {
-                msg = message::get_message(message::CREATE);
+                msg = message::get_message(message::create);
             } else {
-                msg = message::get_message(message::JOIN);
+                msg = message::get_message(message::join);
             }
         
             msg[message::body] = room_name;
@@ -56,15 +56,15 @@ class client {
         socket.send(packet);
         packet.clear();
         
-        // цикл потому что он может получить тут PING
+        // цикл потому что он может получить тут ping
         while (true) {
             socket.receive(packet);
             msg = message::packet_to_json(packet);
-            if (msg[message::head] == message::STATUS) {
+            if (msg[message::head] == message::status) {
                 break;
             }
-            if (msg[message::head] == message::PING && msg[message::body] == "to") {
-                msg = message::get_message(message::PING);
+            if (msg[message::head] == message::ping && msg[message::body] == "to") {
+                msg = message::get_message(message::ping);
                 msg[message::body] = "back";
                 packet = message::json_to_packet(msg);
                 socket.send(packet);

@@ -26,7 +26,7 @@ struct client {
             return false;
         } 
         if (clock.getElapsedTime() > TIME_OUT) {
-            send(message::PING, "to");
+            send(message::ping, "to");
         }
         return true;
     }
@@ -105,22 +105,22 @@ class server {
                 clt.clock.restart();
                 json msg = message::packet_to_json(packet);
                 auto head = msg[message::head];
-                if (head == message::CREATE) {
-                    clt.send(message::STATUS, "ok");
+                if (head == message::create) {
+                    clt.send(message::status, "ok");
                     std::string room_name = msg[message::body];
                     rooms.emplace(room_name, clients_room(std::move(clt), selector, max_clients));
                     std::cout << "room " << room_name << " created" << std::endl; // TODO: logger
-                } else if (head == message::JOIN) {
-                    clt.send(message::STATUS, "ok");
+                } else if (head == message::join) {
+                    clt.send(message::ping, "ok");
                     std::string room_name = msg[message::body];
                     rooms.at(room_name).add_client(std::move(clt));
                     std::cout << "client joined in room " << room_name << std::endl; // TODO: logger
-                } else if (head == message::PING) {
+                } else if (head == message::ping) {
                     if (msg[message::body] == "to") {
-                        clt.send(message::PING, "back");
+                        clt.send(message::ping, "back");
                     }
                 } else {
-                    clt.send(message::STATUS, "fail");
+                    clt.send(message::ping, "fail");
                     selector.remove(*(clt.socket));
                     std::cout << "fail in massage" << std::endl; // TODO: logger
                 }
