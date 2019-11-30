@@ -20,17 +20,17 @@ int loader::load_all() {
     car_red.setTexture(*get_texture("car_red"));
     car_red.setOrigin(get_texture("car_red")->getSize().x/2,
         get_texture("car_red")->getSize().y/2);
-    
+
     sf::Sprite car_blue;
     car_blue.setTexture(*get_texture("car_blue"));
     car_blue.setOrigin(get_texture("car_blue")->getSize().x/2,
         get_texture("car_blue")->getSize().y/2);
-    
+
     cars.push_back(car_red);
     cars.push_back(car_blue);
     cars.push_back(car_red);
     cars.push_back(car_blue);
-    
+
     loaded = true;
     return 0;
 }

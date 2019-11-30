@@ -6,7 +6,7 @@
 
 class input : public input_abst {
  public:
-    input(sf::RenderWindow *win);
+    explicit input(sf::RenderWindow *win);
     struct keys_pressed_variants get_pressed_keys();
     void start_control();
     void end_control();
@@ -20,8 +20,8 @@ class input : public input_abst {
         game,
         end_game
     };
-    
+
     scene_types current_scene;
 };
 
-#endif // INPUT_H_
+#endif  // INPUT_H_

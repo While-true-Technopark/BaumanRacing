@@ -14,9 +14,9 @@ bool input_manager::nothing_pressed(const struct keys_pressed keys) {
 
 event input_manager::throw_event() {
     event ev_input(nothing_keys, { .empty = {} });
-    
+
     struct keys_pressed_variants keys = module->get_pressed_keys();
-    
+
     if (keys.closing == true) {
         ev_input.type = closing;
         ev_input.data.empty = { };
@@ -24,6 +24,6 @@ event input_manager::throw_event() {
         ev_input.type = key_pressed;
         ev_input.data.keys = keys.keys;
     }
-    
+
     return ev_input;
 }

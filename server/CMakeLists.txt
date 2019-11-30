@@ -5,17 +5,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "--coverage")
 set(CMAKE_C_FLAGS "--coverage")
+set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -Wall -Wextra -Werror --pedantic")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
-include_directories(server/game_logic)
-include_directories(server/game_manager)
+include_directories(${SOURCE_DIR}/game_logic)
+include_directories(${SOURCE_DIR}/game_manager)
 
 set(LIB_GAME_SERVER
-        server/game_logic/game_logic.h
-        server/game_logic/game_logic_test.cpp
-        server/game_manager/game_manager.h
-        server/game_manager/game_manager_test.cpp)
+        ${SOURCE_DIR}/game_logic/game_logic.hpp
+        ${SOURCE_DIR}/game_logic/game_logic_test.cpp
+        ${SOURCE_DIR}/game_manager/game_manager.hpp
+        ${SOURCE_DIR}/game_manager/game_manager_test.cpp)
 add_library(_game_server STATIC ${LIB_GAME_SERVER})
 
 find_package(Boost REQUIRED)
@@ -29,7 +30,7 @@ if(Boost_FOUND AND GTest_FOUND)
     include_directories(${GTEST_INCLUDE_DIRS})
 
 # link game_manager
-    add_executable(game_manager_test.out server/game_manager/game_manager_test.cpp)
+    add_executable(game_manager_test.out ${SOURCE_DIR}/game_manager/game_manager_test.cpp)
     target_link_libraries(game_manager_test.out _game_server)
     target_link_libraries(game_manager_test.out ${GTEST_LIBRARIES})
     target_link_libraries(game_manager_test.out pthread)
@@ -38,7 +39,7 @@ if(Boost_FOUND AND GTest_FOUND)
     #target_link_libraries(game_manager_test.out ${SFML_LIBRARIES})
 
 # link game_logic
-    add_executable(game_logic_test.out server/game_logic/game_logic_test.cpp)
+    add_executable(game_logic_test.out ${SOURCE_DIR}/game_logic/game_logic_test.cpp)
     target_link_libraries(game_logic_test.out _game_server)
     target_link_libraries(game_logic_test.out ${GTEST_LIBRARIES})
     target_link_libraries(game_logic_test.out pthread)

@@ -15,4 +15,4 @@ class network : public network_abst {
     float speed;
 };
 
-#endif // NETWORK_H_
+#endif  // NETWORK_H_

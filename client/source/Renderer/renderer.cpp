@@ -9,13 +9,11 @@ renderer::renderer(sf::RenderWindow* win) {
 }
 
 int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
-    using namespace tinyxml2;
-    using namespace sf;
-    XMLDocument doc;
+    tinyxml2::XMLDocument doc;
     if (doc.LoadFile(paths_to_xml_maps[map_number].c_str())) {
         return -1;
     }
-    XMLElement * map_xml = doc.FirstChildElement("map");
+    tinyxml2::XMLElement * map_xml = doc.FirstChildElement("map");
     if (map_xml == nullptr) {
         return -1;
     }
@@ -25,19 +23,19 @@ int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
     size_t block_height = map_xml->IntAttribute("tileheight", 0);
 
     std::string tileset_tsx = map_xml->FirstChildElement("tileset")->Attribute("source");
-    XMLDocument doc_tileset;
+    tinyxml2::XMLDocument doc_tileset;
     tileset_tsx = "static/" + tileset_tsx;
     if (doc_tileset.LoadFile(tileset_tsx.c_str())) {
         return -1;
     }
-    XMLElement * tileset = doc_tileset.FirstChildElement("tileset");
+    tinyxml2::XMLElement * tileset = doc_tileset.FirstChildElement("tileset");
     size_t sprite_width = tileset->IntAttribute("tilewidth", 0);
     size_t sprite_height = tileset->IntAttribute("tileheight", 0);
     size_t sprite_count = tileset->IntAttribute("tilecount", 0);
     size_t sprite_columns = tileset->IntAttribute("columns", 0);
 
     map_texture->setSmooth(true);
-    std::vector<Sprite> block_sprites;
+    std::vector<sf::Sprite> block_sprites;
     size_t cur_x = 0;
     size_t cur_y = 0;
     for (size_t i = 0; i != sprite_count; i++) {
@@ -45,11 +43,12 @@ int renderer::create_map(size_t map_number, sf::Texture* map_texture) {
             cur_y += sprite_height;
             cur_x = 0;
         }
-        block_sprites.push_back(Sprite(*map_texture, IntRect(cur_x, cur_y, sprite_width, sprite_height)));
+        block_sprites.push_back(sf::Sprite(*map_texture,
+            sf::IntRect(cur_x, cur_y, sprite_width, sprite_height)));
         cur_x += sprite_width;
     }
 
-    XMLElement * tile_xml = map_xml->FirstChildElement("layer")
+    tinyxml2::XMLElement * tile_xml = map_xml->FirstChildElement("layer")
                                    ->FirstChildElement("data")
                                    ->FirstChildElement("tile");
     size_t i = 0;

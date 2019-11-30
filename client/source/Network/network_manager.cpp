@@ -5,7 +5,7 @@ network_manager::network_manager(network_abst *abst) {
 }
 
 int network_manager::handle_event(const event & e) {
-    switch(e.type) {
+    switch (e.type) {
         case key_pressed:
             module->keys_send(e.data.keys);
             break;
@@ -17,9 +17,9 @@ int network_manager::handle_event(const event & e) {
 
 event network_manager::throw_event() {
     event ev;
-    
+
     ev.type = update_position;
     ev.data.players_positions = module->get_positions();
-    
+
     return ev;
 }

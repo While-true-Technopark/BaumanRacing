@@ -1,0 +1,37 @@
+addons:
+    apt:
+        update: true
+
+
+language: c++
+
+
+before_install:
+    - sudo apt update
+
+install:
+    - sudo apt install valgrind
+    - sudo apt install cmake
+    - sudo apt-get install clang-format
+    - sudo apt-get install lcov
+    - sudo apt-get install libgtest-dev
+    - cd /usr/src/gtest
+    - sudo cmake .
+    - sudo make
+    - sudo cp *.a /usr/lib
+    - cd -
+
+before_script:
+    - cd client
+    - cmake .
+    - make
+    - ./linters/run.sh
+    - cd -
+    - cd server
+    - cmake .
+    - make
+    - ./linters/run.sh
+    - cd -
+
+after_script:
+    - make clean

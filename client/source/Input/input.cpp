@@ -7,7 +7,7 @@ input::input(sf::RenderWindow *win) {
 
 struct keys_pressed_variants input::get_pressed_keys() {
     struct keys_pressed_variants keys = { };
-    
+
     sf::Event event = sf::Event();
     while (window->pollEvent(event)) {
         switch (event.type) {
@@ -16,7 +16,7 @@ struct keys_pressed_variants input::get_pressed_keys() {
                 break;
             }
             case sf::Event::KeyPressed: {
-                switch(event.key.code) {
+                switch (event.key.code) {
                     case sf::Keyboard::Up:
                         keys.keys.up = true;
                         break;
@@ -41,7 +41,7 @@ struct keys_pressed_variants input::get_pressed_keys() {
                 break;
             }
             case sf::Event::KeyReleased: {
-                switch(event.key.code) {
+                switch (event.key.code) {
                     case sf::Keyboard::Up:
                         keys.keys.up = false;
                         break;
@@ -69,14 +69,12 @@ struct keys_pressed_variants input::get_pressed_keys() {
                 break;
         }
     }
-    
+
     return keys;
 }
 
 void input::start_control() {
-
 }
 
 void input::end_control() {
-
 }

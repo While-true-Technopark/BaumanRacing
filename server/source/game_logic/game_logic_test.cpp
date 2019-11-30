@@ -1,4 +1,4 @@
-#include "game_logic.h"
+#include "game_logic.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <fstream>
@@ -23,7 +23,8 @@ bool operator==(const std::vector<double>& l, const std::vector<double>& r) {
     return true;
 }
 
-bool operator==(const matrix<double>& l, const matrix<double>& r) {
+bool operator==(const boost::numeric::ublas::matrix<double>& l,
+    const boost::numeric::ublas::matrix<double>& r) {
     if (l.size1() != r.size1() || l.size2() != r.size2()) {
         return false;
     }
@@ -40,29 +41,31 @@ bool operator==(const matrix<double>& l, const matrix<double>& r) {
 class test_solver {
  public:
     test_solver() = default;
-    virtual ~test_solver() {};
-    virtual 
-    std::vector<double> linear(const matrix<double>& matrix, const std::vector<double>& rhs) {
+    virtual ~test_solver() {}
+    virtual  std::vector<double> linear(const boost::numeric::ublas::matrix<double>& matrix,
+        const std::vector<double>& rhs) {
         return solver::gauss(matrix, rhs);
     }
-    virtual 
-    std::vector<double> nonlinear(const std::vector<std::function<double(const std::vector<double>&)>>& sistem) {
+    virtual std::vector<double> nonlinear(
+        const std::vector<std::function<double(const std::vector<double>&)>>& sistem) {
         return solver::newton(sistem);
     }
-    virtual
-    std::vector<double> differential_equation(const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs, 
-                                                const std::vector<double>& init_cond, double dt) {
+    virtual std::vector<double> differential_equation(
+        const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs,
+        const std::vector<double>& init_cond, double dt) {
         return solver::runge_kutta(rhs, init_cond, dt);
     }
 };
 
 class mock_solver : public test_solver {
  public:
-    MOCK_METHOD3(differential_equation, 
-        std::vector<double>(const std::vector<std::function<double(const std::vector<double>&, double)>>&, 
-                                const std::vector<double>&, double));
-    MOCK_METHOD2(linear, std::vector<double>(const matrix<double>&, const std::vector<double>&));
-    MOCK_METHOD1(nonlinear, std::vector<double>(const std::vector<std::function<double(const std::vector<double>&)>>&));
+    MOCK_METHOD3(differential_equation,
+        std::vector<double>(const std::vector<std::function<double(
+        const std::vector<double>&, double)>>&, const std::vector<double>&, double));
+    MOCK_METHOD2(linear, std::vector<double>(
+        const boost::numeric::ublas::matrix<double>&, const std::vector<double>&));
+    MOCK_METHOD1(nonlinear, std::vector<double>(
+        const std::vector<std::function<double(const std::vector<double>&)>>&));
 };
 
 TEST(solver, linear) {
@@ -70,7 +73,7 @@ TEST(solver, linear) {
     size_t rows = 0, cols = 0;
     std::ifstream f("tests/1.txt");
     f >> rows >> cols;
-    matrix<double> matr(rows, cols);
+    boost::numeric::ublas::matrix<double> matr(rows, cols);
     std::vector<double> x(rows);
     std::vector<double> rhs(rows);
     for (size_t i = 0; i < rows; i++) {
@@ -101,8 +104,8 @@ TEST(solver, nonlinear) {
 TEST(solver, differential_equation) {
     mock_solver sol;
     std::vector<std::function<double(const std::vector<double>&, double)>> rhs = {
-        [](const std::vector<double>& u, double t) { // уравнение колебаний в нормальной форме
-            t++; // for -Werror=unused...
+        [](const std::vector<double>& u, double t) {  // уравнение колебаний в нормальной форме
+            t++;  // for -Werror=unused...
             return u[1];
         },
         [](const std::vector<double>& u, double t) {

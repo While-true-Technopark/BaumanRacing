@@ -12,4 +12,4 @@ class network_abst {
     struct players_positions_info positions;
 };
 
-#endif // NETWORK_ABST_H_
+#endif  // NETWORK_ABST_H_

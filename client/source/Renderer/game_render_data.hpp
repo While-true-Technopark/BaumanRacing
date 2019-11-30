@@ -20,7 +20,7 @@ struct players_data {
 };
 
 struct game_render_data {
-    //players_data players;
+    // players_data players;
     std::vector<player_data> players;
 };
 

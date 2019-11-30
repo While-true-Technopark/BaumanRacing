@@ -1,7 +1,7 @@
 #include "application.hpp"
 
 application::application() :
-    //window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
+    //  window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
     window(sf::VideoMode(1280, 720), "Bauman Racing"),
     game_context_mngr(new game_context()),
     input_mngr(new input(&window)),
@@ -16,11 +16,11 @@ bool application::run() {
     event loaded = loader_mngr.throw_event();
     loaded.data.textures.map_number = 0;
     renderer_mngr.handle_event(loaded);
-    
+
     event e_start(game_start, { .empty = {} });
     renderer_mngr.handle_event(e_start);
-    
-    while(window.isOpen()) {
+
+    while (window.isOpen()) {
         event e_input = input_mngr.throw_event();
         switch (e_input.type) {
             case closing:
@@ -32,13 +32,13 @@ bool application::run() {
             default:
                 break;
         }
-        
+
         event e_network = network_mngr.throw_event();
-        
+
         switch (e_network.type) {
             case update_position:
                 renderer_mngr.handle_event(e_network);
-                // + game_context
+                //  + game_context
                 break;
             default:
                 break;
