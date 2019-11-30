@@ -15,6 +15,7 @@ class mock_loader : public loader_abst {
  public:
     MOCK_METHOD0(load_all, int());
     MOCK_METHOD1(get_texture, sf::Texture*(const std::string & name));
+    MOCK_METHOD1(get_car, sf::Sprite*(size_t id));
 };
 
 TEST(load_manager_test, load_all) {

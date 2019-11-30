@@ -17,6 +17,7 @@ class mock_network : public network_abst {
     MOCK_METHOD0(get_last_package, event());
     MOCK_METHOD1(keys_send, void(struct keys_pressed));
     MOCK_METHOD1(name_car_send, void(struct player_info));
+    MOCK_METHOD0(get_positions, struct players_positions_info());
 };
 
 bool operator==(const struct keys_pressed & left, const struct keys_pressed & right) {
