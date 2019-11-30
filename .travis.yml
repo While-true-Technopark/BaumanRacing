@@ -7,7 +7,6 @@ language: c++
 
 
 before_install:
-    - sudo apt-get install libgmock-dev
     - sudo apt update
 
 install:
