@@ -25,9 +25,7 @@ install:
     - sudo apt install unzip
     - sudo wget https://github.com/google/googletest/archive/release-1.8.0.zip
     - sudo unzip release-1.8.0.zip -d /usr/src/gmock
-    - cd /usr/src/gmock
-    - sudo mkdir build
-    - cd build
+    - cd /usr/src/gmock/googlemock
     - sudo cmake .
     - sudo make
     - sudo cp *.a /usr/lib
