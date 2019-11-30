@@ -22,7 +22,7 @@ install:
     - sudo make
     - sudo cp *.a /usr/lib
     - cd -
-    - sudo apt-get install libgmock-dev
+    - sudo apt-get install google-mock
     - cd /usr/src/gmock
     - sudo mkdir build
     - sudo cmake ..
