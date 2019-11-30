@@ -13,7 +13,7 @@ if [ "${1}" == "--local" ]; then
 else
 	CPPCHECK="./linters/cppcheck/cppcheck"
 fi
-${CPPCHECK} source --library=googletest --enable=all --error-exitcode=1 -I source/game_logic -I source/game_manager --suppress=missingIncludeSystem # --check-config
+${CPPCHECK} source --enable=all --error-exitcode=1 -I source/game_logic -I source/game_manager --suppress=missingIncludeSystem # --check-config
 
 print_header "RUN cpplint.py"
 python2.7 ./linters/cpplint/cpplint.py --extensions=c,cpp --headers=h,hpp --filter=-runtime/references source/game_logic/* source/game_manager/*
