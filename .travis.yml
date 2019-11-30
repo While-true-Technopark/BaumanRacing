@@ -26,8 +26,6 @@ install:
     - sudo wget https://github.com/cfmobile/gmock/archive/master.zip
     - sudo unzip master.zip -d /usr/src/gmock
     - cd /usr/src/gmock
-    - sudo mkdir build
-    - cd build
     - sudo cmake .
     - sudo make
     - sudo cp *.a /usr/lib
