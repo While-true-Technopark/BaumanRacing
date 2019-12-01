@@ -28,7 +28,7 @@ enum event_type {
     closing,
     nothing_keys,
     mouse_click,
-    textures_loaded      // throw it to get all textures
+    textures_loaded  // throw it to get all textures
 };
 
 struct player_id {
@@ -101,7 +101,7 @@ struct empty_event {};
 
 struct textures_loaded_event {
     sf::Texture* map;
-    size_t map_number;  //add textures
+    size_t map_number;  // add textures
     sf::Sprite* player_1;
     sf::Sprite* player_2;
     sf::Sprite* player_3;
@@ -125,11 +125,11 @@ union event_data {
 };
 
 class event {
-public:
+ public:
     event() = default;
     event(event_type, event_data);
     event_type type;
     event_data data;
 };
 
-#endif  // EVENT_H_
+#endif  //  EVENT_H_

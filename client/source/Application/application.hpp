@@ -31,4 +31,4 @@ class application {
     renderer_manager renderer_mngr;
 };
 
-#endif // APPLICATION_H_
+#endif  // APPLICATION_H_

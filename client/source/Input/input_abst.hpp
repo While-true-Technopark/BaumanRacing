@@ -9,11 +9,11 @@ class input_abst {
     virtual struct keys_pressed_variants get_pressed_keys() = 0;
     virtual void start_control() = 0;
     virtual void end_control() = 0;
-protected:
+ protected:
     sf::RenderWindow *window;
     bool controlling;
 
     struct keys_pressed keys;
 };
 
-#endif // INPUT_ABST_H_
+#endif  // INPUT_ABST_H_

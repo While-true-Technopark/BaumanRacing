@@ -31,7 +31,7 @@ event network::get_last_package() {
 
 void network::keys_send(struct keys_pressed keys_input) {
     keys = keys_input;
-    
+
     if (keys.up) {
         speed -= 0.5;
     }
@@ -44,12 +44,9 @@ void network::keys_send(struct keys_pressed keys_input) {
     if (keys.right) {
         positions.player_1.angle += 4;
     }
-    
 }
 
-void network::name_car_send(struct player_info) {
-    
-}
+void network::name_car_send(struct player_info) { }
 
 struct players_positions_info network::get_positions() {
     positions.player_1.x += speed * cos(M_PI * positions.player_1.angle / 180);

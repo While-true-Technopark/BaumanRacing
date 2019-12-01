@@ -11,4 +11,4 @@ class game_context_abst {
     virtual int update_positions(struct players_positions_info) = 0;
 };
 
-#endif // GAME_CONTEXT_ABST_H_
+#endif  // GAME_CONTEXT_ABST_H_

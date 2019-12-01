@@ -6,4 +6,4 @@ class event_throwable {
     virtual event throw_event() = 0;
 };
 
-#endif // EVENT_THROWABLE_H_
+#endif  // EVENT_THROWABLE_H_

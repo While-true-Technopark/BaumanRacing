@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #define private public
 #include <SFML/Graphics.hpp>
@@ -14,14 +14,14 @@ using ::testing::SetArgReferee;
 
 class mock_input : public input_abst {
  public:
+    MOCK_METHOD0(get_pressed_keys, struct keys_pressed_variants());
     MOCK_METHOD0(start_control, void());
     MOCK_METHOD0(end_control, void());
-    MOCK_METHOD0(get_pressed_key, struct keys_pressed());
 };
 
-TEST(input_manager_test, get_pressed_key) {
+TEST(input_manager_test, get_pressed_keys) {
     mock_input m_input;
-    EXPECT_CALL(m_input, get_pressed_key()).Times(AtLeast(1));
+    EXPECT_CALL(m_input, get_pressed_keys()).Times(AtLeast(1));
 
     input_manager input_mngr(&m_input);
     input_mngr.throw_event();

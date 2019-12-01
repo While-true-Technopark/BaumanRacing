@@ -15,4 +15,4 @@ class game_context : public game_context_abst {
     event players;
 };
 
-#endif // GAME_CONTEXT_H_
+#endif  // GAME_CONTEXT_H_

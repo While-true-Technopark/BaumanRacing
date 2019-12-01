@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #define private public
 #include <SFML/Graphics.hpp>
@@ -13,7 +13,7 @@ using ::testing::Return;
 using ::testing::SetArgReferee;
 
 class mock_game_context : public game_context_abst {
-public:
+ public:
     MOCK_METHOD1(get_name_from_id, int(size_t));
     MOCK_METHOD1(get_car_from_id, int(size_t));
     MOCK_METHOD1(add_players, int(struct players_info));
