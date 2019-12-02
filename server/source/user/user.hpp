@@ -1,11 +1,7 @@
 #ifndef USER_H_
 #define USER_H_
 
-#include <memory>
 #include "message.hpp"
-
-const sf::Time PING_TIME_OUT = sf::seconds(30.0f);
-const sf::Time CONNECT_TIME_OUT = 3.0f * PING_TIME_OUT;
 
 class user final {
  public:

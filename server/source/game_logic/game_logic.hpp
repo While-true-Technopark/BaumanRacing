@@ -41,15 +41,6 @@ struct player {
     bool on_pitstop;
 };
 
-struct command {
-    bool forward;
-    bool back;
-    bool right_turn;
-    bool left_turn;
-    bool run_sprint;
-    bool throw_side_object;
-};
-
 class map {
  public:
     map() = default;

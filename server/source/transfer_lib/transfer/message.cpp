@@ -6,10 +6,6 @@ const std::string message::body = "body";
 const std::string message::ok = "ok";
 const std::string message::fail = "fail";
 
-const std::string message::small = "small";
-const std::string message::medium = "medium";
-const std::string message::big = "big";
-
 const std::string message::to = "to";
 const std::string message::back = "back";
 
@@ -44,11 +40,19 @@ json message::get_message(header _header) {
         case wait: {
             return message_wait();
         }
-        /*case start: {
-            return 
-        }*/
+        case start: {
+            return message_start();
+        }
         
-        
+        case command: {
+            return message_command();
+        }
+        case coord: {
+            return message_coord();
+        }
+        case rating: {
+            return message_rating();
+        }
         
         case ping: {
              return message_ping();   
@@ -70,7 +74,7 @@ json message::message_status() {
 }
 
 json message::message_setting() {
-    return json{{head, setting}, {body, medium}}; // body - small, medium, big
+    return json{{head, setting}, {body, car_type::medium}}; // body - small, medium, big
 }
 
 json message::message_wait() {
@@ -78,13 +82,25 @@ json message::message_wait() {
     // TODO: вместо кол-ва присоед игроков писать их имена
 }
 
+json message::message_start() {
+    return json{{head, start}, {body, 0}}; // body - игровой номер [0,..., MAX_USERS)
+}
+
 json message::message_command() {
-    return json{{head, command}, {body, ""}};
+    move_command comm;
+    return json{{head, command}, {body, comm.get_json()}}; // команды передвижения машинки в формате json
 }
 
 json message::message_coord() {
-    std::array<std::array<double, 2>, 4> c{{{0, 0}, {0, 0}, {0, 0}, {0, 0}}};
-    return json{{head, coord}, {body, std::move(c)}}; // body - кол-во присоед игроков
+    players_coord coords;
+    coords.fill({0, 0});
+    return json{{head, coord}, {body, std::move(coords)}}; // координаты всех игроков
+}
+
+json message::message_rating() {
+    players_rating ratings;
+    ratings.fill(0);
+    return json{{head, rating}, {body, std::move(ratings)}}; // body - рейтинг игроков
 }
 
 json message::message_ping() {

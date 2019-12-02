@@ -1,10 +1,7 @@
 #ifndef USERS_ROOM_H_
 #define USERS_ROOM_H_
 
-#include <vector>
 #include "user.hpp"
-
-#define MAX_USERS 4
 
 class users_room {
  public:

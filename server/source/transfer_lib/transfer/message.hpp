@@ -1,12 +1,7 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include <SFML/Network.hpp>
-#include <string>
-#include <iostream>
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
+#include "command.hpp"
 
 class message {
  public:
@@ -27,6 +22,7 @@ class message {
         // game
         command,   // ->
         coord,     // <-
+        rating,    // <-
         
         // after game
         finish,    // <-
@@ -40,10 +36,6 @@ class message {
     
     static const std::string ok;
     static const std::string fail;
-    
-    static const std::string small;
-    static const std::string medium;
-    static const std::string big;
 
     static const std::string to;
     static const std::string back;
@@ -65,6 +57,7 @@ class message {
     // game
     static json message_command();
     static json message_coord();
+    static json message_rating();
     
     // after game
     static json message_finish();

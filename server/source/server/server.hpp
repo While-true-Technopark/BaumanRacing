@@ -3,10 +3,6 @@
 
 #include "users_room.hpp"
 
-
-const size_t PORT = 5555;
-const std::string LOCAL_IP = "127.0.0.1";
-
 class server {
  public:
     server(size_t port, const std::string& ip);

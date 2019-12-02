@@ -9,19 +9,29 @@ set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -Wall -Wextra -Werror -Wpedantic")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
+include_directories(${SOURCE_DIR}/transfer_lib/config) # TODO: подключать как отдельную либу
+include_directories(${SOURCE_DIR}/transfer_lib/transfer)
+include_directories(${SOURCE_DIR}/user)
+include_directories(${SOURCE_DIR}/users_room)
 include_directories(${SOURCE_DIR}/server)
-include_directories(${SOURCE_DIR}/message)
-include_directories(${SOURCE_DIR}/game_manager)
-include_directories(${SOURCE_DIR}/game_logic)
+#include_directories(${SOURCE_DIR}/game_manager)
+#include_directories(${SOURCE_DIR}/game_logic)
 
 set(LIB_GAME_SERVER
-        ${SOURCE_DIR}/message/message.hpp
-        ${SOURCE_DIR}/message/message.cpp
+        ${SOURCE_DIR}/transfer_lib/config/config.hpp # TODO: сделать как отдельную либу
+        ${SOURCE_DIR}/transfer_lib/config/def.hpp
         
-        ${SOURCE_DIR}/server/user.hpp
-        ${SOURCE_DIR}/server/user.cpp
-        ${SOURCE_DIR}/server/users_room.hpp
-        ${SOURCE_DIR}/server/users_room.cpp
+        ${SOURCE_DIR}/transfer_lib/transfer/command.hpp
+        ${SOURCE_DIR}/transfer_lib/transfer/command.cpp
+        ${SOURCE_DIR}/transfer_lib/transfer/message.hpp
+        ${SOURCE_DIR}/transfer_lib/transfer/message.cpp
+        
+        ${SOURCE_DIR}/user/user.hpp
+        ${SOURCE_DIR}/user/user.cpp
+        
+        ${SOURCE_DIR}/users_room/users_room.hpp
+        ${SOURCE_DIR}/users_room/users_room.cpp
+        
         ${SOURCE_DIR}/server/server.hpp
         ${SOURCE_DIR}/server/server.cpp
         #${SOURCE_DIR}/game_logic/game_logic.hpp
