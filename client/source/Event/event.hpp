@@ -101,12 +101,10 @@ struct empty_event {};
 
 struct textures_loaded_event {
     sf::Texture* map;
-    sf::Texture* map2;
-    size_t map_number;  // add textures
-    sf::Sprite* player_1;
-    sf::Sprite* player_2;
-    sf::Sprite* player_3;
-    sf::Sprite* player_4;
+    sf::Texture* player_1;
+    sf::Texture* player_2;
+    sf::Texture* player_3;
+    sf::Texture* player_4;
 };
 
 union event_data {

@@ -12,7 +12,7 @@ using ::testing::SetArgReferee;
 
 class mock_renderer : public renderer_abst {
  public:
-    MOCK_METHOD2(create_map, int(size_t map_number, sf::Texture* map_texture));
+    MOCK_METHOD2(init, int(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture));
     MOCK_METHOD1(build_game_scene, int(const game_render_data data));
     MOCK_METHOD0(car_choose_menu, int());
     MOCK_METHOD0(end_game_menu, int());

@@ -7,11 +7,13 @@ renderer_manager::renderer_manager(renderer_abst *abst) {
 int renderer_manager::handle_event(const event & e) {
     switch (e.type) {
         case textures_loaded: {
-            module->create_map(e.data.textures.map_number, e.data.textures.map);
-            module->players.push_back(e.data.textures.player_1);
-            module->players.push_back(e.data.textures.player_2);
-            module->players.push_back(e.data.textures.player_3);
-            module->players.push_back(e.data.textures.player_4);
+            std::vector<sf::Texture*> cars_textures = {
+                e.data.textures.player_1,
+                e.data.textures.player_2,
+                e.data.textures.player_3,
+                e.data.textures.player_4,
+            };
+            module->init(cars_textures, e.data.textures.map);
             break;
         }
         case game_start: {

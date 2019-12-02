@@ -9,8 +9,7 @@
 class renderer : public renderer_abst {
  public:
     explicit renderer(sf::RenderWindow *win);
-    // int create_cars(std::vector<sf::Texture*> cars_textures) override;
-    int create_map(size_t map_number, sf::Texture* map_texture) override;
+    int init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture) override;
     int build_game_scene(game_render_data data) override;
     int car_choose_menu() override;
     int end_game_menu() override;
@@ -20,25 +19,9 @@ class renderer : public renderer_abst {
     int wait_scene() override;
 
  private:
-    struct map_block {
-        size_t id;
-        bool passable;
-        sf::Sprite sprite;
-        // float x;
-        // float y;
-        // float width;
-        // float height;
-    };
-    std::vector<std::vector<map_block>> map;
-    std::vector<std::string> paths_to_xml_maps;
-
-    sf::Texture whole_map_texture;
-
-    float scale;
-
-    // std::vector<sf::Sprite*> players;
-    // sf::Sprite* map_sprite;
-
+    std::vector<sf::Sprite> players;
+    sf::Texture map_texture;
+    sf::Sprite map;
     sf::View view;
 
     int parse_map();
