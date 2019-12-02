@@ -22,6 +22,7 @@ class client {
             }
         } else {
             std::cout << "connection to server not established" << std::endl;// TODO: logger
+            while (true) {}
         }
     }
     

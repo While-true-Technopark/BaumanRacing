@@ -32,7 +32,7 @@ void server::run() {
 }
     
 void server::rooms_event_handler() {
-    for(auto& room : rooms) {
+    for(auto& room: rooms) {
         room.second.event_handler();
     }
 }
@@ -45,30 +45,50 @@ void server::guests_event_handler() {
             clt.socket->receive(packet);
             clt.restart_time_last_activity();
             json msg = message::packet_to_json(packet);
-            auto head = msg[message::head];
-            if (head == message::create) {
-                clt.send(message::status, message::ok);
-                // TODO: обработка, если комната с таким именем уже существует
-                std::string room_name = msg[message::body];
-                rooms.emplace(room_name, users_room(std::move(clt), selector, MAX_USERS));
-                std::cout << "room " << room_name << " created" << std::endl;
-            } else if (head == message::join) {
-                clt.send(message::status, message::ok);
-                std::string room_name = msg[message::body];
-                // TODO: обработка, если комнаты с таким именем не существует
-                rooms.at(room_name).add_user(std::move(clt));
-                std::cout << "client joined in room " << room_name << std::endl;
-            } else if (head == message::ping) {
-                if (msg[message::body] == message::to) {
-                    clt.send(message::ping, message::back);
+            // TODO: в случае, когда срабатывает деструктор клиента он сюда чет шлет и json при паринге тут падает так как у него нет заголовка
+            size_t head = msg[message::head];
+            switch (head) {
+                case message::create: {
+                    std::string room_name = msg[message::body];
+                    if (!rooms.count(room_name)) {
+                        clt.send(message::status, message::ok);
+                        rooms.emplace(room_name, users_room(std::move(clt), selector, MAX_USERS));
+                        guests.erase(guests.begin() + idx);
+                        --idx;
+                        std::cout << "room " << room_name << " created" << std::endl;
+                    } else {
+                        clt.send(message::status, message::fail);
+                        std::cout << "create failed. a room with such names exists" << std::endl;;
+                    }
+                    return;
                 }
-            } else {
-                clt.send(message::ping, message::fail);
-                selector.remove(*(clt.socket));
-                std::cout << "fail in massage" << std::endl;
+                case message::join: {
+                    std::string room_name = msg[message::body];
+                    // TODO: обработка, если комната уже заполнена
+                    if (rooms.count(room_name)) {
+                        clt.send(message::status, message::ok);
+                        rooms.at(room_name).add_user(std::move(clt));
+                        guests.erase(guests.begin() + idx);
+                        --idx;
+                        std::cout << "client joined in room " << room_name << std::endl;
+                    } else {
+                        std::cout << "join failed. no room with that name exists or is already full" << std::endl;;
+                        clt.send(message::status, message::fail);
+                    }
+                    return;
+                }
+                case message::ping: {
+                    if (msg[message::body] == message::to) {
+                        clt.send(message::ping, message::back);
+                    }
+                    return;
+                } 
+                default: {
+                    clt.send(message::status, message::fail);
+                    std::cout << "fail in massage" << std::endl;
+                    return;
+                }
             }
-            guests.erase(guests.begin() + idx);
-            --idx;
         }
     }
 }

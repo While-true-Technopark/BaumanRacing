@@ -15,12 +15,15 @@ class users_room {
     virtual ~users_room() = default;
     users_room(const users_room&) = delete;
     users_room& operator=(const users_room&) = delete;
-    users_room(users_room&&) = delete;
-    users_room& operator=(users_room&&) = delete;
     */
     
-    virtual void event_handler();
+    void event_handler();
     bool add_user(user&& clt);
+    
+ protected:
+    virtual void before_session() {};
+    virtual void session() {};
+    virtual void after_session() {};
     
  private:
     sf::SocketSelector& selector;
