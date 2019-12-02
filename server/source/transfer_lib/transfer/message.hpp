@@ -21,7 +21,8 @@ class message {
         
         // game
         command,   // ->
-        coord,     // <-
+        coord,   // <-
+        coord_s,   // <-
         rating,    // <-
         
         // after game
@@ -57,6 +58,7 @@ class message {
     // game
     static json message_command();
     static json message_coord();
+    static json message_coord_s();
     static json message_rating();
     
     // after game

@@ -50,6 +50,9 @@ json message::get_message(header _header) {
         case coord: {
             return message_coord();
         }
+        case coord_s: {
+            return message_coord_s();
+        }
         case rating: {
             return message_rating();
         }
@@ -88,13 +91,17 @@ json message::message_start() {
 
 json message::message_command() {
     move_command comm;
-    return json{{head, command}, {body, comm.get_json()}}; // команды передвижения машинки в формате json
+    return json{{head, command}, {body, comm.get_json()}}; // body - команды передвижения машинки в формате json
 }
 
 json message::message_coord() {
     players_coord coords;
     coords.fill({0, 0});
-    return json{{head, coord}, {body, std::move(coords)}}; // координаты всех игроков
+    return json{{head, coord}, {body, std::move(coords)}}; // body - координаты всех игроков
+}
+
+json message::message_coord_s() {
+    return json{{head, coord_s}, {body, std::vector<point>()}}; // body - координаты сторонних объектов
 }
 
 json message::message_rating() {
