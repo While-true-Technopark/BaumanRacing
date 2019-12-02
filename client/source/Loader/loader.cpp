@@ -3,8 +3,10 @@
 loader::loader() {
     loaded = false;
     paths.push_back("static/map_tiles.png");
+    // paths.push_back("static/map.png");
     paths.push_back("static/car_red.png");
     paths.push_back("static/car_blue.png");
+
 }
 
 int loader::load_all() {
@@ -38,10 +40,12 @@ int loader::load_all() {
 sf::Texture* loader::get_texture(const std::string & name) {
     if (name == "map") {
         return &textures[0];
-    } else if (name == "car_red") {
+    } else if (name == "map2") {
         return &textures[1];
-    } else if (name == "car_blue") {
+    } else if (name == "car_red") {
         return &textures[2];
+    } else if (name == "car_blue") {
+        return &textures[3];
     }
     return nullptr;
 }

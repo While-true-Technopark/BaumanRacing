@@ -19,6 +19,7 @@ event loader_manager::throw_event() {
     event e;
     e.type = textures_loaded;
     e.data.textures.map = module->get_texture("map");
+    e.data.textures.map2 = module->get_texture("map2");
 
     e.data.textures.player_1 = module->get_car(0);
     e.data.textures.player_2 = module->get_car(1);
