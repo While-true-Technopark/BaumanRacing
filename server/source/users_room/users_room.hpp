@@ -16,16 +16,19 @@ class users_room {
     
     void event_handler();
     bool add_user(user&& clt);
-    
- protected:
-    virtual void before_session() {};
-    virtual void session() {};
-    virtual void after_session() {};
+    bool ping();
     
  private:
+    size_t num_connected_users() const;
     sf::SocketSelector& selector;
     const size_t max_users;
     std::vector<user> users;
+    std::vector<bool> connected;
+    
+ protected:
+    virtual void before_session();
+    virtual void session();
+    bool started;
 };
 
 #endif  // USERS_ROOM_H_

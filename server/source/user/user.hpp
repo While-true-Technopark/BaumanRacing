@@ -7,19 +7,26 @@ class user final {
  public:
     user();
     // поч с этим при линковке ругается на unique_ptr?
-    //virtual ~user() = default;
-    //user(const user&) = delete;
-    //user& operator=(const user&) = delete;
-    
-    void send(message::header _header, const std::string body);
-    json receive();
+    /*virtual ~user(){};
+    user(const user&) = default;
+    user& operator=(const user&) = default;*/
+    template<class type>
+    void send(message::header head, const type& body) const{
+        json msg = message::get_message(head);
+        msg[message::body] = body;
+        sf::Packet packet = message::json_to_packet(msg);
+        socket->send(packet);
+    }
+    json receive() const;
+    bool ping() const;
     sf::TcpSocket& get_socket();
-    bool ping();
-    void restart_time_last_activity();
+    void restart_tla();
     
  private:
     std::unique_ptr<sf::TcpSocket> socket;
     sf::Clock time_last_activity;
 };
+
+//#include "message.inl"
 
 #endif  // USER_H_

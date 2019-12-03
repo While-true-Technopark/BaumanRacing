@@ -28,6 +28,7 @@ set(LIB_GAME_SERVER
         
         ${SOURCE_DIR}/user/user.hpp
         ${SOURCE_DIR}/user/user.cpp
+        #${SOURCE_DIR}/user/user.cpp
         
         ${SOURCE_DIR}/users_room/users_room.hpp
         ${SOURCE_DIR}/users_room/users_room.cpp

@@ -42,7 +42,7 @@ void server::guests_event_handler() {
         user& clt = guests[idx];
         if (selector.isReady(clt.get_socket())) {
             json msg = clt.receive();
-            clt.restart_time_last_activity();
+            clt.restart_tla();
             // TODO: в случае, когда срабатывает деструктор клиента он сюда чет шлет и json при паринге тут падает так как у него нет заголовка
             size_t head = msg[message::head];
             switch (head) {
@@ -58,7 +58,7 @@ void server::guests_event_handler() {
                         clt.send(message::status, message::fail);
                         std::cout << "create failed. a room with such names exists" << std::endl;;
                     }
-                    return;
+                    break;
                 }
                 case message::join: {
                     std::string room_name = msg[message::body];
@@ -73,18 +73,18 @@ void server::guests_event_handler() {
                         std::cout << "join failed. no room with that name exists or is already full" << std::endl;;
                         clt.send(message::status, message::fail);
                     }
-                    return;
+                    break;
                 }
                 case message::ping: {
                     if (msg[message::body] == message::to) {
                         clt.send(message::ping, message::back);
                     }
-                    return;
+                    break;
                 } 
                 default: {
                     clt.send(message::status, message::fail);
                     std::cout << "fail in massage" << std::endl;
-                    return;
+                    break;
                 }
             }
         }
@@ -105,7 +105,12 @@ void server::ping_guests() {
 }
     
 void server::ping_rooms() {
-    std::cout << "ping rooms" << std::endl;
+    for (auto it = rooms.begin(); it != rooms.end(); ++it) {
+        std::cout << "ping room " << it->first << std::endl;
+        if (!it->second.ping()) {
+            // TODO: удаление комнаты
+        }
+    }
 }
 
 bool server::add_guest() {

@@ -4,24 +4,13 @@ user::user()
     : socket{std::make_unique<sf::TcpSocket>()}
 {}
 
-void user::send(message::header _header, const std::string body) {
-    json msg = message::get_message(_header);
-    msg[message::body] = body;
-    sf::Packet packet = message::json_to_packet(msg);
-    socket->send(packet);
-}
-
-json user::receive() {
+json user::receive() const {
     sf::Packet packet;
     socket->receive(packet);
     return message::packet_to_json(packet);
 }
 
-sf::TcpSocket& user::get_socket() {
-    return *socket;
-}
-
-bool user::ping() {
+bool user::ping() const {
     if (time_last_activity.getElapsedTime() > CONNECT_TIME_OUT) {
         return false;
     } 
@@ -31,6 +20,10 @@ bool user::ping() {
     return true;
 }
 
-void user::restart_time_last_activity() {
+sf::TcpSocket& user::get_socket() {
+    return *socket;
+}
+
+void user::restart_tla() {
     time_last_activity.restart();
 }
