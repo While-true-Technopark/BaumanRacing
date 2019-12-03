@@ -11,6 +11,16 @@ void user::send(message::header _header, const std::string body) {
     socket->send(packet);
 }
 
+json user::receive() {
+    sf::Packet packet;
+    socket->receive(packet);
+    return message::packet_to_json(packet);
+}
+
+sf::TcpSocket& user::get_socket() {
+    return *socket;
+}
+
 bool user::ping() {
     if (time_last_activity.getElapsedTime() > CONNECT_TIME_OUT) {
         return false;

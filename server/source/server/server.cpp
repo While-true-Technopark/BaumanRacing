@@ -40,11 +40,9 @@ void server::rooms_event_handler() {
 void server::guests_event_handler() {
     for (size_t idx = 0; idx < guests.size(); ++idx) {
         user& clt = guests[idx];
-        if (selector.isReady(*(clt.socket))) {
-            sf::Packet packet;
-            clt.socket->receive(packet);
+        if (selector.isReady(clt.get_socket())) {
+            json msg = clt.receive();
             clt.restart_time_last_activity();
-            json msg = message::packet_to_json(packet);
             // TODO: в случае, когда срабатывает деструктор клиента он сюда чет шлет и json при паринге тут падает так как у него нет заголовка
             size_t head = msg[message::head];
             switch (head) {
@@ -99,7 +97,7 @@ void server::ping_guests() {
         user& clt = guests[idx];
         if (!clt.ping()) {
             std::cout << "disconnect guest " << idx << std::endl;
-            selector.remove(*(clt.socket));
+            selector.remove(clt.get_socket());
             guests.erase(guests.begin() + idx);
             --idx;
         }
@@ -112,8 +110,9 @@ void server::ping_rooms() {
 
 bool server::add_guest() {
     user clt;
-    if (listener.accept(*(clt.socket)) == sf::Socket::Done) {
-        selector.add(*(clt.socket));
+    sf::TcpSocket& socket = clt.get_socket();
+    if (listener.accept(socket) == sf::Socket::Done) {
+        selector.add(socket);
         guests.emplace_back(std::move(clt));
         std::cout << "add guest" << std::endl;
         return true;

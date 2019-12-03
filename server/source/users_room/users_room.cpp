@@ -10,7 +10,7 @@ users_room::users_room(user&& first_clt, sf::SocketSelector& selector, size_t ma
 void users_room::event_handler() {
     for (size_t idx = 0; idx < users.size(); ++idx) {
         user& clt = users[idx];
-        if (selector.isReady(*(clt.socket))) {}
+        if (selector.isReady(clt.get_socket())) {}
     }
 }
 
