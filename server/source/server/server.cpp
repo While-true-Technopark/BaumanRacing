@@ -1,7 +1,6 @@
 #include "server.hpp"
     
 // TODO: обработка исключений
-// TODO: написать обработчики событий
 // TODO: logger
 
 server::server(size_t port, const std::string& ip) {
@@ -80,11 +79,16 @@ void server::guests_event_handler() {
                         clt.send(message::ping, message::back);
                     }
                     break;
+                }
+                case message::close: {
+                    selector.remove(clt.get_socket());
+                    guests.erase(guests.begin() + idx);
+                    --idx;
+                    break;
                 } 
                 default: {
                     clt.send(message::status, message::fail);
                     std::cout << "fail in massage" << std::endl;
-                    break;
                 }
             }
         }

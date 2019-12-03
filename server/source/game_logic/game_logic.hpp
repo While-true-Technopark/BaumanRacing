@@ -7,12 +7,6 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <functional>
 
-struct point {
-    double x;
-    double y;
-    double norm();
-};
-
 struct side_object {
     point coord;
     size_t ttl;
@@ -79,65 +73,6 @@ class standard_maps final {
             return map();
         }
         return map();
-    }
-};
-
-class solver final {
- public:
-    solver() = default;
-    ~solver() {}
-
-    solver(const solver&) = delete;
-    solver& operator=(const solver&) = delete;
-
-    solver(solver&&) = delete;
-    solver& operator=(solver&&) = delete;
-
-    static std::vector<double> linear(const boost::numeric::ublas::matrix<double>& matrix,
-    const std::vector<double>& rhs, const std::string& method) {
-        if (method == "gauss") {
-            gauss(matrix, rhs);
-        }
-        return std::vector<double>();
-    }
-    static std::vector<double> nonlinear(
-        const std::vector<std::function<double(const std::vector<double>&)>>& sistem,
-        const std::string& method) {
-        if (method == "newton") {
-            newton(sistem);
-        }
-        return std::vector<double>();
-    }
-    static std::vector<double> differential_equation(
-        const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs,
-        const std::vector<double>& init_cond,
-        double dt, const std::string& method) {
-        if (method == "runge_kutta") {
-            runge_kutta(rhs, init_cond, dt);
-        }
-        return std::vector<double>();
-    }
-
-    friend class test_solver;
-
- private:
-    static std::vector<double> gauss(const boost::numeric::ublas::matrix<double>& matrix,
-        const std::vector<double>& rhs) {
-        matrix(0, 0); rhs[0];  // for -Werror=unused...
-        return std::vector<double>();
-    }
-    static
-    std::vector<double> newton(
-        const std::vector<std::function<double(const std::vector<double>&)>>& sistem) {
-        sistem[0];  // for -Werror=unused...
-        return std::vector<double>();
-    }
-    static
-    std::vector<double> runge_kutta(
-        const std::vector<std::function<double(const std::vector<double>&, double)>>& rhs,
-        const std::vector<double>& init_cond, double dt) {
-        rhs[0]; init_cond[0]; dt++;  // for -Werror=unused...
-        return std::vector<double>();
     }
 };
 

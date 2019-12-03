@@ -24,12 +24,11 @@ class message {
         coord,   // <-
         coord_s,   // <-
         rating,    // <-
-        
-        // after game
         finish,    // <-
         
         // shared
         ping,      // <-->
+        close,
     };
     
     static const std::string head;
@@ -59,13 +58,11 @@ class message {
     static json message_command();
     static json message_coord();
     static json message_coord_s();
-    static json message_rating();
-    
-    // after game
-    static json message_finish();
+    static json message_rating(header _header);
     
     // shared
     static json message_ping();
+    static json message_close();
 };
 
 #endif  // MESSAGE_H_

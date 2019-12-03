@@ -54,11 +54,17 @@ json message::get_message(header _header) {
             return message_coord_s();
         }
         case rating: {
-            return message_rating();
+            return message_rating(rating);
+        }
+        case finish:  {
+            return message_rating(finish);
         }
         
         case ping: {
              return message_ping();   
+        }
+        case close: {
+             return message_close();   
         }
         
         default: {
@@ -104,14 +110,18 @@ json message::message_coord_s() {
     return json{{head, coord_s}, {body, std::vector<point>()}}; // body - координаты сторонних объектов
 }
 
-json message::message_rating() {
+json message::message_rating(header _header) { // _header - rating, finish
     players_rating ratings;
     ratings.fill(0);
-    return json{{head, rating}, {body, std::move(ratings)}}; // body - рейтинг игроков
+    return json{{head, _header}, {body, std::move(ratings)}}; // body - рейтинг игроков
 }
 
 json message::message_ping() {
     return json{{head, ping}, {body, back}}; // body - to, back
     // to - нас пингуют (нужно ответить, иначе соединение будет разорвано)
     // back - нам ответили на пинг (можно ничего не отвечать)
+}
+
+json message::message_close() {
+    return json{{head, close}}; // нет body
 }

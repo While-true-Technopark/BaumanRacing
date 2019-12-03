@@ -46,9 +46,13 @@ void users_room::before_session() {
                         }
                         break;
                     }
+                    case message::close: {
+                        connected[idx] = false;
+                        selector.remove(clt.get_socket());
+                        break;
+                    } 
                     default: {
                         clt.send(message::status, message::fail);
-                        break;
                     }
                 }
             }
@@ -68,6 +72,8 @@ void users_room::session() {
         return;
     }
     
+    std::vector<move_command> comm(max_users); // TODO: проверка что тут все false
+    
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             user& clt = users[idx];
@@ -77,7 +83,7 @@ void users_room::session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        // TODO:
+                        comm[idx] = move_command(msg[message::body]);
                         break;
                     }
                     case message::ping: {
@@ -86,19 +92,31 @@ void users_room::session() {
                         }
                         break;
                     }
-                     default: {
-                        clt.send(message::status, message::fail);
+                    case message::close: {
+                        connected[idx] = false;
+                        selector.remove(clt.get_socket());
                         break;
+                    } 
+                    default: {
+                        clt.send(message::status, message::fail);
                     }
                 }
-            }
+            }            
+        }
+    }
+    
+    // TODO: game_manager
+    
+    for (size_t idx = 0; idx < max_users; ++idx) {
+        if (connected[idx]) {
+            //user& clt = users[idx];
             // TODO:
             // if (coord update) clt.send(message::coord, );
             // if (coord_s update) clt.send(message::coord_s, );
             // if (raiting update) send(message::rating, );
-            
         }
     }
+
 }
 
 bool users_room::add_user(user&& clt) {
