@@ -26,6 +26,7 @@ void users_room::before_session() {
     size_t num_users = num_connected_users();
     if (num_users == max_users) {
         started = true;
+        manager.start();
     }
     
     for (size_t idx = 0; idx < max_users; ++idx) {
@@ -37,7 +38,8 @@ void users_room::before_session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::setting: {
-                        // TODO:
+                        car_type type = msg[message::body];
+                        manager.set_setting(idx, type);
                         break;
                     }
                     case message::ping: {
@@ -65,18 +67,12 @@ void users_room::before_session() {
             
         }
     }
-    
-    if (started) {
-        // game_manager start
-    }
 }
 
 void users_room::session() {
     if (!started) {
         return;
     }
-    
-    std::vector<move_command> comm(max_users); // TODO: проверка что тут все false
     
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
@@ -87,7 +83,8 @@ void users_room::session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        comm[idx] = move_command(msg[message::body]);
+                        move_command comm(msg[message::body]);
+                        manager.set_setting(idx, comm);
                         break;
                     }
                     case message::ping: {
@@ -109,18 +106,26 @@ void users_room::session() {
         }
     }
     
-    // TODO: game_manager
-    
+    if (manager.update()) {
+        update_user();
+    }
+}
+
+void users_room::update_user() const {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
+            const user& clt = users[idx];
+            if (manager.finished(idx)) {
+                // TODO: send rating
+                clt.send(message::finish, 0);
+            }
             //user& clt = users[idx];
             // TODO:
-            // if (coord update) clt.send(message::coord, );
-            // if (coord_s update) clt.send(message::coord_s, );
+            // if (pos update) clt.send(message::pos, );
+            // if (pos_s update) clt.send(message::pos_s, );
             // if (raiting update) send(message::rating, );
         }
     }
-
 }
 
 bool users_room::add_user(user&& clt) {

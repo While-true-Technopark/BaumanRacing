@@ -8,8 +8,7 @@ set(CMAKE_C_FLAGS "--coverage")
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -Wall -Wextra -Werror -Wpedantic")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
-set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty")
-set(TINYXML_DIR "${3RDPARTY_DIR}/tinyxml2")
+set(TINYXML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tinyxml2")
 
 include_directories(${SOURCE_DIR}/transfer_lib/config) # TODO: подключать как отдельную либу
 include_directories(${SOURCE_DIR}/transfer_lib/transfer)

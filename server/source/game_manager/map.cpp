@@ -2,7 +2,7 @@
 #include "tinyxml2.hpp"
 
 side_object::side_object() 
-    : weight{1} 
+    : mass{1} 
 {
     /*coord.fill(0);*/
     size[0] = 0.5;
@@ -19,7 +19,7 @@ car::car(car_type type) {
         case car_type::small: {
             size[0] = 1;
             size[1] = 1;
-            weight = 1;
+            mass = 1;
             num_side_objects = 1;
             num_accelerations = 1;
             break;
@@ -27,7 +27,7 @@ car::car(car_type type) {
         case car_type::big: {
             size[0] = 3;
             size[1] = 3;
-            weight = 3;
+            mass = 3;
             num_side_objects = 3;
             num_accelerations = 3;
             break;
@@ -35,15 +35,15 @@ car::car(car_type type) {
         default: { // medium
             size[0] = 2;
             size[1] = 2;
-            weight = 2;
+            mass = 2;
             num_side_objects = 2;
             num_accelerations = 2; 
         }
     }
 }
 
-game_map::game_map(/*size_t map_id*/) {
-    // finished.fill(false);
+game_map::game_map() {
+    num_circle.fill(-1);
     load_map(STANDARD_MAP_PATH);
 }
 
@@ -64,14 +64,10 @@ bool game_map::load_map(const std::string& path) {
     size_t block_height = map_xml->IntAttribute("tileheight", 0);
 
     tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data");
-    // можно ли до map_height?
-    for (size_t col = 0; /*true*/ col < map_height; ++col) {
+    for (size_t col = 0; col < map_height; ++col) {
         std::vector<map_block> block_stripes(map_width);
         for (size_t row = 0; row <  map_width; ++row) {
             tile_xml = tile_xml->NextSiblingElement("tile");
-            /*if ( !() ) {
-                return true;
-            }*/
             map_block& block = block_stripes[row];
             block.type = static_cast<map_block::block_type>(tile_xml->IntAttribute("gid", 1));
             block.coord[0] = row * block_width;
@@ -83,7 +79,7 @@ bool game_map::load_map(const std::string& path) {
     return true;
 }
 
-players_position game_map::get_players_pos() {
+players_position game_map::get_players_pos() const {
     players_position pos;
     for (size_t idx = 0; idx < pos.size(); ++idx) {
         pos[idx] = players[idx].pos;
@@ -92,16 +88,20 @@ players_position game_map::get_players_pos() {
 }
 
 // TODO:
-players_rating game_map::get_rating() {
+players_rating game_map::get_rating() const {
     return players_rating();   
 }
 
-std::vector<position> game_map::get_side_objects_pos() {
+std::vector<position> game_map::get_side_objects_pos() const {
     std::vector<position> pos(side_objects.size());
     for (size_t idx = 0; idx < side_objects.size(); ++idx) {
         pos[idx] = side_objects[idx].pos;
     }
     return pos;
+}
+
+int8_t game_map::get_num_circle(size_t id) const {
+    return num_circle[id];
 }
     
 void game_map::set_car(size_t id, car_type type) {

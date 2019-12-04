@@ -2,6 +2,7 @@
 #define USERS_ROOM_H_
 
 #include "user.hpp"
+#include "game_manager.hpp"
 
 class users_room {
  public:
@@ -19,11 +20,13 @@ class users_room {
     bool ping();
     
  private:
+    void update_user() const;
     size_t num_connected_users() const;
     sf::SocketSelector& selector;
     const size_t max_users;
     std::vector<user> users;
     std::vector<bool> connected;
+    game_manager manager;
     
  protected:
     virtual void before_session();
