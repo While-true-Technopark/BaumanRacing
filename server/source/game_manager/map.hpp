@@ -5,7 +5,7 @@
 
 struct side_object {
     side_object();
-    point coord;
+    position pos;
     point size; // 0 - width, 1 - height
     double weight;
     sf::Clock ttl;
@@ -14,9 +14,9 @@ struct side_object {
 struct car {
     car();
     explicit car(car_type type);
-    point coord;
-    point speed;
-    point direction;
+    position pos;
+    position speed;
+    //point direction;
     point size; // 0 - width, 1 - height
     double weight;
     size_t num_side_objects;
@@ -31,17 +31,13 @@ class game_map {
     game_map();
     bool load_map(const std::string& path);
     
-    players_coord get_players_coord();
+    players_position get_players_pos();
     players_rating get_rating();
-    std::vector<point> get_side_objects_coord();
+    std::vector<position> get_side_objects_pos();
     
     void set_car(size_t id, car_type type);
     void set_command(size_t id, const move_command& comm);
     void make_move();
-    
-    void start() {
-        started = true;
-    }
     // TODO: is update 
     //bool player_finished(size_t player_id);
     
@@ -56,7 +52,7 @@ class game_map {
     };
     std::vector<std::vector<map_block>> map_info;
     //point start_coord;
-    bool started;
+    //bool started;
     //std::array<bool, MAX_USERS> finished;
 };
 

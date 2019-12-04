@@ -4,6 +4,7 @@
 #include <SFML/Network.hpp>
 
 const size_t DIM = 2;
+const size_t DOF = DIM + 1;  // x, y, angle
 const size_t MAX_USERS = 4;
 
 const size_t PORT = 5555;

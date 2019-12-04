@@ -42,9 +42,7 @@ car::car(car_type type) {
     }
 }
 
-game_map::game_map(/*size_t map_id*/)
-    : started{false}
-{
+game_map::game_map(/*size_t map_id*/) {
     // finished.fill(false);
     load_map(STANDARD_MAP_PATH);
 }
@@ -66,9 +64,9 @@ bool game_map::load_map(const std::string& path) {
     size_t block_height = map_xml->IntAttribute("tileheight", 0);
 
     tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data");
-    std::vector<map_block> block_stripes(map_width);
     // можно ли до map_height?
-    for (size_t col = 0; col < map_height; ++col) {
+    for (size_t col = 0; /*true*/ col < map_height; ++col) {
+        std::vector<map_block> block_stripes(map_width);
         for (size_t row = 0; row <  map_width; ++row) {
             tile_xml = tile_xml->NextSiblingElement("tile");
             /*if ( !() ) {
@@ -79,49 +77,40 @@ bool game_map::load_map(const std::string& path) {
             block.coord[0] = row * block_width;
             block.coord[1] = col * block_height;
         }
-        map_info.push_back(block_stripes);
+        map_info.emplace_back(std::move(block_stripes));
     }
     
     return true;
 }
 
-players_coord game_map::get_players_coord() {
-    players_coord coord;
-    for (size_t idx = 0; idx < coord.size(); ++idx) {
-        coord[idx] = players[idx].coord;
+players_position game_map::get_players_pos() {
+    players_position pos;
+    for (size_t idx = 0; idx < pos.size(); ++idx) {
+        pos[idx] = players[idx].pos;
     }
-    return coord;
+    return pos;
 }
 
 // TODO:
 players_rating game_map::get_rating() {
-    return  players_rating();   
+    return players_rating();   
 }
 
-std::vector<point> game_map::get_side_objects_coord() {
-    std::vector<point> side_objects_coord(side_objects.size());
+std::vector<position> game_map::get_side_objects_pos() {
+    std::vector<position> pos(side_objects.size());
     for (size_t idx = 0; idx < side_objects.size(); ++idx) {
-        side_objects_coord[idx] = side_objects[idx].coord;
+        pos[idx] = side_objects[idx].pos;
     }
-    return side_objects_coord;
+    return pos;
 }
     
 void game_map::set_car(size_t id, car_type type) {
-    if (started) {
-        return;
-    }
     players[id] = car(type);
 }
 
 void game_map::set_command(size_t id, const move_command& comm) {
-    if (!started) {
-        return;
-    }
     command[id] = comm;
 }
 
 void game_map::make_move() {
-    if (!started) {
-        started = true;
-    }
 }

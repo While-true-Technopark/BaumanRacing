@@ -47,11 +47,11 @@ json message::get_message(header _header) {
         case command: {
             return message_command();
         }
-        case coord: {
-            return message_coord();
+        case pos: {
+            return message_pos();
         }
-        case coord_s: {
-            return message_coord_s();
+        case pos_s: {
+            return message_pos_s();
         }
         case rating: {
             return message_rating(rating);
@@ -100,20 +100,16 @@ json message::message_command() {
     return json{{head, command}, {body, comm.get_json()}}; // body - команды передвижения машинки в формате json
 }
 
-json message::message_coord() {
-    players_coord coords;
-    coords.fill({0, 0});
-    return json{{head, coord}, {body, std::move(coords)}}; // body - координаты всех игроков
+json message::message_pos() {
+    return json{{head, pos}, {body, players_position()}}; // body - координаты всех игроков
 }
 
-json message::message_coord_s() {
-    return json{{head, coord_s}, {body, std::vector<point>()}}; // body - координаты сторонних объектов
+json message::message_pos_s() {
+    return json{{head, pos_s}, {body, std::vector<position>()}}; // body - координаты сторонних объектов
 }
 
 json message::message_rating(header _header) { // _header - rating, finish
-    players_rating ratings;
-    ratings.fill(0);
-    return json{{head, _header}, {body, std::move(ratings)}}; // body - рейтинг игроков
+    return json{{head, _header}, {body, players_rating()}}; // body - рейтинг игроков
 }
 
 json message::message_ping() {

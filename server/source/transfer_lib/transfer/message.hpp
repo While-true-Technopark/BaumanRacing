@@ -21,8 +21,8 @@ class message {
         
         // game
         command,   // ->
-        coord,     // <-
-        coord_s,   // <-
+        pos,     // <-
+        pos_s,   // <-
         rating,    // <-
         finish,    // <-
         
@@ -56,8 +56,8 @@ class message {
     
     // game
     static json message_command();
-    static json message_coord();
-    static json message_coord_s();
+    static json message_pos();
+    static json message_pos_s();
     static json message_rating(header _header);
     
     // shared
