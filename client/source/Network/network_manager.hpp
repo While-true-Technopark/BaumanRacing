@@ -5,6 +5,7 @@
 #include "base_manager.hpp"
 #include "network_abst.hpp"
 #include "event_throwable.hpp"
+#include "message.hpp"
 
 class network_manager : public base_manager, event_throwable {
  public:

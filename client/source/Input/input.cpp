@@ -2,7 +2,6 @@
 
 input::input(sf::RenderWindow *win) {
     window = win;
-    current_scene = game;
 }
 
 struct keys_pressed_variants input::get_pressed_keys() {
@@ -63,6 +62,12 @@ struct keys_pressed_variants input::get_pressed_keys() {
                     default:
                         break;
                 }
+                break;
+            }
+            case sf::Event::TextEntered: {
+                if (event.text.unicode < 128)
+                    keys.player_input += event.text.unicode;
+                   //std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
                 break;
             }
             default:

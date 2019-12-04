@@ -24,6 +24,16 @@ network::network() {
     };
 }
 
+network::~network() {
+    json msg;
+    
+    msg = message::get_message(message::close);
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+    packet.clear();
+    socket.disconnect();
+}
+
 event network::get_last_package() {
     event ev;
     return ev;
@@ -54,3 +64,67 @@ struct players_positions_info network::get_positions() {
     return positions;
 }
 
+bool network::connect(size_t port, const std::string& ip) {
+    if (socket.connect(ip, port) != sf::Socket::Done) {
+        // throw std::runtime_error(std::strerror(errno));
+        //std::cout << "no connect" << std::flush;
+        return false;
+    }
+    //socket.setBlocking(false);
+    std::cout << "connect" << std::flush;
+    return true;
+}
+
+int network::create_room(const char (*str)[256]) {
+    std::cout << "create" << std::flush;
+//    json msg;
+//
+//    std::string room_name(*str);
+//    std::cin >> room_name;
+//    msg = message::get_message(message::create);
+//
+//    msg[message::body] = room_name;
+
+    json msg;
+    
+    {
+        std::cout << "create a room (0), join the room (1): ";
+        bool tmp = false;
+        std::cin >> tmp;
+        
+        std::cout << "print name room: ";
+        std::string room_name;
+        std::cin >> room_name;
+        
+        if (!tmp) {
+            msg = message::get_message(message::create);
+        } else {
+            msg = message::get_message(message::join);
+        }
+        
+        msg[message::body] = room_name;
+    }
+
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+    packet.clear();
+    
+    
+    while (true) {
+            socket.receive(packet);
+            msg = message::packet_to_json(packet);
+            if (msg[message::head] == message::status) {
+                break;
+            }
+            if (msg[message::head] == message::ping && msg[message::body] == "to") {
+                msg = message::get_message(message::ping);
+                msg[message::body] = "back";
+                packet = message::json_to_packet(msg);
+                socket.send(packet);
+                std::cout << "send on ping" << std::endl;
+            }
+            packet.clear();
+        }
+    
+    return 0;
+}

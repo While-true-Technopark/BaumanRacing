@@ -1,12 +1,19 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
+#define WIDTH 1280
+#define HEIGHT 720
+
 #include <iostream>
+#include <string>
 #include <SFML/Graphics.hpp>
 
 enum event_type {
     application_run,
     main_menu,
+    connect_to_open,
+    create_room,
+    connect_to_room,
     new_game,
     name_choose,
     name_chosen,
@@ -28,7 +35,10 @@ enum event_type {
     closing,
     nothing_keys,
     mouse_click,
-    textures_loaded  // throw it to get all textures
+    textures_loaded, // throw it to get all textures
+    key_pressed_menu,
+    input_ev,
+    connect_create
 };
 
 struct player_id {
@@ -80,6 +90,11 @@ struct keys_pressed {
 struct keys_pressed_variants {
     struct keys_pressed keys;
     bool closing;
+    std::string player_input;
+};
+
+struct input_data {
+    char str[256];
 };
 
 struct lap_event {
@@ -105,6 +120,13 @@ struct textures_loaded_event {
     sf::Texture* player_2;
     sf::Texture* player_3;
     sf::Texture* player_4;
+    sf::Texture* logo;
+    sf::Texture* box;
+    sf::Font* main_font;
+};
+
+struct info_select {
+    size_t select;
 };
 
 union event_data {
@@ -121,6 +143,8 @@ union event_data {
     game_results_event       game_results;
     empty_event              empty;
     textures_loaded_event    textures;
+    info_select    box;
+    input_data input_ev;
 };
 
 class event {

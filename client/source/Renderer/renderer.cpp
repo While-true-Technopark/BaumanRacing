@@ -5,14 +5,73 @@ renderer::renderer(sf::RenderWindow* win) {
     view = window->getView();
 }
 
-int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture) {
+int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
+    sf::Texture* logo_texture, sf::Texture* box_texture, sf::Font *main_font) {
     map_texture = map_texture;
+    main_font = main_font;
+    
+    play_text.setFont(*main_font);
+    play_text.setString("Play");
+    play_text.setOrigin(sf::Vector2f(play_text.getGlobalBounds().width / 2,
+        play_text.getGlobalBounds().height / 2));
+    play_text.setFillColor(sf::Color::White);
+    play_text.setPosition(WIDTH / 2, 244);
+    
+    settings_text.setFont(*main_font);
+    settings_text.setString("Settings");
+    settings_text.setOrigin(sf::Vector2f(settings_text.getGlobalBounds().width / 2,
+        settings_text.getGlobalBounds().height / 2));
+    settings_text.setFillColor(sf::Color::White);
+    settings_text.setPosition(WIDTH / 2, 344);
+    
+    new_room_text.setFont(*main_font);
+    new_room_text.setString("Create new room");
+    new_room_text.setOrigin(sf::Vector2f(new_room_text.getGlobalBounds().width / 2,
+        new_room_text.getGlobalBounds().height / 2));
+    new_room_text.setFillColor(sf::Color::White);
+    new_room_text.setPosition(WIDTH / 2, 244);
+    
+    connect_to_text.setFont(*main_font);
+    connect_to_text.setString("Connect to exists room");
+    connect_to_text.setOrigin(sf::Vector2f(connect_to_text.getGlobalBounds().width / 2,
+        connect_to_text.getGlobalBounds().height / 2));
+    connect_to_text.setFillColor(sf::Color::White);
+    connect_to_text.setPosition(WIDTH / 2, 344);
+    
+    enter_new_name_text.setFont(*main_font);
+    enter_new_name_text.setString("Enter name of new room");
+    enter_new_name_text.setOrigin(sf::Vector2f(enter_new_name_text.getGlobalBounds().width / 2,
+        enter_new_name_text.getGlobalBounds().height / 2));
+    enter_new_name_text.setFillColor(sf::Color::White);
+    enter_new_name_text.setPosition(WIDTH / 2, 244);
+    
+    enter_name_text.setFont(*main_font);
+    enter_name_text.setString("Enter name of exists room");
+    enter_name_text.setOrigin(sf::Vector2f(enter_name_text.getGlobalBounds().width / 2,
+        enter_name_text.getGlobalBounds().height / 2));
+    enter_name_text.setFillColor(sf::Color::White);
+    enter_name_text.setPosition(WIDTH / 2, 244);
+    
+    input_text.setFont(*main_font);
+    input_text.setString("");
+    input_text.setOrigin(sf::Vector2f(input_text.getGlobalBounds().width / 2,
+        input_text.getGlobalBounds().height / 2));
+    input_text.setFillColor(sf::Color::White);
+    input_text.setPosition(WIDTH / 2, 344);
+    
     for (size_t i = 0; i != cars_textures.size(); i++) {
         sf::Sprite car(*cars_textures[i]);
         car.setOrigin(cars_textures[i]->getSize().x / 2, cars_textures[i]->getSize().y / 2);
         players.push_back(car);
     }
     map.setTexture(*map_texture);
+
+    logo.setTexture(*logo_texture);
+    logo.setOrigin(logo.getTexture()->getSize().x/2, logo.getTexture()->getSize().y/2);
+    logo.setPosition(WIDTH/2, 50);
+
+    box.setTexture(*box_texture);
+    box.setOrigin(box.getTexture()->getSize().x/2, box.getTexture()->getSize().y/2);
     return 0;
 }
 
@@ -42,7 +101,53 @@ int renderer::lobby_scene() {
     return 0;
 }
 
-int renderer::main_menu() {
+int renderer::main_menu(size_t box_select) {
+    window->clear();
+    
+    window->draw(logo);
+    
+    box.setPosition(WIDTH/2, box_select * 100 + 250);
+    window->draw(box);
+    
+    window->draw(play_text);
+    window->draw(settings_text);
+    
+    window->display();
+    return 0;
+}
+
+int renderer::connect_to_open(size_t box_select) {
+    window->clear();
+    //view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    //window->setView(view);
+    
+    window->draw(logo);
+    
+    box.setPosition(WIDTH/2, box_select * 100 + 250);
+    window->draw(box);
+    
+    window->draw(new_room_text);
+    window->draw(connect_to_text);
+    
+    window->display();
+    return 0;
+}
+
+int renderer::create_room(const char (*str)[256]) {
+    window->clear();
+    //view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    //window->setView(view);
+    
+    window->draw(logo);
+    window->draw(enter_new_name_text);
+    
+    std::string s(*str);
+    input_text.setString(s);
+    input_text.setOrigin(sf::Vector2f(input_text.getGlobalBounds().width / 2,
+    input_text.getGlobalBounds().height / 2));
+    window->draw(input_text);
+    
+    window->display();
     return 0;
 }
 

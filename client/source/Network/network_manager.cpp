@@ -9,6 +9,10 @@ int network_manager::handle_event(const event & e) {
         case key_pressed:
             module->keys_send(e.data.keys);
             break;
+        case connect_create:
+            module->connect(PORT, LOCAL_IP);
+            module->create_room(&e.data.input_ev.str);
+            break;
         default:
             return -1;
     }

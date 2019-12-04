@@ -13,8 +13,20 @@ int renderer_manager::handle_event(const event & e) {
                 e.data.textures.player_3,
                 e.data.textures.player_4,
             };
-            module->init(cars_textures, e.data.textures.map);
+            module->init(cars_textures, e.data.textures.map, e.data.textures.logo, e.data.textures.box, e.data.textures.main_font);
             break;
+        }
+        case main_menu: {
+            module->main_menu(e.data.box.select);
+            break;
+        }
+        case connect_to_open: {
+            module->connect_to_open(e.data.box.select);
+            break;
+        }
+        case create_room: {
+             module->create_room();
+             break;
         }
         case game_start: {
             struct player_data player = { };
@@ -45,6 +57,10 @@ int renderer_manager::handle_event(const event & e) {
 
             module->build_game_scene(data);
             break;
+        }
+        case input_ev: {
+            //std::cout << e.data.input_ev.str << "\n" << std::flush;
+            module->create_room(&e.data.input_ev.str);
         }
         default:
             return -1;
