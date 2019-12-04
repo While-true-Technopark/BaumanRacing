@@ -14,7 +14,7 @@ set(TINYXML_DIR "${3RDPARTY_DIR}/tinyxml2")
 include_directories(${SOURCE_DIR}/transfer_lib/config) # TODO: подключать как отдельную либу
 include_directories(${SOURCE_DIR}/transfer_lib/transfer)
 include_directories(${SOURCE_DIR}/user)
-include_directories(${TINYXML_DIR})
+include_directories(${TINYXML_DIR})  # TODO: подключать как отдельную либу
 include_directories(${SOURCE_DIR}/game_manager)
 include_directories(${SOURCE_DIR}/users_room)
 include_directories(${SOURCE_DIR}/server)
@@ -22,12 +22,14 @@ include_directories(${SOURCE_DIR}/server)
 
 set(LIB_GAME_SERVER
 
-        ${SOURCE_DIR}/transfer_lib/transfer/command.cpp
+        ${SOURCE_DIR}/transfer_lib/transfer/command.cpp  # TODO: подключать как отдельную либу
         ${SOURCE_DIR}/transfer_lib/transfer/message.cpp
         
         ${SOURCE_DIR}/user/user.cpp
         
-        ${TINYXML_DIR}/tinyxml2.cpp
+        ${TINYXML_DIR}/tinyxml2.cpp  # TODO: подключать как отдельную либу
+        ${SOURCE_DIR}/game_manager/map.cpp
+        ${SOURCE_DIR}/game_manager/game_manager.cpp
         
         ${SOURCE_DIR}/users_room/users_room.cpp
         

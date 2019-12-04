@@ -65,6 +65,10 @@ void users_room::before_session() {
             
         }
     }
+    
+    if (started) {
+        // game_manager start
+    }
 }
 
 void users_room::session() {

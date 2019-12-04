@@ -21,7 +21,7 @@ class message {
         
         // game
         command,   // ->
-        coord,   // <-
+        coord,     // <-
         coord_s,   // <-
         rating,    // <-
         finish,    // <-
