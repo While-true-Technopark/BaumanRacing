@@ -11,10 +11,10 @@ class loader_abst {
  public:
     virtual int load_all() = 0;
     virtual sf::Texture* get_texture(const std::string & name) = 0;
+    virtual bool is_loaded() = 0;
  protected:
     bool loaded;
     std::vector<std::string> paths;
-    std::vector<sf::Texture> textures;
 };
 
 #endif  // LOADER_ABST_H_
