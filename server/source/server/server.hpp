@@ -14,7 +14,7 @@ class server {
  private:
     sf::TcpListener listener;
     sf::SocketSelector selector;
-    std::map<std::string, users_room> rooms;
+    std::unordered_map<std::string, users_room> rooms;
     std::vector<user> guests; // клиенты, которые пока без комнаты
     bool add_guest();
     void ping_rooms();

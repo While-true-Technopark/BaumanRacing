@@ -53,9 +53,3 @@ void game_manager::set_setting(size_t id, car_type type) {
 void game_manager::set_setting(size_t id, const move_command& comm) {
     map.set_command(id, comm);
 }
-
-
-    
-
-
-
