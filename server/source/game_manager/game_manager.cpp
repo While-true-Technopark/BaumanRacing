@@ -1,12 +1,12 @@
 #include "game_manager.hpp"
 
 game_manager::game_manager() 
-    : started{false}
+    : run{false}
 {}
 
 void game_manager::start() {
     wait_before_start.restart();
-    started = true;
+    run = true;
 }
 
 players_position game_manager::get_players_pos() const {
@@ -25,8 +25,21 @@ bool game_manager::finished(size_t id) const {
     return !(map.get_num_circle(id) < NUM_CIRCLE);
 }
 
+bool game_manager::finish() {
+    if (!run) {
+        return true;
+    }
+    for (size_t idx = 0; idx < MAX_USERS; ++idx) {
+        if (!finished(idx)) {
+            return false;
+        }
+    }
+    run = false;
+    return true;
+}
+
 bool game_manager::update() {
-    if (!started && wait_before_start.getElapsedTime() < TIME_OUT_BEFORE_START) {
+    if (!run && wait_before_start.getElapsedTime() < TIME_OUT_BEFORE_START && finish()) {
         return false;
     }
     map.make_move();

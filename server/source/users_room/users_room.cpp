@@ -109,21 +109,31 @@ void users_room::session() {
     if (manager.update()) {
         update_user();
     }
+    
+    if (manager.finish()) {
+        /*
+         clear room
+         */
+    }
 }
 
 void users_room::update_user() const {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             const user& clt = users[idx];
-            if (manager.finished(idx)) {
-                // TODO: send rating
-                clt.send(message::finish, 0);
-            }
-            //user& clt = users[idx];
+            clt.send(message::pos, manager.get_players_pos());
+            clt.send(message::rating, manager.get_rating());
             // TODO:
-            // if (pos update) clt.send(message::pos, );
+            // if (pos update) 
             // if (pos_s update) clt.send(message::pos_s, );
             // if (raiting update) send(message::rating, );
+            if (manager.finished(idx)) {                
+                // TODO: send rating
+                clt.send(message::finish, players_rating());
+                /*selector.remove(clt.get_socket()); // ???
+                connected[idx] = false; */
+            }
+
         }
     }
 }
