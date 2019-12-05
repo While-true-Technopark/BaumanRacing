@@ -6,7 +6,7 @@
 
 class users_room {
  public:
-    users_room(user&& first_clt, sf::SocketSelector& selector, size_t max_users);
+    users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelector>& selector, size_t max_users);
 
     /*
     не работает emplace в std::map, если оставить это
@@ -22,11 +22,11 @@ class users_room {
  private:
     void update_user() const;
     size_t num_connected_users() const;
-    sf::SocketSelector& selector;
+    std::shared_ptr<sf::SocketSelector> selector;
     const size_t max_users;
     std::vector<user> users;
     std::vector<bool> connected;
-    game_manager manager;
+    //game_manager manager;
     
  protected:
     virtual void before_session();

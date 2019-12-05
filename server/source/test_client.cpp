@@ -10,6 +10,12 @@ class client {
         // clt.setBlocking(false);
     }
     
+    ~client() {
+        json msg = message::get_message(message::close);
+        sf::Packet packet = message::json_to_packet(msg);
+        socket.send(packet);
+    }
+    
     void run() {
         if (init()) {
             std::cout << "connection to server established" << std::endl; // TODO: logger
@@ -22,18 +28,28 @@ class client {
             }
         } else {
             std::cout << "connection to server not established" << std::endl;// TODO: logger
-            while (true) {}
+            //while (true) {}
         }
     }
     
-    ~client() {}
+    template<class type>
+    void send(message::header head, const type& body) {
+        json msg = message::get_message(head);
+        msg[message::body] = body;
+        sf::Packet packet = message::json_to_packet(msg);
+        socket.send(packet);
+    }
+    
+    json receive() {
+        sf::Packet packet;
+        socket.receive(packet);
+        return message::packet_to_json(packet);
+    }
 
  private:
     sf::TcpSocket socket;
     
     bool init() {
-        
-        json msg;
         
         // TODO: прикрутить норм меню (Слава)
         {
@@ -46,36 +62,29 @@ class client {
             std::cin >> room_name;
        
             if (!tmp) {
-                msg = message::get_message(message::create);
+                send(message::create, room_name);
             } else {
-                msg = message::get_message(message::join);
+                send(message::join, room_name);
             }
-        
-            msg[message::body] = room_name;
         }
-        
-        sf::Packet packet = message::json_to_packet(msg);
-        socket.send(packet);
-        packet.clear();
         
         // цикл потому что он может получить тут ping
         while (true) {
-            socket.receive(packet);
-            msg = message::packet_to_json(packet);
+            json msg = receive();
             if (msg[message::head] == message::status) {
-                break;
+                if (msg[message::body] != message::ok) {
+                    return false;
+                } else {
+                    send(message::setting, car_type::small);
+                    std::cout << "set car type" << std::endl; // TODO: logger
+                    return true;
+                }
             }
             if (msg[message::head] == message::ping && msg[message::body] == message::to) {
-                msg = message::get_message(message::ping);
-                msg[message::body] = message::back;
-                packet = message::json_to_packet(msg);
-                socket.send(packet);
+                send(message::ping, message::back);
                 std::cout << "send on ping" << std::endl; // TODO: logger
             }
-            packet.clear();
         }
-        
-        return msg[message::body] == message::ok;
     }
 };
 

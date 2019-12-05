@@ -1,6 +1,6 @@
 #include "users_room.hpp"
 
-users_room::users_room(user&& first_clt, sf::SocketSelector& selector, size_t max_users)
+users_room::users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelector>& selector, size_t max_users)
     : selector{selector}
     , max_users{max_users}
     , users(max_users)
@@ -26,20 +26,21 @@ void users_room::before_session() {
     size_t num_users = num_connected_users();
     if (num_users == max_users) {
         started = true;
-        manager.start();
+        //manager.start();
     }
     
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             user& clt = users[idx];
-            if (selector.isReady(clt.get_socket())) {
+            if (selector->isReady(clt.get_socket())) {
                 json msg = clt.receive();
                 clt.restart_tla();
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::setting: {
-                        car_type type = msg[message::body];
-                        manager.set_setting(idx, type);
+                        std::cout << "set setting" << std::endl;
+                        //car_type type = msg[message::body];
+                        //manager.set_setting(idx, type);
                         break;
                     }
                     case message::ping: {
@@ -50,7 +51,7 @@ void users_room::before_session() {
                     }
                     case message::close: {
                         connected[idx] = false;
-                        selector.remove(clt.get_socket());
+                        selector->remove(clt.get_socket());
                         break;
                     } 
                     default: {
@@ -77,14 +78,14 @@ void users_room::session() {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             user& clt = users[idx];
-            if (selector.isReady(clt.get_socket())) {
+            if (selector->isReady(clt.get_socket())) {
                 json msg = clt.receive();
                 clt.restart_tla();
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        move_command comm(msg[message::body]);
-                        manager.set_setting(idx, comm);
+                        //move_command comm(msg[message::body]);
+                        //manager.set_setting(idx, comm);
                         break;
                     }
                     case message::ping: {
@@ -95,7 +96,7 @@ void users_room::session() {
                     }
                     case message::close: {
                         connected[idx] = false;
-                        selector.remove(clt.get_socket());
+                        selector->remove(clt.get_socket());
                         break;
                     } 
                     default: {
@@ -106,33 +107,33 @@ void users_room::session() {
         }
     }
     
-    if (manager.update()) {
+   /*if (manager.update()) {
         update_user();
     }
     
     if (manager.finish()) {
-        /*
+        
          clear room
-         */
-    }
+         
+    }*/
 }
 
 void users_room::update_user() const {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
-            const user& clt = users[idx];
-            clt.send(message::pos, manager.get_players_pos());
-            clt.send(message::rating, manager.get_rating());
+            //const user& clt = users[idx];
+            //clt.send(message::pos, manager.get_players_pos());
+            //clt.send(message::rating, manager.get_rating());
             // TODO:
             // if (pos update) 
             // if (pos_s update) clt.send(message::pos_s, );
             // if (raiting update) send(message::rating, );
-            if (manager.finished(idx)) {                
+            /*if (manager.finished(idx)) {                
                 // TODO: send rating
                 clt.send(message::finish, players_rating());
-                /*selector.remove(clt.get_socket()); // ???
-                connected[idx] = false; */
-            }
+                //selector.remove(clt.get_socket()); // ???
+                //connected[idx] = false; 
+            }*/
 
         }
     }
@@ -156,7 +157,7 @@ bool users_room::ping() {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && !users[idx].ping()) {
             connected[idx] = false;
-            selector.remove(users[idx].get_socket());
+            selector->remove(users[idx].get_socket());
         }
     }
     return num_connected_users();

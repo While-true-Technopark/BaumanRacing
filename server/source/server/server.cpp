@@ -3,11 +3,13 @@
 // TODO: обработка исключений
 // TODO: logger
 
-server::server(size_t port, const std::string& ip) {
+server::server(size_t port, const std::string& ip) 
+    : selector{std::make_shared<sf::SocketSelector>()}
+{
     if (listener.listen(port, ip) != sf::Socket::Done) {
         // throw std::runtime_error(std::strerror(errno));
     }
-    selector.add(listener);
+    selector->add(listener);
     std::cout << "server is started and waiting for clients" << std::endl;
 }
 
@@ -17,8 +19,8 @@ server::~server() {
 
 void server::run() {
     while (true) {
-        if (selector.wait(PING_TIME_OUT)) {
-            if (selector.isReady(listener)) {
+        if (selector->wait(PING_TIME_OUT)) {
+            if (selector->isReady(listener)) {
                 add_guest();
             } else {
                 rooms_event_handler();
@@ -35,11 +37,11 @@ void server::rooms_event_handler() {
         room.second.event_handler();
     }
 }
-    
+
 void server::guests_event_handler() {
     for (size_t idx = 0; idx < guests.size(); ++idx) {
         user& clt = guests[idx];
-        if (selector.isReady(clt.get_socket())) {
+        if (selector->isReady(clt.get_socket())) {
             json msg = clt.receive();
             clt.restart_tla();
             // TODO: в случае, когда срабатывает деструктор клиента он сюда чет шлет и json при паринге тут падает так как у него нет заголовка
@@ -55,7 +57,7 @@ void server::guests_event_handler() {
                         std::cout << "room " << room_name << " created" << std::endl;
                     } else {
                         clt.send(message::status, message::fail);
-                        std::cout << "create failed. a room with such names exists" << std::endl;;
+                        std::cout << "create failed. a room with such names exists" << std::endl;
                     }
                     break;
                 }
@@ -81,7 +83,7 @@ void server::guests_event_handler() {
                     break;
                 }
                 case message::close: {
-                    selector.remove(clt.get_socket());
+                    selector->remove(clt.get_socket());
                     guests.erase(guests.begin() + idx);
                     --idx;
                     break;
@@ -101,7 +103,7 @@ void server::ping_guests() {
         user& clt = guests[idx];
         if (!clt.ping()) {
             std::cout << "disconnect guest " << idx << std::endl;
-            selector.remove(clt.get_socket());
+            selector->remove(clt.get_socket());
             guests.erase(guests.begin() + idx);
             --idx;
         }
@@ -121,7 +123,7 @@ bool server::add_guest() {
     user clt;
     sf::TcpSocket& socket = clt.get_socket();
     if (listener.accept(socket) == sf::Socket::Done) {
-        selector.add(socket);
+        selector->add(socket);
         guests.emplace_back(std::move(clt));
         std::cout << "add guest" << std::endl;
         return true;
