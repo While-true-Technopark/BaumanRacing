@@ -1,12 +1,12 @@
 #include "game_manager.hpp"
 
 game_manager::game_manager() 
-    : run{false}
+    : start{false}
 {}
 
-void game_manager::start() {
+void game_manager::run() {
     wait_before_start.restart();
-    run = true;
+    start = true;
 }
 
 players_position game_manager::get_players_pos() const {
@@ -22,28 +22,25 @@ std::vector<position> game_manager::get_side_objects_pos() const {
 }
 
 bool game_manager::finished(size_t id) const {
-    return !(map.get_num_circle(id) < NUM_CIRCLE);
+    return !(map.get_num_circle(id) < NUM_CIRCLE); // map.get_num_circle(id) >= NUM_CIRCLE;
 }
 
 bool game_manager::finish() {
-    if (!run) {
-        return true;
-    }
     for (size_t idx = 0; idx < MAX_USERS; ++idx) {
         if (!finished(idx)) {
             return false;
         }
     }
-    run = false;
+    start = false;
     return true;
 }
 
 bool game_manager::update() {
-    if (!run && wait_before_start.getElapsedTime() < TIME_OUT_BEFORE_START && finish()) {
-        return false;
+    if (start && wait_before_start.getElapsedTime() > TIME_OUT_BEFORE_START && !finish()) {
+        map.make_move();
+        return true;
     }
-    map.make_move();
-    return true;
+    return false;
 }
 
 void game_manager::set_setting(size_t id, car_type type) {

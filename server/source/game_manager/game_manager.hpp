@@ -7,7 +7,7 @@
 class game_manager {
  public:
     game_manager();
-    void start();
+    void run();
     players_position get_players_pos() const;
     players_rating get_rating() const;
     std::vector<position> get_side_objects_pos() const;
@@ -21,7 +21,7 @@ class game_manager {
     
     game_map map;
     sf::Clock wait_before_start;
-    bool run;
+    bool start;
 };
 
 #endif  // GAME_MANAGER_H_

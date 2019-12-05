@@ -44,7 +44,6 @@ void server::guests_event_handler() {
         if (selector->isReady(clt.get_socket())) {
             json msg = clt.receive();
             clt.restart_tla();
-            // TODO: в случае, когда срабатывает деструктор клиента он сюда чет шлет и json при паринге тут падает так как у него нет заголовка
             size_t head = msg[message::head];
             switch (head) {
                 case message::create: {
@@ -63,8 +62,7 @@ void server::guests_event_handler() {
                 }
                 case message::join: {
                     std::string room_name = msg[message::body];
-                    // TODO: обработка, если комната уже заполнена
-                    if (rooms.count(room_name)) {
+                    if (rooms.count(room_name) && rooms.at(room_name).size() < MAX_USERS) {
                         clt.send(message::status, message::ok);
                         rooms.at(room_name).add_user(std::move(clt));
                         guests.erase(guests.begin() + idx);
@@ -83,6 +81,7 @@ void server::guests_event_handler() {
                     break;
                 }
                 case message::close: {
+                    std::cout << "guest " << idx << " close connection" << std::endl;
                     selector->remove(clt.get_socket());
                     guests.erase(guests.begin() + idx);
                     --idx;
@@ -111,11 +110,25 @@ void server::ping_guests() {
 }
     
 void server::ping_rooms() {
+    std::vector<std::string> del_rooms;
     for (auto it = rooms.begin(); it != rooms.end(); ++it) {
-        std::cout << "ping room " << it->first << std::endl;
-        if (!it->second.ping()) {
-            // TODO: удаление комнаты
+        const std::string& room_name = it->first;
+        users_room& room = it->second;
+        std::cout << "ping room " << room_name << std::endl;
+        if (!room.ping()) {
+            std::cout << "disconnect room " << room_name << std::endl;
+            del_rooms.push_back(room_name);
+            std::vector<user> users = room.get_users();
+            std::cout << users.size() << " members of the room became guests" << std::endl;
+            //guests.emplace(guests.end(), users.begin(), users.end()); -- не работает
+            for (size_t idx = 0; idx < users.size(); ++idx) {
+                guests.emplace_back(std::move(users[idx]));
+            }
         }
+    }
+    
+    for (const std::string& room_name: del_rooms) {
+        rooms.erase(room_name);
     }
 }
 
