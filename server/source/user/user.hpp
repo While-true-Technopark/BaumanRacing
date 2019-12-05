@@ -11,7 +11,7 @@ class user final {
     user(const user&) = default;
     user& operator=(const user&) = default;*/
     template<class type>
-    void send(message::header head, const type& body) const{
+    void send(message::header head, const type& body) const {
         json msg = message::get_message(head);
         msg[message::body] = body;
         sf::Packet packet = message::json_to_packet(msg);

@@ -44,36 +44,38 @@ car::car(car_type type) {
 
 game_map::game_map() {
     num_circle.fill(-1);
-    load_map(STANDARD_MAP_PATH);
+    load_map(STANDARD_MAP);
 }
 
 bool game_map::load_map(const std::string& path) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(path.c_str())) {
-        std::cout << "not found" << std::endl;
+        std::cout << "not found map" << std::endl;
         return false;
     }
+    
     tinyxml2::XMLElement* map_xml = doc.FirstChildElement("map");
     if (!map_xml) {
         return false;
     }
     size_t map_width = map_xml->IntAttribute("width", 0);
     size_t map_height = map_xml->IntAttribute("height", 0);
-    --map_height; ++map_height; // for werror
     size_t block_width = map_xml->IntAttribute("tilewidth", 0);
     size_t block_height = map_xml->IntAttribute("tileheight", 0);
+    
+    std::cout << "map_width " << map_width << " map_height " << map_height << std::endl;
 
-    tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data");
+    tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data")->FirstChildElement("tile");
     for (size_t col = 0; col < map_height; ++col) {
-        std::vector<map_block> block_stripes(map_width);
+        std::vector<map_block> block_line(map_width);
         for (size_t row = 0; row <  map_width; ++row) {
-            tile_xml = tile_xml->NextSiblingElement("tile");
-            map_block& block = block_stripes[row];
+            map_block& block = block_line[row];
             block.type = static_cast<map_block::block_type>(tile_xml->IntAttribute("gid", 1));
             block.coord[0] = row * block_width;
             block.coord[1] = col * block_height;
+            tile_xml = tile_xml->NextSiblingElement("tile");
         }
-        map_info.emplace_back(std::move(block_stripes));
+        map_info.emplace_back(std::move(block_line));
     }
     
     return true;

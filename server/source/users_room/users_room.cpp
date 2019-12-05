@@ -26,7 +26,7 @@ void users_room::before_session() {
     size_t num_users = num_connected_users();
     if (num_users == max_users) {
         started = true;
-        //manager.start();
+        manager.start();
     }
     
     for (size_t idx = 0; idx < max_users; ++idx) {
@@ -38,9 +38,9 @@ void users_room::before_session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::setting: {
-                        std::cout << "set setting" << std::endl;
-                        //car_type type = msg[message::body];
-                        //manager.set_setting(idx, type);
+                        std::cout << "player " << idx << " set car" << std::endl;
+                        car_type type = msg[message::body];
+                        manager.set_setting(idx, type);
                         break;
                     }
                     case message::ping: {
@@ -84,8 +84,9 @@ void users_room::session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        //move_command comm(msg[message::body]);
-                        //manager.set_setting(idx, comm);
+                        std::cout << "player " << idx << " set command" << std::endl;
+                        move_command comm(msg[message::body]);
+                        manager.set_setting(idx, comm);
                         break;
                     }
                     case message::ping: {
@@ -107,23 +108,22 @@ void users_room::session() {
         }
     }
     
-   /*if (manager.update()) {
+   if (manager.update()) {
         update_user();
     }
     
     if (manager.finish()) {
-        
-         clear room
-         
-    }*/
+        // clear room
+    }
 }
 
 void users_room::update_user() const {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
-            //const user& clt = users[idx];
-            //clt.send(message::pos, manager.get_players_pos());
-            //clt.send(message::rating, manager.get_rating());
+            const user& clt = users[idx];
+            clt.send(message::pos, manager.get_players_pos());
+            clt.send(message::rating, manager.get_rating());
+            clt.send(message::pos_s, manager.get_side_objects_pos());
             // TODO:
             // if (pos update) 
             // if (pos_s update) clt.send(message::pos_s, );

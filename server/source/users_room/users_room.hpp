@@ -26,7 +26,7 @@ class users_room {
     const size_t max_users;
     std::vector<user> users;
     std::vector<bool> connected;
-    //game_manager manager;
+    game_manager manager;
     
  protected:
     virtual void before_session();
