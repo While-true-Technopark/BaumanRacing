@@ -8,7 +8,7 @@ const size_t DOF = DIM + 1;  // x, y, angle
 const size_t MAX_USERS = 4;
 const int8_t NUM_CIRCLE = 1;
 
-const size_t PORT = 5555;
+const size_t PORT = 5558;
 const std::string LOCAL_IP = "127.0.0.1";
 
 const sf::Time PING_TIME_OUT = sf::seconds(30.0f);
