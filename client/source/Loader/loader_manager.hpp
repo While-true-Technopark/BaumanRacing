@@ -12,6 +12,7 @@ class loader_manager : public base_manager, event_throwable {
     int handle_event(const event& e) override;
     event throw_event() override;
     loader_abst* module;
+    ~loader_manager();
 };
 
 #endif  // LOADER_MANAGER_H_

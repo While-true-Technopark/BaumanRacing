@@ -51,10 +51,6 @@ event network_manager::throw_event() {
             ev.type = update_position;
             std::cout << "recieved coords" << std::flush << std::endl;
             players_position coord = msg[message::body];
-            std::cout << "size : " << coord.size() << std::endl;
-            std::cout << "x : " << coord[0][0] << std::flush << std::endl;
-            std::cout << "y : " << coord[0][1] << std::flush << std::endl;
-            std::cout << "angle : " << coord[0][2] << std::flush << std::endl;
             for (int i = 0; i != coord.size(); i++) {
                 ev.data.players_positions.player[i].x = coord[i][0];
                 ev.data.players_positions.player[i].y = coord[i][1];

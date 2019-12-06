@@ -5,6 +5,10 @@ renderer_manager::renderer_manager(renderer_abst *abst) {
     my_client_id = -1;
 }
 
+renderer_manager::~renderer_manager() {
+    delete module;
+}
+
 int renderer_manager::handle_event(const event & e) {
     switch (e.type) {
         case textures_loaded: {
@@ -43,28 +47,21 @@ int renderer_manager::handle_event(const event & e) {
         }
         case game_start: {
             my_client_id = e.data.box.select;
-            std::cout <<  "my_client_id : " << my_client_id << std::endl;
-            struct player_data player = { };
             game_render_data data = { };
-
             module->build_game_scene(data);
             break;
         }
         case update_position: {
-            struct player_data player = { };
             game_render_data data = { };
-
             for (int i = 0; i != data.players.size(); i++) {
                 data.players[i].position = e.data.players_positions.player[i];
             }
-
             std::swap(data.players[0], data.players[my_client_id]);
-
             module->build_game_scene(data);
             break;
         }
         default:
-            return -1;
+            return RNDR_MNGR_WRONG_EVENT_TYPE;
     }
-    return 0;
+    return RNDR_MNGR_OK;
 }

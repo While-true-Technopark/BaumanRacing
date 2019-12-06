@@ -4,6 +4,10 @@ loader_manager::loader_manager(loader_abst* abst) {
     module = abst;
 }
 
+loader_manager::~loader_manager() {
+    delete module;
+}
+
 int loader_manager::handle_event(const event& e) {
     switch (e.type) {
         case application_run:
@@ -25,7 +29,7 @@ event loader_manager::throw_event() {
     e.data.textures.logo = module->get_texture("logo");
     e.data.textures.box = module->get_texture("box");
     e.data.textures.arrow = module->get_texture("arrow");
-    
+
     e.data.textures.main_font = module->get_font("Menlo");
 
     return e;

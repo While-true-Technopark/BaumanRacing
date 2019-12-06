@@ -25,6 +25,8 @@ class renderer_abst {
     virtual int main_menu(size_t box_select) = 0;
     virtual int settings_menu() = 0;
     virtual int wait_scene() = 0;
+    virtual ~renderer_abst() = default;
+
  protected:
     sf::RenderWindow *window;
 };

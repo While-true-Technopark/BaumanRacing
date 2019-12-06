@@ -9,9 +9,14 @@ loader::loader() {
     textures_paths.push_back("static/logo.png");
     textures_paths.push_back("static/box.png");
     textures_paths.push_back("static/arrow.png");
-    
+
     fonts_paths.push_back("static/Menlo-Regular.ttf");
 }
+
+loader::~loader() {
+
+}
+
 
 int loader::load_all() {
     if (loaded) {
@@ -22,7 +27,7 @@ int loader::load_all() {
         texture.loadFromFile(textures_paths[i]);
         textures.push_back(texture);
     }
-    
+
     for (size_t i = 0; i != fonts_paths.size(); i++) {
         sf::Font font;
         font.loadFromFile(fonts_paths[i]);
