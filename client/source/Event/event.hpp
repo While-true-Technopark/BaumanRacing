@@ -1,9 +1,6 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#define WIDTH 1280
-#define HEIGHT 720
-
 #include <iostream>
 #include <string.h>
 #include <SFML/Graphics.hpp>
