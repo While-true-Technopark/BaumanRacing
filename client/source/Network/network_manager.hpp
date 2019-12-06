@@ -13,6 +13,8 @@ class network_manager : public base_manager, event_throwable {
     int handle_event(const event & e);
     event throw_event();
     network_abst *module;
+ private:
+    bool network = false;
 };
 
 #endif  // NETWORK_MANAGER_H_

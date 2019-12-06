@@ -27,56 +27,71 @@ bool application::run() {
         event e_input = input_mngr.throw_event();
         switch (e_input.type) {
             case closing:
+                e_start.type = e_input.type;
+                e_start.data.empty = {};
+                network_mngr.handle_event(e_start);
                 window.close();
                 break;
             case key_pressed:
                 network_mngr.handle_event(e_input);
                 break;
             case main_menu:
-                //std::cout << "keys" << e_input.data.box.select << std::flush;
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
-                renderer_mngr.handle_event(e_start);
+                renderer_mngr.handle_event(e_input);
                 break;
             case connect_to_open:
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
-                renderer_mngr.handle_event(e_start);
+                renderer_mngr.handle_event(e_input);
                 break;
             case create_room:
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
-                renderer_mngr.handle_event(e_start);
+                renderer_mngr.handle_event(e_input);
                 break;
             case connect_to_room:
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
+                renderer_mngr.handle_event(e_input);
+                break;
+            case input_ev: // TODO: обработка строки >256
+                renderer_mngr.handle_event(e_input);
+                break;
+            case connect_create: // TODO: проверка ошибок, если такая комната уже есть
+                network_mngr.handle_event(e_input);
+                e_start.type = show_car;
+                e_start.data.box.select = 0;
                 renderer_mngr.handle_event(e_start);
                 break;
-            case input_ev:
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
+            case connect_join: // TODO: проверка ошибок, если такой комнаты нет
+                network_mngr.handle_event(e_input);
+                e_start.type = show_car;
+                e_start.data.box.select = 0;
                 renderer_mngr.handle_event(e_start);
                 break;
-            case connect_create:
-                e_start.type = e_input.type;
-                e_start.data = e_input.data;
-                network_mngr.handle_event(e_start);
+            case show_car:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case car_chosen:
+                network_mngr.handle_event(e_input);
+                
+                e_start.type = waiting;
+                e_start.data.box.select = 0;
+                renderer_mngr.handle_event(e_start);
                 break;
             default:
                 break;
         }
-//
-//        event e_network = network_mngr.throw_event();
-//
-//        switch (e_network.type) {
-//            case update_position:
-//                renderer_mngr.handle_event(e_network);
-//                //  + game_context
-//                break;
-//            default:
-//                break;
-//        }
+
+        event e_network = network_mngr.throw_event();
+
+        switch (e_network.type) {
+            case update_position:
+                renderer_mngr.handle_event(e_network);
+                //  + game_context
+                break;
+            case waiting:
+                renderer_mngr.handle_event(e_network);
+                break;
+            case game_start:
+                renderer_mngr.handle_event(e_network);
+                break;
+            default:
+                break;
+        }
     }
     return true;
 }

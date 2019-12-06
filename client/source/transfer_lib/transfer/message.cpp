@@ -12,6 +12,7 @@ const std::string message::back = "back";
 json message::packet_to_json(sf::Packet& packet) {
     std::string tmp;
     packet >> tmp;
+    // std::cout << tmp << std::endl;
     return json::parse(tmp);
 }
     

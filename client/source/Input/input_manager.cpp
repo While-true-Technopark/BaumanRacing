@@ -43,6 +43,12 @@ event input_manager::throw_event() {
         current_scene = create_room_scene;
         box = 0;
         input = "";
+    }   else if (keys.keys.enter && current_scene == connect_to_scene && box == 1) {
+        ev_input.type = connect_to_room;
+        ev_input.data.empty = { };
+        current_scene = connect_to_room_scene;
+        box = 0;
+        input = "";
     } else if (!nothing_pressed(keys.keys) && current_scene == connect_to_scene) {
         ev_input.type = connect_to_open;
         if (keys.keys.up && box != 0)
@@ -55,13 +61,38 @@ event input_manager::throw_event() {
         ev_input.type = connect_create;
         strcpy(ev_input.data.input_ev.str, input.c_str());
         //current_scene = create_room_scene;
-        
+        current_scene = car_choose_scene;
         input = "";
-    } else if (current_scene == create_room_scene) {
-        ev_input.type = input_ev;
+    } else if (keys.keys.enter && current_scene == connect_to_room) {
+        ev_input.type = connect_join;
+        strcpy(ev_input.data.input_ev.str, input.c_str());
+        //current_scene = create_room_scene;
+        current_scene = car_choose_scene;
+        input = "";
+    } else if (current_scene == connect_to_room) {
+        ev_input.type = connect_to_room;
         //std::cout << input << "\n" << std::flush;
         input += keys.player_input;
         strcpy(ev_input.data.input_ev.str, input.c_str());
+    } else if (current_scene == create_room_scene) {
+        ev_input.type = create_room;
+        //std::cout << input << "\n" << std::flush;
+        input += keys.player_input;
+        strcpy(ev_input.data.input_ev.str, input.c_str());
+    } else if (keys.keys.enter && current_scene == car_choose_scene) {
+        ev_input.type = car_chosen;
+        ev_input.data.box.select = box;
+        current_scene = waiting_scene;
+    } else if (!nothing_pressed(keys.keys) && current_scene == car_choose_scene) {
+        ev_input.type = show_car;
+        if (keys.keys.left && box == 0)
+            box = 2;
+        else if (keys.keys.left)
+            box--;
+        else if (keys.keys.right)
+            box = (box + 1) % 3;
+
+        ev_input.data.box.select = box;
     }
 
     return ev_input;

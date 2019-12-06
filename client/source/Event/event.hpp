@@ -14,9 +14,11 @@ enum event_type {
     connect_to_open,
     create_room,
     connect_to_room,
+    connect_join,
     new_game,
     name_choose,
     name_chosen,
+    waiting,
     settings_menu,
     show_car,
     car_chosen,
@@ -34,6 +36,7 @@ enum event_type {
     key_pressed,
     closing,
     nothing_keys,
+    nothing_recieve,
     mouse_click,
     textures_loaded, // throw it to get all textures
     key_pressed_menu,
@@ -122,6 +125,7 @@ struct textures_loaded_event {
     sf::Texture* player_4;
     sf::Texture* logo;
     sf::Texture* box;
+    sf::Texture* arrow;
     sf::Font* main_font;
 };
 

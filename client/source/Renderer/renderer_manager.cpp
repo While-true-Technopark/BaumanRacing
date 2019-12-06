@@ -10,23 +10,35 @@ int renderer_manager::handle_event(const event & e) {
             std::vector<sf::Texture*> cars_textures = {
                 e.data.textures.player_1,
                 e.data.textures.player_2,
-                e.data.textures.player_3,
-                e.data.textures.player_4,
+                e.data.textures.player_3
             };
-            module->init(cars_textures, e.data.textures.map, e.data.textures.logo, e.data.textures.box, e.data.textures.main_font);
+            module->init(cars_textures, e.data.textures.map, e.data.textures.logo, e.data.textures.box,
+            e.data.textures.arrow, e.data.textures.main_font);
             break;
         }
         case main_menu: {
             module->main_menu(e.data.box.select);
             break;
         }
-        case connect_to_open: {
+        case connect_to_open: { // окно выбора
             module->connect_to_open(e.data.box.select);
             break;
         }
-        case create_room: {
-             module->create_room();
+        case create_room: { // новая комната
+             module->create_room(&e.data.input_ev.str);
              break;
+        }
+        case connect_to_room: { // существующая
+             module->connect_to_room(&e.data.input_ev.str);
+             break;
+        }
+        case show_car: { // окно выбора машинки
+             module->show_car(e.data.box.select);
+             break;
+        }
+        case waiting: { // окно ожидания
+            module->show_wait(e.data.box.select);
+            break;
         }
         case game_start: {
             struct player_data player = { };
@@ -57,10 +69,6 @@ int renderer_manager::handle_event(const event & e) {
 
             module->build_game_scene(data);
             break;
-        }
-        case input_ev: {
-            //std::cout << e.data.input_ev.str << "\n" << std::flush;
-            module->create_room(&e.data.input_ev.str);
         }
         default:
             return -1;

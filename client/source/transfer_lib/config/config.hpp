@@ -17,6 +17,6 @@ const sf::Time CONNECT_TIME_OUT = 3.0f * PING_TIME_OUT;
 const sf::Time TIME_OUT_BEFORE_START = sf::seconds(5.0f);
 const sf::Time TLL_SIDE_OBJECT = sf::seconds(10.0f);
 
-const std::string STANDARD_MAP_PATH = "../client/static/map.tmx";
+const std::string STANDARD_MAP = "default_maps/map.tmx";
 
 #endif  // CONFIG_H_

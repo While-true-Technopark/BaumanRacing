@@ -5,8 +5,10 @@ loader::loader() {
     textures_paths.push_back("static/map.png");
     textures_paths.push_back("static/car_red.png");
     textures_paths.push_back("static/car_blue.png");
+    textures_paths.push_back("static/car_yellow.png");
     textures_paths.push_back("static/logo.png");
     textures_paths.push_back("static/box.png");
+    textures_paths.push_back("static/arrow.png");
     
     fonts_paths.push_back("static/Menlo-Regular.ttf");
 }
@@ -41,11 +43,17 @@ sf::Texture* loader::get_texture(const std::string & name) {
     if (name == "car_blue") {
         return &textures[2];
     }
-    if (name == "logo") {
+    if (name == "car_yellow") {
         return &textures[3];
     }
-    if (name == "box") {
+    if (name == "logo") {
         return &textures[4];
+    }
+    if (name == "box") {
+        return &textures[5];
+    }
+    if (name == "arrow") {
+        return &textures[6];
     }
     return nullptr;
 }

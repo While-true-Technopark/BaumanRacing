@@ -3,7 +3,6 @@
 
 #include "event.hpp"
 #include "network_abst.hpp"
-#include "message.hpp"
 
 class network : public network_abst {
  public:
@@ -15,8 +14,16 @@ class network : public network_abst {
     struct players_positions_info get_positions();
     bool connect(size_t port, const std::string& ip);
     int create_room(const char (*str)[256]);
+    int join_room(const char (*str)[256]);
     int connect_room(const char (*str)[256]);
+    int set_car(size_t index);
+    void ping();
+    json get();
+    int close();
     void run();
+    template<class type>
+    void send(message::header head, const type& body);
+    json receive();
     struct keys_pressed keys;
     float speed;
  private:
