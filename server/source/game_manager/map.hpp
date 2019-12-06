@@ -48,11 +48,12 @@ class game_map {
     std::array<int8_t, MAX_USERS> num_circle;
     std::array<move_command, MAX_USERS> command;
     struct map_block {
-        enum block_type {road = 1, wall = 2, grass = 3} type;
+        enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
         point coord;
         point block_size;
     };
     std::vector<std::vector<map_block>> map_info;
+    map_block::block_type get_pos_type() { return map_block::block_type::road; };
     //point start_coord;
     //bool started;
     //std::array<bool, MAX_USERS> finished;
