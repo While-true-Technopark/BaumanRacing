@@ -8,7 +8,7 @@ application::application() :
     loader_mngr(new loader()),
     network_mngr(new network()),
     renderer_mngr(new renderer(&window)) {
-        //window.setFramerateLimit(60);
+        window.setFramerateLimit(60);
 }
 
 bool application::run() {

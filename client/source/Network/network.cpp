@@ -2,30 +2,26 @@
 #include "network.hpp"
 
 network::network() {
-    positions.player_1 = {
-        .x = 2400.0,
-        .y = 7260.0,
-        .angle = 0.0,
-    };
-    positions.player_2 = {
-        .x = 2400.0,
-        .y = 7380.0,
-        .angle = 0.0,
-    };
-    positions.player_3 = {
-        .x = 2600.0,
-        .y = 7260.0,
-        .angle = 0.0,
-    };
-    positions.player_4 = {
-        .x = 2600.0,
-        .y = 7380.0,
-        .angle = 0.0,
-    };
 }
 
 network::~network() {
+}
 
+template<class type>
+void network::send(message::header head, const type& body) {
+    json msg = message::get_message(head);
+    msg[message::body] = body;
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+}
+
+json network::receive() {
+    sf::Packet packet;
+    if (socket.receive(packet) == sf::Socket::NotReady) {
+        return json();
+    } else {
+        return message::packet_to_json(packet);
+    }
 }
 
 event network::get_last_package() {
@@ -63,8 +59,8 @@ void network::keys_send(struct keys_pressed keys_input) {
 void network::name_car_send(struct player_info) { }
 
 struct players_positions_info network::get_positions() {
-    positions.player_1.x += speed * cos(M_PI * positions.player_1.angle / 180);
-    positions.player_1.y += speed * sin(M_PI * positions.player_1.angle / 180);
+    // positions.player_1.x += speed * cos(M_PI * positions.player_1.angle / 180);
+    // positions.player_1.y += speed * sin(M_PI * positions.player_1.angle / 180);
     return positions;
 }
 
@@ -78,23 +74,6 @@ bool network::connect(size_t port, const std::string& ip) {
 
     std::cout << "connect\n" << std::flush;
     return true;
-}
-
-template<class type>
-void network::send(message::header head, const type& body) {
-    json msg = message::get_message(head);
-    msg[message::body] = body;
-    sf::Packet packet = message::json_to_packet(msg);
-    socket.send(packet);
-}
-
-json network::receive() {
-    sf::Packet packet;
-    if (socket.receive(packet) == sf::Socket::NotReady) {
-        return json();
-    } else {
-        return message::packet_to_json(packet);
-    }
 }
 
 int network::create_room(const char (*str)[256]) {

@@ -10,6 +10,8 @@ class renderer_manager : public base_manager {
     explicit renderer_manager(renderer_abst *abst);
     int handle_event(const event & e) override;
     renderer_abst *module;
+ private:
+    int my_client_id;
 };
 
 #endif  // RENDERER_MANAGER_H_
