@@ -6,6 +6,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty")
 set(TINYXML_DIR "${3RDPARTY_DIR}/tinyxml2")
+include_directories(${SOURCE_DIR}/transfer_lib/config) # TODO: подключать как отдельную либу
+include_directories(${SOURCE_DIR}/transfer_lib/transfer)
 
 set(CMAKE_CXX_COMPILER "g++")
 
@@ -25,6 +27,8 @@ set(ALL_SOURCES
     ${SOURCE_DIR}/Network/network_manager.cpp
     ${SOURCE_DIR}/Renderer/renderer.cpp
     ${SOURCE_DIR}/Renderer/renderer_manager.cpp
+    ${SOURCE_DIR}/transfer_lib/transfer/message.cpp
+    ${SOURCE_DIR}/transfer_lib/transfer/command.cpp
     ${TINYXML_DIR}/tinyxml2.cpp
 )
 
@@ -63,6 +67,7 @@ set(TEST_EXTERNAL_SOURCES
 
 find_package(Boost REQUIRED)
 find_package(SFML COMPONENTS graphics audio network window system REQUIRED)
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 if (Boost_FOUND AND SFML_FOUND)
 
@@ -73,25 +78,27 @@ if (Boost_FOUND AND SFML_FOUND)
     add_executable(Client.out ${SOURCE_DIR}/main.cpp ${ALL_SOURCES})
     target_link_libraries(Client.out ${Boost_LIBRARIES})
     target_link_libraries(Client.out ${SFML_LIBRARIES})
+    target_link_libraries(Client.out nlohmann_json::nlohmann_json)
+
 
     find_package(GTest REQUIRED)
     include_directories(${GTEST_INCLUDE_DIRS})
 
-    add_executable(Client_test_internal.out ${SOURCE_DIR}/main_test_internal.cpp ${TEST_INTERNAL_SOURCES})
+    #add_executable(Client_test_internal.out ${SOURCE_DIR}/main_test_internal.cpp ${TEST_INTERNAL_SOURCES})
 
-    target_link_libraries(Client_test_internal.out ${GTEST_LIBRARIES})
-    target_link_libraries(Client_test_internal.out pthread)
-    target_link_libraries(Client_test_internal.out gmock)
-    target_link_libraries(Client_test_internal.out ${Boost_LIBRARIES})
-    target_link_libraries(Client_test_internal.out ${SFML_LIBRARIES})
+    #target_link_libraries(Client_test_internal.out ${GTEST_LIBRARIES})
+    #target_link_libraries(Client_test_internal.out pthread)
+    #target_link_libraries(Client_test_internal.out gmock)
+    #target_link_libraries(Client_test_internal.out ${Boost_LIBRARIES})
+    #target_link_libraries(Client_test_internal.out ${SFML_LIBRARIES})
 
-    add_executable(Client_tests_external.out ${SOURCE_DIR}/main_test_external.cpp ${TEST_EXTERNAL_SOURCES})
+    #add_executable(Client_tests_external.out ${SOURCE_DIR}/main_test_external.cpp ${TEST_EXTERNAL_SOURCES})
 
-    target_link_libraries(Client_tests_external.out ${GTEST_LIBRARIES})
-    target_link_libraries(Client_tests_external.out pthread)
-    target_link_libraries(Client_tests_external.out gmock)
-    target_link_libraries(Client_tests_external.out ${Boost_LIBRARIES})
-    target_link_libraries(Client_tests_external.out ${SFML_LIBRARIES})
+    #target_link_libraries(Client_tests_external.out ${GTEST_LIBRARIES})
+    #target_link_libraries(Client_tests_external.out pthread)
+    #target_link_libraries(Client_tests_external.out gmock)
+    #target_link_libraries(Client_tests_external.out ${Boost_LIBRARIES})
+    #target_link_libraries(Client_tests_external.out ${SFML_LIBRARIES})
 
 else()
     if (Boost_FOUND)

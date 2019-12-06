@@ -5,6 +5,7 @@
 #include "base_manager.hpp"
 #include "network_abst.hpp"
 #include "event_throwable.hpp"
+#include "message.hpp"
 
 class network_manager : public base_manager, event_throwable {
  public:
@@ -12,6 +13,8 @@ class network_manager : public base_manager, event_throwable {
     int handle_event(const event & e);
     event throw_event();
     network_abst *module;
+ private:
+    bool network = false;
 };
 
 #endif  // NETWORK_MANAGER_H_

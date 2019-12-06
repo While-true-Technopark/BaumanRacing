@@ -9,6 +9,7 @@ class loader : public loader_abst {
     loader();
     int load_all() override;
     sf::Texture* get_texture(const std::string & name) override;
+    sf::Font* get_font(const std::string & name) override;
 };
 
 #endif  // LOADER_H_

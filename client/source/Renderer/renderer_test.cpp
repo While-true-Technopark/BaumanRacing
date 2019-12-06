@@ -12,12 +12,19 @@ using ::testing::SetArgReferee;
 
 class mock_renderer : public renderer_abst {
  public:
-    MOCK_METHOD2(init, int(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture));
-    MOCK_METHOD1(build_game_scene, int(const game_render_data data));
+    MOCK_METHOD6(init, int(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
+                   sf::Texture* logo_texture, sf::Texture* box_texture,
+                   sf::Texture* arrow_texture, sf::Font *main_font));
+    MOCK_METHOD1(build_game_scene, int(game_render_data data));
+    MOCK_METHOD1(connect_to_open, int(size_t box_select));
+    //MOCK_METHOD1(create_room, int(const char (*str)[256] = &STR256));
+    //MOCK_METHOD1(connect_to_room, int(const char (*str)[256]));
+    MOCK_METHOD1(show_wait, int(size_t waiting));
+    MOCK_METHOD1(show_car, int(size_t index));
     MOCK_METHOD0(car_choose_menu, int());
     MOCK_METHOD0(end_game_menu, int());
     MOCK_METHOD0(lobby_scene, int());
-    MOCK_METHOD0(main_menu, int());
+    MOCK_METHOD1(main_menu, int(size_t box_select));
     MOCK_METHOD0(settings_menu, int());
     MOCK_METHOD0(wait_scene, int());
 };
@@ -71,7 +78,7 @@ TEST(renderer_manager_test, lobby_scene) {
 
 TEST(renderer_manager_test, main_menu) {
     mock_renderer m_renderer;
-    EXPECT_CALL(m_renderer, main_menu()).Times(2);
+    EXPECT_CALL(m_renderer, main_menu(0)).Times(2);
 
     renderer_manager renderer_mngr(&m_renderer);
     EXPECT_EQ(renderer_mngr.handle_event(event(application_run, { .empty = {} })), 0);

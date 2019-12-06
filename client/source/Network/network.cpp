@@ -24,10 +24,20 @@ network::network() {
     };
 }
 
+network::~network() {
+
+}
+
 event network::get_last_package() {
     event ev;
     return ev;
 }
+
+
+void network::ping() {
+    send(message::ping, message::back);
+}
+
 
 void network::keys_send(struct keys_pressed keys_input) {
     keys = keys_input;
@@ -54,3 +64,83 @@ struct players_positions_info network::get_positions() {
     return positions;
 }
 
+bool network::connect(size_t port, const std::string& ip) {
+    if (socket.connect(ip, port) != sf::Socket::Done) {
+        // throw std::runtime_error(std::strerror(errno));
+        std::cout << "no connect\n" << std::flush;
+        return false;
+    }
+    socket.setBlocking(false);
+    
+    std::cout << "connect\n" << std::flush;
+    return true;
+}
+
+template<class type>
+void network::send(message::header head, const type& body) {
+    json msg = message::get_message(head);
+    msg[message::body] = body;
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+}
+
+json network::receive() {
+    sf::Packet packet;
+    if (socket.receive(packet) == sf::Socket::NotReady) {
+        return json();
+    } else {
+        return message::packet_to_json(packet);
+    }
+}
+
+int network::create_room(const char (*str)[256]) {
+    std::cout << "create\n" << std::flush;
+    json msg;
+    std::string room_name(*str);
+    msg = message::get_message(message::create);
+    msg[message::body] = room_name;
+
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+    packet.clear();
+
+    return 0;
+}
+
+int network::set_car(size_t index) {
+    std::cout << "set car\n" << std::flush;
+    car_type model = (car_type)index;
+    send(message::setting, model);
+
+    return 0;
+}
+
+int network::join_room(const char (*str)[256]) {
+    std::cout << "join\n" << std::flush;
+    json msg;
+
+    std::string room_name(*str);
+    msg = message::get_message(message::join);
+
+    msg[message::body] = room_name;
+
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+    packet.clear();
+    
+    return 0;
+}
+
+json network::get() {
+    json msg = receive();
+    return msg;
+}
+
+int network::close() {
+    std::cout << "delete it\n" << std::flush;
+    json msg = message::get_message(message::close);
+    sf::Packet packet = message::json_to_packet(msg);
+    socket.send(packet);
+
+    return 0;
+}

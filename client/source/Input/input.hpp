@@ -10,18 +10,8 @@ class input : public input_abst {
     struct keys_pressed_variants get_pressed_keys();
     void start_control();
     void end_control();
- private:
-    enum scene_types {
-        main_menu,
-        settings,
-        car_choose,
-        lobby,
-        waiting,
-        game,
-        end_game
-    };
-
-    scene_types current_scene;
+private:
+    std::string playerInput;
 };
 
 #endif  // INPUT_H_

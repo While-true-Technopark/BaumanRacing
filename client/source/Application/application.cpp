@@ -2,7 +2,7 @@
 
 application::application() :
     // window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
-    window(sf::VideoMode(1280, 720), "Bauman Racing"),
+    window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
     game_context_mngr(new game_context()),
     input_mngr(new input(&window)),
     loader_mngr(new loader()),
@@ -12,22 +12,65 @@ application::application() :
 }
 
 bool application::run() {
+   
     event e(application_run, { .empty = {} });
     loader_mngr.handle_event(e);
     event loaded = loader_mngr.throw_event();
     renderer_mngr.handle_event(loaded);
 
-    event e_start(game_start, { .empty = {} });
+    event e_start(main_menu, { .empty = {} });
     renderer_mngr.handle_event(e_start);
+//    event e_start(game_start, { .empty = {} });
+//    renderer_mngr.handle_event(e_start);
 
     while (window.isOpen()) {
         event e_input = input_mngr.throw_event();
         switch (e_input.type) {
             case closing:
+                e_start.type = e_input.type;
+                e_start.data.empty = {};
+                network_mngr.handle_event(e_start);
                 window.close();
                 break;
             case key_pressed:
                 network_mngr.handle_event(e_input);
+                break;
+            case main_menu:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case connect_to_open:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case create_room:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case connect_to_room:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case input_ev: // TODO: обработка строки >256
+                renderer_mngr.handle_event(e_input);
+                break;
+            case connect_create: // TODO: проверка ошибок, если такая комната уже есть
+                network_mngr.handle_event(e_input);
+                e_start.type = show_car;
+                e_start.data.box.select = 0;
+                renderer_mngr.handle_event(e_start);
+                break;
+            case connect_join: // TODO: проверка ошибок, если такой комнаты нет
+                network_mngr.handle_event(e_input);
+                e_start.type = show_car;
+                e_start.data.box.select = 0;
+                renderer_mngr.handle_event(e_start);
+                break;
+            case show_car:
+                renderer_mngr.handle_event(e_input);
+                break;
+            case car_chosen:
+                network_mngr.handle_event(e_input);
+                
+                e_start.type = waiting;
+                e_start.data.box.select = 0;
+                renderer_mngr.handle_event(e_start);
                 break;
             default:
                 break;
@@ -39,6 +82,12 @@ bool application::run() {
             case update_position:
                 renderer_mngr.handle_event(e_network);
                 //  + game_context
+                break;
+            case waiting:
+                renderer_mngr.handle_event(e_network);
+                break;
+            case game_start:
+                renderer_mngr.handle_event(e_network);
                 break;
             default:
                 break;
