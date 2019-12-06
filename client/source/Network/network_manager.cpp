@@ -43,16 +43,23 @@ event network_manager::throw_event() {
             if (msg[message::head] == message::ping && msg[message::body] == message::to) {
                 module->ping();
                 std::cout << "send on ping\n" << std::flush;
+                std::cout << msg[message::head] << std::flush;
             } else if (msg[message::head] == message::wait) {
                 ev.type = waiting;
                 ev.data.box.select = msg[message::body];
                 std::cout << "new " << ev.data.box.select << "\n" << std::flush;
-            }  else if (msg[message::head] == message::start) {
+            } else if (msg[message::head] == message::start) {
                 ev.type = game_start;
                 ev.data.box.select = msg[message::body];
                 std::cout << "Let's go!\n" << std::flush;
+            } else if (msg[message::head] == message::pos) {
+                std::cout << "recieved coords" << std::flush << std::endl;
+                players_position coord = msg[message::body];
+                std::cout << "x : " << coord[0][0] << std::flush << std::endl;
+                std::cout << "y : " << coord[0][1] << std::flush << std::endl;
+                std::cout << "angle : " << coord[0][2] << std::flush << std::endl;
             }
     }
-    
+
     return ev;
 }

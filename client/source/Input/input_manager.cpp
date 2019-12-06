@@ -55,7 +55,6 @@ event input_manager::throw_event() {
             box--;
         else if (keys.keys.down && box != 1)
             box++;
-        
         ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == create_room_scene) {
         ev_input.type = connect_create;
@@ -78,7 +77,11 @@ event input_manager::throw_event() {
     } else if (keys.keys.enter && current_scene == car_choose_scene) {
         ev_input.type = car_chosen;
         ev_input.data.box.select = box;
-        current_scene = waiting_scene;
+        ////////////////////////////////----gavroman----////////////////////////////////
+        // Кнопки не отправлялись в application при current_scene == game_scene
+        // заменил строчку ниже, хз если правильно, вроде ничего не сломалось
+        current_scene = game_scene; // current_scene = waiting_scene;
+        ////////////////////////////////----gavroman----////////////////////////////////
     } else if (!nothing_pressed(keys.keys) && current_scene == car_choose_scene) {
         ev_input.type = show_car;
         if (keys.keys.left && box == 0)

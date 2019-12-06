@@ -40,20 +40,24 @@ void network::ping() {
 
 
 void network::keys_send(struct keys_pressed keys_input) {
-    keys = keys_input;
+    std::cout << "╔═keys send═╗" << std::endl;
+    std::cout << "║ up    : "    << keys_input.up    << " ║"<< std::endl;
+    std::cout << "║ down  : "    << keys_input.down  << " ║"<< std::endl;
+    std::cout << "║ left  : "    << keys_input.left  << " ║"<< std::endl;
+    std::cout << "║ right : "    << keys_input.right << " ║"<< std::endl;
+    std::cout << "║ enter : "    << keys_input.enter << " ║"<< std::endl;
+    std::cout << "║ esc   : "    << keys_input.esc   << " ║"<< std::endl;
+    std::cout << "╚═══════════╝" << std::endl;
 
-    if (keys.up) {
-        speed -= 0.5;
-    }
-    if (keys.down) {
-        speed += 0.5;
-    }
-    if (keys.left) {
-        positions.player_1.angle -= 4;
-    }
-    if (keys.right) {
-        positions.player_1.angle += 4;
-    }
+    move_command keys_to_send;
+    keys_to_send.forward = keys_input.up;
+    keys_to_send.back = keys_input.down;
+    keys_to_send.right_turn = keys_input.right;
+    keys_to_send.left_turn = keys_input.left;
+    keys_to_send.run_sprint = keys_input.enter;
+    keys_to_send.throw_side_object = keys_input.esc;
+
+    send(message::command, keys_to_send.get_json());
 }
 
 void network::name_car_send(struct player_info) { }
@@ -71,7 +75,7 @@ bool network::connect(size_t port, const std::string& ip) {
         return false;
     }
     socket.setBlocking(false);
-    
+
     std::cout << "connect\n" << std::flush;
     return true;
 }
@@ -127,7 +131,7 @@ int network::join_room(const char (*str)[256]) {
     sf::Packet packet = message::json_to_packet(msg);
     socket.send(packet);
     packet.clear();
-    
+
     return 0;
 }
 
