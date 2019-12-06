@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "renderer_abst.hpp"
 #include "event.hpp"
-#include "tinyxml2.h"
+#include "tinyxml2.hpp"
 
 class renderer : public renderer_abst {
  public:

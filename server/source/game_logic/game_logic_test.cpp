@@ -71,7 +71,7 @@ class mock_solver : public test_solver {
 TEST(solver, linear) {
     mock_solver sol;
     size_t rows = 0, cols = 0;
-    std::ifstream f("tests/1.txt");
+    std::ifstream f("test_data/1.txt");
     f >> rows >> cols;
     boost::numeric::ublas::matrix<double> matr(rows, cols);
     std::vector<double> x(rows);
