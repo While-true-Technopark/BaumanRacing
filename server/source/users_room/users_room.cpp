@@ -5,7 +5,9 @@ users_room::users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelecto
     , max_users{max_users}
     , users(max_users)
     , connected(max_users, false)
+    , ready(max_users, false)
     , started{false}
+    , finished{false}
 {
     users[0] = std::move(first_clt);
     connected[0] = true;
@@ -23,12 +25,7 @@ void users_room::before_session() {
         return;
     }
     
-    size_t num_users = num_connected_users();
-    if (num_users == max_users) {
-        started = true;
-        manager.start();
-    }
-    
+    bool all_ready = true;
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             user& clt = users[idx];
@@ -37,10 +34,11 @@ void users_room::before_session() {
                 clt.restart_tla();
                 size_t head = msg[message::head];
                 switch (head) {
-                    case message::setting: {
-                        std::cout << "player " << idx << " set car" << std::endl;
+                    case message::setting: { // TODO: vector ready когда выбрал настройки
+                        std::cout << "(room) player " << idx << " set car" << std::endl;
                         car_type type = msg[message::body];
                         manager.set_setting(idx, type);
+                        ready[idx] = true;
                         break;
                     }
                     case message::ping: {
@@ -50,7 +48,9 @@ void users_room::before_session() {
                         break;
                     }
                     case message::close: {
+                        std::cout << "(room) user " << idx << " close connection before game" << std::endl;
                         connected[idx] = false;
+                        ready[idx] = false;
                         selector->remove(clt.get_socket());
                         break;
                     } 
@@ -59,14 +59,23 @@ void users_room::before_session() {
                     }
                 }
             }
-        
-            if (!started) {
-                clt.send(message::wait, num_users);
-            } else {
-                clt.send(message::start, idx);
-            }
             
+            size_t num_users = size();
+            std::cout << "(room) wait " << num_users << " users" << std::endl;
+            clt.send(message::wait, num_users);
         }
+        if (!ready[idx]) {
+            all_ready = false;
+        }
+    }
+    
+    if (all_ready) {
+        std::cout << "(room) game started" << std::endl;
+        for (size_t idx = 0; idx < max_users; ++idx) {
+            users[idx].send(message::start, idx);
+        }
+        started = true;
+        manager.run();
     }
 }
 
@@ -84,7 +93,7 @@ void users_room::session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        std::cout << "player " << idx << " set command" << std::endl;
+                        std::cout << "(room) player " << idx << " set command" << std::endl;
                         move_command comm(msg[message::body]);
                         manager.set_setting(idx, comm);
                         break;
@@ -96,7 +105,9 @@ void users_room::session() {
                         break;
                     }
                     case message::close: {
+                        std::cout << "(room) user " << idx << " close connection during the game" << std::endl;
                         connected[idx] = false;
+                        ready[idx] = false;
                         selector->remove(clt.get_socket());
                         break;
                     } 
@@ -108,12 +119,14 @@ void users_room::session() {
         }
     }
     
-   if (manager.update()) {
+    if (manager.update()) {
+        std::cout << "(room) manager update" << std::endl;
         update_user();
     }
     
     if (manager.finish()) {
-        // clear room
+        std::cout << "(room) game finish" << std::endl;
+        finished = true;
     }
 }
 
@@ -128,12 +141,13 @@ void users_room::update_user() const {
             // if (pos update) 
             // if (pos_s update) clt.send(message::pos_s, );
             // if (raiting update) send(message::rating, );
-            /*if (manager.finished(idx)) {                
+            if (manager.finished(idx)) {                
                 // TODO: send rating
                 clt.send(message::finish, players_rating());
                 //selector.remove(clt.get_socket()); // ???
-                //connected[idx] = false; 
-            }*/
+                //connected[idx] = false;
+                //ready[idx] = false;
+            }
 
         }
     }
@@ -147,6 +161,7 @@ bool users_room::add_user(user&& clt) {
         if (!connected[idx]) {
             users[idx] = std::move(clt);
             connected[idx] = true;
+            std::cout << "(room) add user " << idx << std::endl;
             return true;
         }
     }
@@ -154,20 +169,39 @@ bool users_room::add_user(user&& clt) {
 }
 
 bool users_room::ping() {
+    if (finished) {
+        return false;
+    }
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && !users[idx].ping()) {
             connected[idx] = false;
+            ready[idx] = false;
             selector->remove(users[idx].get_socket());
+            std::cout << "(room) disconnect user " << idx << std::endl;
         }
     }
-    return num_connected_users();
+    return size();
 }
 
-size_t users_room::num_connected_users() const {
+size_t users_room::size() const {
     size_t res = 0;
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             ++res;
+        }
+    }
+    return started && res ? max_users : res;
+}
+
+std::vector<user> users_room::get_users() {
+    std::vector<user> res;
+    if (finished) {
+        for (size_t idx = 0; idx < max_users; ++idx) {
+            if (connected[idx]) {
+                connected[idx] = false;
+                ready[idx] = false;
+                res.emplace_back(std::move(users[idx]));
+            }
         }
     }
     return res;
