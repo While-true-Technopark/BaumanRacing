@@ -4,7 +4,7 @@
 side_object::side_object() 
     : mass{1} 
 {
-    /*coord.fill(0);*/
+    // coord.fill(0);
     size[0] = 0.5;
     size[1] = 0.5;
 }
@@ -12,38 +12,41 @@ side_object::side_object()
 car::car(): car(car_type::medium) {}
 
 car::car(car_type type) {
-    /*coord.fill(0);
-    speed.fill(0);
-    direction.fill(0);*/
+    // coord.fill(0);
     switch (type) {
         case car_type::small: {
-            size[0] = 1;
-            size[1] = 1;
+            size[0] = 100;
+            size[1] = 40;
             mass = 1;
             num_side_objects = 1;
             num_accelerations = 1;
+            max_speed = 10;
             break;
         }
         case car_type::big: {
-            size[0] = 3;
-            size[1] = 3;
+            size[0] = 100;
+            size[1] = 40;
             mass = 3;
             num_side_objects = 3;
             num_accelerations = 3;
+            max_speed = 10;
             break;
         }
         default: { // medium
-            size[0] = 2;
-            size[1] = 2;
+            size[0] = 100;
+            size[1] = 40;
             mass = 2;
             num_side_objects = 2;
-            num_accelerations = 2; 
+            num_accelerations = 2;
+            max_speed = 10;
         }
     }
 }
 
 game_map::game_map() {
     num_circle.fill(-1);
+    prev_pos.fill({0, 0});
+    // TODO: стартовая позиция
     load_map(STANDARD_MAP);
 }
 
@@ -114,5 +117,61 @@ void game_map::set_command(size_t id, const move_command& comm) {
     command[id] = comm;
 }
 
+game_map::map_block::block_type game_map::get_pos_type(/*const position& pos*/) {
+    return map_block::block_type::road; 
+}
+
+/*game_map::map_block::block_type game_map::pos_type(const position& pos) { 
+    return map_block::block_type::road; 
+}*/
+
 void game_map::make_move() {
+    double h = 0.00001;
+    double a = 3;
+    
+    std::array<position, MAX_USERS> curr_pos = get_players_pos();
+    std::array<position, MAX_USERS> next_pos = curr_pos;
+    
+    // (y_{i+1} - 2 * y_{i} + y_{i-1}) / h^2 ~= a''
+    
+    for (size_t idx = 0; idx < MAX_USERS; ++idx) {
+        car& player = players[idx];
+        
+        if (command[idx].forward) {
+            next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] + h * h * a /*/ player.mass*/ * cos(curr_pos[idx][3]);
+            next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] + h * h * a /*/ player.mass*/ * sin(curr_pos[idx][3]);
+            
+            double v_x = (next_pos[idx][0] - curr_pos[idx][0]) / h;
+            double v_y = (next_pos[idx][1] - curr_pos[idx][1]) / h;
+            
+            if (sqrt(v_x * v_x + v_y * v_y) > player.max_speed) {
+                next_pos[idx][0] = curr_pos[idx][0] + player.max_speed * cos(curr_pos[idx][3]);
+                next_pos[idx][1] = curr_pos[idx][1] + player.max_speed * sin(curr_pos[idx][3]);
+            }
+        }
+        
+        if (command[idx].back) {
+            next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] - h * h * a /*/ player.mass*/ * cos(curr_pos[idx][3]);
+            next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] - h * h * a /*/ player.mass*/ * sin(curr_pos[idx][3]);
+            
+            double v_x = (next_pos[idx][0] - curr_pos[idx][0]) / h;
+            double v_y = (next_pos[idx][1] - curr_pos[idx][1]) / h;
+            
+            if (sqrt(v_x * v_x + v_y * v_y) > player.max_speed) {
+                next_pos[idx][0] = curr_pos[idx][0] - player.max_speed * cos(curr_pos[idx][3]);
+                next_pos[idx][1] = curr_pos[idx][1] - player.max_speed * sin(curr_pos[idx][3]);
+            }
+        }
+        
+        // TODO: занос
+        if (command[idx].right_turn) {
+            curr_pos[idx][3] += M_PI / 6.;
+        }
+        if (command[idx].left_turn) {
+            curr_pos[idx][3] -= M_PI / 6.;
+        }
+        
+        prev_pos = curr_pos;
+        player.pos = next_pos[idx];
+    }
 }
