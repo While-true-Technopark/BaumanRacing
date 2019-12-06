@@ -21,8 +21,8 @@ class message {
         
         // game
         command,   // ->
-        pos,     // <-
-        pos_s,   // <-
+        pos,       // <-
+        pos_s,     // <-
         rating,    // <-
         finish,    // <-
         
