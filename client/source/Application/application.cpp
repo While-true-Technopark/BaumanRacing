@@ -8,11 +8,11 @@ application::application() :
     loader_mngr(new loader()),
     network_mngr(new network()),
     renderer_mngr(new renderer(&window)) {
-        //window.setFramerateLimit(60);
+        window.setFramerateLimit(60);
 }
 
 bool application::run() {
-   
+
     event e(application_run, { .empty = {} });
     loader_mngr.handle_event(e);
     event loaded = loader_mngr.throw_event();
@@ -67,7 +67,7 @@ bool application::run() {
                 break;
             case car_chosen:
                 network_mngr.handle_event(e_input);
-                
+
                 e_start.type = waiting;
                 e_start.data.box.select = 0;
                 renderer_mngr.handle_event(e_start);

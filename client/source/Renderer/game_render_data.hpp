@@ -6,22 +6,14 @@
 
 struct player_data {
     player_position_info position;
-    int player_id;
-    int player_lap;
-    int player_car_id;
-    int player_race_position;
-};
-
-struct players_data {
-    player_data player_1;
-    player_data player_2;
-    player_data player_3;
-    player_data player_4;
+    int id;
+    int lap;
+    int car_id;
+    int race_position;
 };
 
 struct game_render_data {
-    // players_data players;
-    std::vector<player_data> players;
+    std::array<player_data, MAX_USERS> players;
 };
 
 #endif  // GAME_RENDER_DATA_H_

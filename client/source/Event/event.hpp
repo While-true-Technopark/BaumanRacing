@@ -5,6 +5,8 @@
 #include <string.h>
 #include <SFML/Graphics.hpp>
 
+#include "config.hpp"
+
 enum event_type {
     application_run,
     main_menu,
@@ -51,10 +53,7 @@ struct player_info {
 };
 
 struct players_info {
-    player_info player_1;
-    player_info player_2;
-    player_info player_3;
-    player_info player_4;
+    std::array<player_info, MAX_USERS> player;
 };
 
 struct lobby_timer_event {
@@ -72,10 +71,7 @@ struct player_position_info {
 };
 
 struct players_positions_info {
-    player_position_info player_1;
-    player_position_info player_2;
-    player_position_info player_3;
-    player_position_info player_4;
+    std::array<player_position_info, MAX_USERS> player;
 };
 
 struct keys_pressed {
@@ -144,8 +140,8 @@ union event_data {
     game_results_event       game_results;
     empty_event              empty;
     textures_loaded_event    textures;
-    info_select    box;
-    input_data input_ev;
+    info_select              box;
+    input_data               input_ev;
 };
 
 class event {

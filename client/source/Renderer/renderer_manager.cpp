@@ -2,6 +2,7 @@
 
 renderer_manager::renderer_manager(renderer_abst *abst) {
     module = abst;
+    my_client_id = -1;
 }
 
 int renderer_manager::handle_event(const event & e) {
@@ -41,12 +42,10 @@ int renderer_manager::handle_event(const event & e) {
             break;
         }
         case game_start: {
+            my_client_id = e.data.box.select;
+            std::cout <<  "my_client_id : " << my_client_id << std::endl;
             struct player_data player = { };
             game_render_data data = { };
-            data.players.push_back(player);
-            data.players.push_back(player);
-            data.players.push_back(player);
-            data.players.push_back(player);
 
             module->build_game_scene(data);
             break;
@@ -55,17 +54,11 @@ int renderer_manager::handle_event(const event & e) {
             struct player_data player = { };
             game_render_data data = { };
 
-            player = { .position = e.data.players_positions.player_1 };
-            data.players.push_back(player);
+            for (int i = 0; i != data.players.size(); i++) {
+                data.players[i].position = e.data.players_positions.player[i];
+            }
 
-            player = { .position = e.data.players_positions.player_2 };
-            data.players.push_back(player);
-
-            player = { .position = e.data.players_positions.player_3 };
-            data.players.push_back(player);
-
-            player = { .position = e.data.players_positions.player_4 };
-            data.players.push_back(player);
+            std::swap(data.players[0], data.players[my_client_id]);
 
             module->build_game_scene(data);
             break;
