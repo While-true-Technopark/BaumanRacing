@@ -5,7 +5,7 @@
 #define HEIGHT 720
 
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <SFML/Graphics.hpp>
 
 enum event_type {

@@ -60,23 +60,19 @@ event input_manager::throw_event() {
     } else if (keys.keys.enter && current_scene == create_room_scene) {
         ev_input.type = connect_create;
         strcpy(ev_input.data.input_ev.str, input.c_str());
-        //current_scene = create_room_scene;
         current_scene = car_choose_scene;
         input = "";
     } else if (keys.keys.enter && current_scene == connect_to_room) {
         ev_input.type = connect_join;
         strcpy(ev_input.data.input_ev.str, input.c_str());
-        //current_scene = create_room_scene;
         current_scene = car_choose_scene;
         input = "";
     } else if (current_scene == connect_to_room) {
         ev_input.type = connect_to_room;
-        //std::cout << input << "\n" << std::flush;
         input += keys.player_input;
         strcpy(ev_input.data.input_ev.str, input.c_str());
     } else if (current_scene == create_room_scene) {
         ev_input.type = create_room;
-        //std::cout << input << "\n" << std::flush;
         input += keys.player_input;
         strcpy(ev_input.data.input_ev.str, input.c_str());
     } else if (keys.keys.enter && current_scene == car_choose_scene) {
