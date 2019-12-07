@@ -19,7 +19,7 @@ server::~server() {
 
 void server::run() {
     while (true) {
-        if (selector->wait(PING_TIME_OUT)) {
+        if (selector->wait(WAIT_TIME_OUT)) {
             if (selector->isReady(listener)) {
                 add_guest();
             } else {

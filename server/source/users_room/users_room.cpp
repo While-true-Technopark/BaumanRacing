@@ -121,10 +121,13 @@ void users_room::session() {
         }
     }
 
-    update_user();
+    // update_user();
 }
 
 void users_room::update_user() {
+    if (!started) {
+        return;
+    }
     std::cout << "(room) manager update" << std::endl;
     manager.update();
     for (size_t idx = 0; idx < max_users; ++idx) {
@@ -173,6 +176,7 @@ bool users_room::ping() {
     if (finished) {
         return false;
     }
+    update_user();
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && !users[idx].ping()) {
             connected[idx] = false;
