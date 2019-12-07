@@ -5,13 +5,11 @@
 #include "renderer_abst.hpp"
 #include "event.hpp"
 
+#define RNDR_OK 0
+
 class renderer : public renderer_abst {
  public:
     explicit renderer(sf::RenderWindow *win);
-
-    //int init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
-    //               sf::Texture* logo_texture, sf::Texture* box_texture,
-    //               sf::Texture* arrow_texture, sf::Font *main_font) override;
     int init(init_data data) override;
     int build_game_scene(game_render_data data) override;
     int car_choose_menu() override;
@@ -30,7 +28,6 @@ class renderer : public renderer_abst {
  private:
     sf::Vector2u window_size;
 
-    // sf::Font main_font;
     struct sprite_props {
         sf::Texture* texture;
         bool centered;
@@ -43,7 +40,6 @@ class renderer : public renderer_abst {
     sf::Sprite box;
     sf::Sprite logo;
     sf::Sprite map;
-    // sf::Texture map_texture;
     sf::View view;
     std::vector<sf::Sprite> cars_choose;
     std::vector<sf::Sprite> players;
@@ -51,7 +47,7 @@ class renderer : public renderer_abst {
     struct text_props {
         sf::Color fill_color;
         sf::Font* font;
-        bool centered; // "top-left", "center"
+        bool centered;
         sf::Vector2f position;
         std::string string;
     };

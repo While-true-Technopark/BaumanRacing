@@ -12,11 +12,7 @@ renderer_manager::~renderer_manager() {
 int renderer_manager::handle_event(const event & e) {
     switch (e.type) {
         case textures_loaded: {
-            std::vector<sf::Texture*> cars_textures = {
-                e.data.textures.player_1,
-                e.data.textures.player_2,
-                e.data.textures.player_3
-            };
+            std::vector<sf::Texture*> cars_textures(e.data.textures.players.begin(), e.data.textures.players.end());
             module->init({
                 cars_textures,
                 e.data.textures.map,

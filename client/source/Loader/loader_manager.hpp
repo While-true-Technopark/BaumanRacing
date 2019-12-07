@@ -6,6 +6,9 @@
 #include "event_throwable.hpp"
 #include "loader_abst.hpp"
 
+#define LDR_MNGR_OK 0
+#define LDR_MNGR_WRONG_EVENT_TYPE -1
+
 class loader_manager : public base_manager, event_throwable {
  public:
     explicit loader_manager(loader_abst* abst);

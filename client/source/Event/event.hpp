@@ -111,11 +111,8 @@ struct game_results_event {
 struct empty_event {};
 
 struct textures_loaded_event {
+    std::array<sf::Texture*, CARS_TEXTURES_NUMBER> players;
     sf::Texture* map;
-    sf::Texture* player_1;
-    sf::Texture* player_2;
-    sf::Texture* player_3;
-    sf::Texture* player_4;
     sf::Texture* logo;
     sf::Texture* box;
     sf::Texture* arrow;

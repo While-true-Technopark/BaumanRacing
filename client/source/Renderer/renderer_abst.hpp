@@ -10,9 +10,6 @@
 
 class renderer_abst {
  public:
-    // virtual int init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
-    //                sf::Texture* logo_texture, sf::Texture* box_texture,
-    //                sf::Texture* arrow_texture, sf::Font *main_font) = 0;
     virtual int init(init_data data) = 0;
     virtual int build_game_scene(game_render_data data) = 0;
     virtual int connect_to_open(size_t box_select) = 0;
