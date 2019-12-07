@@ -10,13 +10,13 @@ renderer::renderer(sf::RenderWindow* win) {
 
 renderer::~renderer() {}
 
-int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
-                   sf::Texture* logo_texture, sf::Texture* box_texture,
-                   sf::Texture* arrow_texture, sf::Font *main_font) {
+int renderer::init(init_data data) {
+// int renderer::init(std::vector<sf::Texture*> data.cars_textures, sf::Texture* data.map_texture,
+//                    sf::Texture* data.logo_texture, sf::Texture* data.box_texture,data.//                    sf::Texture* arrow_texture, sf::Font *main_font) {
 
     play_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 244),
         "Play"
@@ -24,7 +24,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     settings_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 344),
         "Settings"
@@ -32,7 +32,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     new_room_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 244),
         "Create new room"
@@ -40,7 +40,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     connect_to_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 344),
         "Connect to existing room"
@@ -48,7 +48,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     enter_new_name_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 244),
         "Enter name of new room"
@@ -56,7 +56,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     enter_exists_name_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 244),
         "Enter name of existing room"
@@ -64,7 +64,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     waiting_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "topleft",
         sf::Vector2f(window_size.x / 2, 344),
         ""
@@ -72,7 +72,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     input_text = build_text({
         sf::Color::White,
-        main_font,
+        data.main_font,
         "center",
         sf::Vector2f(window_size.x / 2, 344),
         ""
@@ -80,19 +80,19 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
 
     for (size_t i = 0; i != 3; i++) { // TODO gavroman: Сделать загрузку тесктур в спрайты согласно данным с сервера
         if (i < 3) {
-            sf::Sprite car(*cars_textures[i]);
-            car.setOrigin(cars_textures[i]->getSize().x / 2, cars_textures[i]->getSize().y / 2);
+            sf::Sprite car(*data.cars_textures[i]);
+            car.setOrigin(data.cars_textures[i]->getSize().x / 2, data.cars_textures[i]->getSize().y / 2);
             players.push_back(car);
         } else {
-            sf::Sprite car(*cars_textures[1]);
-            car.setOrigin(cars_textures[1]->getSize().x / 2, cars_textures[1]->getSize().y / 2);
+            sf::Sprite car(*data.cars_textures[1]);
+            car.setOrigin(data.cars_textures[1]->getSize().x / 2, data.cars_textures[1]->getSize().y / 2);
             players.push_back(car);
         }
     }
 
-    for (size_t i = 0; i != cars_textures.size(); i++) {
+    for (size_t i = 0; i != data.cars_textures.size(); i++) {
         cars_choose.push_back(build_sprite({
-            cars_textures[i],
+            data.cars_textures[i],
             true,
             sf::Vector2f(window_size.x / 2, window_size.y / 2),
             90.f,
@@ -101,7 +101,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
     }
 
     map = build_sprite({
-       map_texture,
+       data.map_texture,
        false,
        sf::Vector2f(0, 0),
        0.f,
@@ -109,7 +109,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
     });
 
     logo = build_sprite({
-        logo_texture,
+        data.logo_texture,
         true,
         sf::Vector2f(window_size.x / 2, 50),
         0.f,
@@ -117,7 +117,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
     });
 
     arrow_l = build_sprite({
-        arrow_texture,
+        data.arrow_texture,
         true,
         sf::Vector2f(140, window_size.y / 2),
         0.f,
@@ -125,7 +125,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
     });
 
     arrow_r = build_sprite({
-        arrow_texture,
+        data.arrow_texture,
         true,
         sf::Vector2f(window_size.x - 140, window_size.y / 2),
         180.f,
@@ -133,7 +133,7 @@ int renderer::init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_tex
     });
 
     box = build_sprite({
-        box_texture,
+        data.box_texture,
         true,
         sf::Vector2f(0, 0),
         0.f,

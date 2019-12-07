@@ -146,9 +146,9 @@ void users_room::update_user() const {
             pos[0][0] = 1234;
             pos[0][1] = 1234;
             pos[0][2] = 1234;
-            pos[1][0] = 1134;
-            pos[1][1] = 1400;
-            pos[1][2] = 32;
+            // pos[1][0] = 1134;
+            // pos[1][1] = 1400;
+            // pos[1][2] = 32;
             clt.send(message::pos, pos);
             clt.send(message::rating, manager.get_rating());
             clt.send(message::pos_s, manager.get_side_objects_pos());

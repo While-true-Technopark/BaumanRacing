@@ -8,9 +8,11 @@
 class renderer : public renderer_abst {
  public:
     explicit renderer(sf::RenderWindow *win);
-    int init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
-                   sf::Texture* logo_texture, sf::Texture* box_texture,
-                   sf::Texture* arrow_texture, sf::Font *main_font) override;
+
+    //int init(std::vector<sf::Texture*> cars_textures, sf::Texture* map_texture,
+    //               sf::Texture* logo_texture, sf::Texture* box_texture,
+    //               sf::Texture* arrow_texture, sf::Font *main_font) override;
+    int init(init_data data) override;
     int build_game_scene(game_render_data data) override;
     int car_choose_menu() override;
     int connect_to_open(size_t box_select) override;

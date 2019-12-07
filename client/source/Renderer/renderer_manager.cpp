@@ -17,8 +17,14 @@ int renderer_manager::handle_event(const event & e) {
                 e.data.textures.player_2,
                 e.data.textures.player_3
             };
-            module->init(cars_textures, e.data.textures.map, e.data.textures.logo, e.data.textures.box,
-            e.data.textures.arrow, e.data.textures.main_font);
+            module->init({
+                cars_textures,
+                e.data.textures.map,
+                e.data.textures.logo,
+                e.data.textures.box,
+                e.data.textures.arrow,
+                e.data.textures.main_font
+            });
             break;
         }
         case main_menu: {

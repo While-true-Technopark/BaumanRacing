@@ -12,7 +12,6 @@ application::application() :
 }
 
 bool application::run() {
-
     event e(application_run, { .empty = {} });
     loader_mngr.handle_event(e);
     event loaded = loader_mngr.throw_event();

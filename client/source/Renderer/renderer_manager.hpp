@@ -6,7 +6,7 @@
 #include "renderer_abst.hpp"
 
 #define RNDR_MNGR_OK 0
-#define RNDR_MNGR_WRONG_EVENT_TYPE 0
+#define RNDR_MNGR_WRONG_EVENT_TYPE -1
 
 class renderer_manager : public base_manager {
  public:
