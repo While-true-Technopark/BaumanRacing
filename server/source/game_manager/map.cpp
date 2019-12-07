@@ -4,7 +4,7 @@
 side_object::side_object() 
     : mass{1} 
 {
-    // coord.fill(0);
+    pos.fill(0);
     size[0] = 0.5;
     size[1] = 0.5;
 }
@@ -12,7 +12,7 @@ side_object::side_object()
 car::car(): car(car_type::medium) {}
 
 car::car(car_type type) {
-    // coord.fill(0);
+    pos.fill(0);
     switch (type) {
         case car_type::small: {
             size[0] = 100;
@@ -20,7 +20,9 @@ car::car(car_type type) {
             mass = 1;
             num_side_objects = 1;
             num_accelerations = 1;
-            max_speed = 10;
+            
+            speed = 0;
+            max_speed = 30;
             break;
         }
         case car_type::big: {
@@ -29,7 +31,9 @@ car::car(car_type type) {
             mass = 3;
             num_side_objects = 3;
             num_accelerations = 3;
-            max_speed = 10;
+            
+            speed = 0;
+            max_speed = 30;
             break;
         }
         default: { // medium
@@ -38,14 +42,16 @@ car::car(car_type type) {
             mass = 2;
             num_side_objects = 2;
             num_accelerations = 2;
-            max_speed = 10;
+            
+            speed = 0;
+            max_speed = 30;
         }
     }
 }
 
 game_map::game_map() {
     num_circle.fill(-1);
-    prev_pos.fill({0, 0});
+    //prev_pos.fill({0, 0});
     // TODO: стартовая позиция
     load_map(STANDARD_MAP);
 }
@@ -126,52 +132,69 @@ game_map::map_block::block_type game_map::get_pos_type(/*const position& pos*/) 
 }*/
 
 void game_map::make_move() {
-    double h = 0.00001;
-    double a = 3;
+    //double h = 0.1;
+    double a = 1;
+    double angle = 4;
     
-    std::array<position, MAX_USERS> curr_pos = get_players_pos();
-    std::array<position, MAX_USERS> next_pos = curr_pos;
+    //std::array<position, MAX_USERS> curr_pos = get_players_pos();
+    //std::array<position, MAX_USERS> next_pos = curr_pos;
     
     // (y_{i+1} - 2 * y_{i} + y_{i-1}) / h^2 ~= a''
     
     for (size_t idx = 0; idx < MAX_USERS; ++idx) {
         car& player = players[idx];
+        move_command& comm = command[idx];
         
-        if (command[idx].forward) {
-            next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] + h * h * a /*/ player.mass*/ * cos(curr_pos[idx][3]);
-            next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] + h * h * a /*/ player.mass*/ * sin(curr_pos[idx][3]);
-            
-            double v_x = (next_pos[idx][0] - curr_pos[idx][0]) / h;
-            double v_y = (next_pos[idx][1] - curr_pos[idx][1]) / h;
-            
-            if (sqrt(v_x * v_x + v_y * v_y) > player.max_speed) {
-                next_pos[idx][0] = curr_pos[idx][0] + player.max_speed * cos(curr_pos[idx][3]);
-                next_pos[idx][1] = curr_pos[idx][1] + player.max_speed * sin(curr_pos[idx][3]);
-            }
+        if (comm.back) {
+            double next_speed = player.speed + a;
+            player.speed = next_speed < player.max_speed ? next_speed : player.max_speed;
+        } else if (comm.forward) {
+            double next_speed = player.speed - a;
+            player.speed = -next_speed < player.max_speed ? next_speed : -player.max_speed;
+        } else {
+            int8_t sign = player.speed > 1e-7 ? 1 : -1;
+            player.speed -= sign * a / 2.;
         }
         
-        if (command[idx].back) {
-            next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] - h * h * a /*/ player.mass*/ * cos(curr_pos[idx][3]);
-            next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] - h * h * a /*/ player.mass*/ * sin(curr_pos[idx][3]);
-            
-            double v_x = (next_pos[idx][0] - curr_pos[idx][0]) / h;
-            double v_y = (next_pos[idx][1] - curr_pos[idx][1]) / h;
-            
-            if (sqrt(v_x * v_x + v_y * v_y) > player.max_speed) {
-                next_pos[idx][0] = curr_pos[idx][0] - player.max_speed * cos(curr_pos[idx][3]);
-                next_pos[idx][1] = curr_pos[idx][1] - player.max_speed * sin(curr_pos[idx][3]);
-            }
-        }
+        player.pos[0] += player.speed * cos(M_PI * player.pos[2] / 180.);
+        player.pos[1] += player.speed * sin(M_PI * player.pos[2] / 180.);
         
+        //double v_prev_x = (curr_pos[idx][0] - prev_pos[idx][0]) / h;
+        //double v_prev_y = (curr_pos[idx][1] - prev_pos[idx][1]) / h;
+        
+        //if (command[idx].forward) {
+        //    // player.mass
+       //     v_prev_x += h * a * cos(M_PI * curr_pos[idx][2] / 180.);
+       //     v_prev_y += h * a * sin(M_PI * curr_pos[idx][2] / 180.);
+       // }
+       // if (command[idx].back) {
+       //     v_prev_x -= h * a * cos(M_PI * curr_pos[idx][2] / 180.);
+       //     v_prev_y -= h * a * sin(M_PI * curr_pos[idx][2] / 180.);
+       // }
+        //else if (v_prev < 1e-5 && command[idx].forward) || (v_prev > 1e-5 && command[idx].back) {
+        //    next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] - h * h * a * cos(M_PI * curr_pos[idx][2] / 180.);
+        //    next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] - h * h * a * sin(M_PI * curr_pos[idx][2] / 180.);
+        //}
+        //next_pos[idx][0] += h * v_prev_x;
+        //next_pos[idx][1] += h * v_prev_y;
+        
+        //if (v > player.max_speed) {
+        //    next_pos[idx][0] = curr_pos[idx][0] + player.max_speed * cos(M_PI * curr_pos[idx][2] / 180.);
+        //    next_pos[idx][1] = curr_pos[idx][1] + player.max_speed * sin(M_PI * curr_pos[idx][2] / 180.);
+        //}
+
         // TODO: занос
         if (command[idx].right_turn) {
-            curr_pos[idx][3] += M_PI / 6.;
+            player.pos[2] += angle;
         }
         if (command[idx].left_turn) {
-            curr_pos[idx][3] -= M_PI / 6.;
+            player.pos[2] -= angle;
         }
         
-        prev_pos = curr_pos;
-        player.pos = next_pos[idx];
+        
+        
+        //player.pos = next_pos[idx];
     }
+    
+    //prev_pos = curr_pos;
 }

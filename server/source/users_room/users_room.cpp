@@ -75,12 +75,12 @@ void users_room::before_session() {
             const user& clt = users[idx];
             clt.send(message::start, idx);
             players_position pos = manager.get_players_pos();
-            pos[0][0] = 1000;
-            pos[0][1] = 1000;
-            pos[0][2] = 50;
-            pos[1][0] = 1100;
-            pos[1][1] = 1000;
-            pos[1][2] = 20;
+            pos[0][0] = 1234;
+            pos[0][1] = 1234;
+            pos[0][2] = 1234;
+            pos[1][0] = 1134;
+            pos[1][1] = 1400;
+            pos[1][2] = 32;
             clt.send(message::pos, pos);
         }
         started = true;
@@ -137,14 +137,7 @@ void users_room::update_user() {
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             const user& clt = users[idx];
-            players_position pos = manager.get_players_pos();
-            pos[0][0] = 1234;
-            pos[0][1] = 1234;
-            pos[0][2] = 1234;
-            pos[1][0] = 1134;
-            pos[1][1] = 1400;
-            pos[1][2] = 32;
-            clt.send(message::pos, pos);
+            clt.send(message::pos, manager.get_players_pos());
             clt.send(message::rating, manager.get_rating());
             clt.send(message::pos_s, manager.get_side_objects_pos());
             // TODO:

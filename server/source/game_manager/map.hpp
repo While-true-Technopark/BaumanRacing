@@ -19,6 +19,7 @@ struct car {
     double mass;
     size_t num_side_objects;
     size_t num_accelerations;
+    double speed;
     double max_speed;
     // double handleability;
 };
@@ -41,7 +42,7 @@ class game_map {
     
  private:
     std::array<car, MAX_USERS> players;
-    std::array<position, MAX_USERS> prev_pos; // for acceleration
+    //std::array<position, MAX_USERS> prev_pos; // for acceleration
     
     std::vector<side_object> side_objects;
     std::array<int8_t, MAX_USERS> num_circle;
