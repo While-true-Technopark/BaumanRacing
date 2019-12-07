@@ -15,15 +15,13 @@ struct car {
     car();
     explicit car(car_type type);
     position pos;
-    position speed;
-    //point direction;
     point size; // 0 - width, 1 - height
     double mass;
     size_t num_side_objects;
     size_t num_accelerations;
+    double speed;
+    double max_speed;
     // double handleability;
-    /*double max_speed;
-    double max_acceleration;*/
 };
 
 class game_map {
@@ -44,15 +42,18 @@ class game_map {
     
  private:
     std::array<car, MAX_USERS> players;
+    //std::array<position, MAX_USERS> prev_pos; // for acceleration
+    
     std::vector<side_object> side_objects;
     std::array<int8_t, MAX_USERS> num_circle;
     std::array<move_command, MAX_USERS> command;
     struct map_block {
-        enum block_type {road = 1, wall = 2, grass = 3} type;
+        enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
         point coord;
         point block_size;
     };
     std::vector<std::vector<map_block>> map_info;
+    map_block::block_type get_pos_type(/*const position& pos*/);
     //point start_coord;
     //bool started;
     //std::array<bool, MAX_USERS> finished;

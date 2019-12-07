@@ -35,12 +35,10 @@ bool game_manager::finish() {
     return true;
 }
 
-bool game_manager::update() {
+void game_manager::update() {
     if (start && wait_before_start.getElapsedTime() > TIME_OUT_BEFORE_START && !finish()) {
         map.make_move();
-        return true;
     }
-    return false;
 }
 
 void game_manager::set_setting(size_t id, car_type type) {

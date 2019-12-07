@@ -34,7 +34,7 @@ void users_room::before_session() {
                 clt.restart_tla();
                 size_t head = msg[message::head];
                 switch (head) {
-                    case message::setting: { // TODO: vector ready когда выбрал настройки
+                    case message::setting: {
                         std::cout << "(room) player " << idx << " set car" << std::endl;
                         car_type type = msg[message::body];
                         manager.set_setting(idx, type);
@@ -72,7 +72,16 @@ void users_room::before_session() {
     if (all_ready) {
         std::cout << "(room) game started" << std::endl;
         for (size_t idx = 0; idx < max_users; ++idx) {
-            users[idx].send(message::start, idx);
+            const user& clt = users[idx];
+            clt.send(message::start, idx);
+            players_position pos = manager.get_players_pos();
+            pos[0][0] = 1234;
+            pos[0][1] = 1234;
+            pos[0][2] = 1234;
+            pos[1][0] = 1134;
+            pos[1][1] = 1400;
+            pos[1][2] = 32;
+            clt.send(message::pos, pos);
         }
         started = true;
         manager.run();
@@ -95,14 +104,6 @@ void users_room::session() {
                     case message::command: {
                         std::cout << "(room) player " << idx << " set command" << std::endl;
                         move_command comm(msg[message::body]);
-                        std::cout << "╔═keys send═╗" << std::endl;
-                        std::cout << "║ up    : "    << comm.forward << " ║"<< std::endl;
-                        std::cout << "║ down  : "    << comm.back << " ║"<< std::endl;
-                        std::cout << "║ left  : "    << comm.left_turn << " ║"<< std::endl;
-                        std::cout << "║ right : "    << comm.right_turn << " ║"<< std::endl;
-                        std::cout << "║ enter : "    << comm.run_sprint << " ║"<< std::endl;
-                        std::cout << "║ esc   : "    << comm.throw_side_object << " ║"<< std::endl;
-                        std::cout << "╚═══════════╝" << std::endl;
                         manager.set_setting(idx, comm);
                         break;
                     }
@@ -127,29 +128,16 @@ void users_room::session() {
         }
     }
 
-    if (manager.update()) {
-        std::cout << "(room) manager update" << std::endl;
-        update_user();
-    }
-
-    if (manager.finish()) {
-        std::cout << "(room) game finish" << std::endl;
-        finished = true;
-    }
+    update_user();
 }
 
-void users_room::update_user() const {
+void users_room::update_user() {
+    std::cout << "(room) manager update" << std::endl;
+    manager.update();
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             const user& clt = users[idx];
-            players_position pos;
-            pos[0][0] = 1234;
-            pos[0][1] = 1234;
-            pos[0][2] = 1234;
-            pos[1][0] = 1134;
-            pos[1][1] = 1400;
-            pos[1][2] = 32;
-            clt.send(message::pos, pos);
+            clt.send(message::pos, manager.get_players_pos());
             clt.send(message::rating, manager.get_rating());
             clt.send(message::pos_s, manager.get_side_objects_pos());
             // TODO:
@@ -165,6 +153,11 @@ void users_room::update_user() const {
             }
 
         }
+    }
+    
+    if (manager.finish()) {
+        std::cout << "(room) game finish" << std::endl;
+        finished = true;
     }
 }
 
