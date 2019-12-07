@@ -7,14 +7,6 @@
 class users_room {
  public:
     users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelector>& selector, size_t max_users);
-
-    /*
-    не работает emplace в std::map, если оставить это
-    virtual ~users_room() = default;
-    users_room(const users_room&) = delete;
-    users_room& operator=(const users_room&) = delete;
-    */
-    
     void event_handler();
     bool add_user(user&& clt);
     bool ping();

@@ -7,6 +7,7 @@ game_manager::game_manager()
 void game_manager::run() {
     wait_before_start.restart();
     start = true;
+    map.set_start_pos();
 }
 
 players_position game_manager::get_players_pos() const {
