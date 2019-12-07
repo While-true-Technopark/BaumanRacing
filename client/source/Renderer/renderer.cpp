@@ -11,9 +11,6 @@ renderer::renderer(sf::RenderWindow* win) {
 renderer::~renderer() {}
 
 int renderer::init(init_data data) {
-// int renderer::init(std::vector<sf::Texture*> data.cars_textures, sf::Texture* data.map_texture,
-//                    sf::Texture* data.logo_texture, sf::Texture* data.box_texture,data.//                    sf::Texture* arrow_texture, sf::Font *main_font) {
-
     play_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -21,7 +18,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 244),
         "Play"
     });
-
     settings_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -29,7 +25,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 344),
         "Settings"
     });
-
     new_room_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -37,7 +32,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 244),
         "Create new room"
     });
-
     connect_to_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -45,7 +39,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 344),
         "Connect to existing room"
     });
-
     enter_new_name_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -53,7 +46,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 244),
         "Enter name of new room"
     });
-
     enter_exists_name_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -61,7 +53,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 244),
         "Enter name of existing room"
     });
-
     waiting_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -69,7 +60,6 @@ int renderer::init(init_data data) {
         sf::Vector2f(window_size.x / 2, 344),
         ""
     });
-
     input_text = build_text({
         sf::Color::White,
         data.main_font,
@@ -89,7 +79,6 @@ int renderer::init(init_data data) {
             players.push_back(car);
         }
     }
-
     for (size_t i = 0; i != data.cars_textures.size(); i++) {
         cars_choose.push_back(build_sprite({
             data.cars_textures[i],
@@ -107,7 +96,6 @@ int renderer::init(init_data data) {
        0.f,
        sf::Vector2f(1, 1)
     });
-
     logo = build_sprite({
         data.logo_texture,
         true,
@@ -115,7 +103,6 @@ int renderer::init(init_data data) {
         0.f,
         sf::Vector2f(1, 1)
     });
-
     arrow_l = build_sprite({
         data.arrow_texture,
         true,
@@ -123,7 +110,6 @@ int renderer::init(init_data data) {
         0.f,
         sf::Vector2f(1, 1)
     });
-
     arrow_r = build_sprite({
         data.arrow_texture,
         true,
@@ -131,7 +117,6 @@ int renderer::init(init_data data) {
         180.f,
         sf::Vector2f(1, 1)
     });
-
     box = build_sprite({
         data.box_texture,
         true,
@@ -220,8 +205,8 @@ int renderer::create_room(const char (*str)[256]) {
 
     std::string s(*str);
     input_text.setString(s);
-    input_text.setOrigin(sf::Vector2f(input_text.getGlobalBounds().width / 2,
-                                      input_text.getGlobalBounds().height / 2));
+    sf::FloatRect bounds(input_text.getGlobalBounds());
+    input_text.setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
     window->draw(input_text);
 
     window->display();
@@ -235,10 +220,8 @@ int renderer::show_wait(size_t waiting) {
     } else {
         waiting_text.setString("player " + std::to_string(waiting) + " connected");
     }
-
-    waiting_text.setOrigin(sf::Vector2f(waiting_text.getGlobalBounds().width / 2,
-        waiting_text.getGlobalBounds().height / 2));
-
+    sf::FloatRect bounds(waiting_text.getGlobalBounds());
+    waiting_text.setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
     window->draw(logo);
     window->draw(waiting_text);
     window->display();
@@ -247,16 +230,13 @@ int renderer::show_wait(size_t waiting) {
 
 int renderer::connect_to_room(const char (*str)[256]) {
     window->clear();
-
     window->draw(logo);
     window->draw(enter_exists_name_text);
-
     std::string s(*str);
     input_text.setString(s);
-    input_text.setOrigin(sf::Vector2f(input_text.getGlobalBounds().width / 2,
-                                      input_text.getGlobalBounds().height / 2));
+    sf::FloatRect bounds(input_text.getGlobalBounds());
+    input_text.setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
     window->draw(input_text);
-
     window->display();
     return 0;
 }
