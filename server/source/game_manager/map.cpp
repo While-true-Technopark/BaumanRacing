@@ -126,13 +126,14 @@ game_map::map_block::block_type game_map::get_pos_type(/*const position& pos*/) 
     return map_block::block_type::road; 
 }
 
-/*game_map::map_block::block_type game_map::pos_type(const position& pos) { 
-    return map_block::block_type::road; 
+/*void game_map::check_collision() {
+ // TODO:
+ // врезание машинок
+ // выезд за трассу
 }*/
 
 void game_map::make_move() {
     double a = 1;
-    double angle = 4;
     
     for (size_t idx = 0; idx < MAX_USERS; ++idx) {
         car& player = players[idx];
@@ -144,22 +145,34 @@ void game_map::make_move() {
         } else if (comm.forward) {
             double next_speed = player.speed - a;
             player.speed = -next_speed < player.max_speed ? next_speed : -player.max_speed;
-        } else {
+        } else if (fabs(player.speed) > 1e-7) { // inertion move
             int8_t sign = player.speed > 1e-7 ? 1 : -1;
             player.speed -= sign * a / 2.;
+        } else {
+            player.speed = 0;
         }
         
-        player.pos[0] += player.speed * cos(M_PI * player.pos[2] / 180.);
-        player.pos[1] += player.speed * sin(M_PI * player.pos[2] / 180.);
-
-        // TODO: занос
+        double& angle = player.pos[2]; // в градусах
+        double circle = 360; // в градусах
         if (command[idx].right_turn && fabs(player.speed) > 2.) {
-            player.pos[2] += angle;
+            angle += 4;
         }
         if (command[idx].left_turn && fabs(player.speed) > 2.) {
-            player.pos[2] -= angle;
+            angle -= 4;
         }
-        comm = move_command();
+        
+        if (fabs(angle) > circle) {
+            int8_t sign = angle > circle ? 1 : -1;
+            angle -= sign * circle;
+        }
+        
+        double rad_angle = angle * 2 * M_PI / circle;
+        player.pos[0] += player.speed * cos(rad_angle);
+        player.pos[1] += player.speed * sin(rad_angle);
+        
+        std::cout << "v = " << player.speed << std::endl << std::flush;
+        // std::cout << "angle = " << angle << " cos(angle) = " << cos(angle) << " sin(angle) = " << sin(angle) << std::endl << std::flush; 
+        // comm = move_command();
     }
 
 }

@@ -76,7 +76,7 @@ void users_room::before_session() {
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
             clt.send(message::start, idx);
-            clt.send(message::pos, manager.get_players_pos());
+            //clt.send(message::pos, manager.get_players_pos());
         }
     }
 }
