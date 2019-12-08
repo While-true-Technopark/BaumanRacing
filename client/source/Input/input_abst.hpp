@@ -9,6 +9,7 @@ class input_abst {
     virtual struct keys_pressed_variants get_pressed_keys() = 0;
     virtual void start_control() = 0;
     virtual void end_control() = 0;
+    virtual void game() = 0;
  protected:
     sf::RenderWindow *window;
     bool controlling;

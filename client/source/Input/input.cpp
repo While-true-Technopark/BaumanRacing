@@ -4,9 +4,14 @@ input::input(sf::RenderWindow *win) {
     window = win;
 }
 
-struct keys_pressed_variants input::get_pressed_keys() {
-    struct keys_pressed_variants keys = { };
+void input::game() {
+    game_start = true;
+}
 
+struct keys_pressed_variants input::get_pressed_keys() {
+    if (!game_start)
+        keys = { };
+    
     sf::Event event = sf::Event();
     while (window->pollEvent(event)) {
         switch (event.type) {

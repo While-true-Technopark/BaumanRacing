@@ -36,14 +36,14 @@ void network::ping() {
 
 
 void network::keys_send(struct keys_pressed keys_input) {
-    std::cout << "╔═keys send═╗" << std::endl;
-    std::cout << "║ up    : "    << keys_input.up    << " ║"<< std::endl;
-    std::cout << "║ down  : "    << keys_input.down  << " ║"<< std::endl;
-    std::cout << "║ left  : "    << keys_input.left  << " ║"<< std::endl;
-    std::cout << "║ right : "    << keys_input.right << " ║"<< std::endl;
-    std::cout << "║ enter : "    << keys_input.enter << " ║"<< std::endl;
-    std::cout << "║ esc   : "    << keys_input.esc   << " ║"<< std::endl;
-    std::cout << "╚═══════════╝" << std::endl;
+//    std::cout << "╔═keys send═╗" << std::endl;
+//    std::cout << "║ up    : "    << keys_input.up    << " ║"<< std::endl;
+//    std::cout << "║ down  : "    << keys_input.down  << " ║"<< std::endl;
+//    std::cout << "║ left  : "    << keys_input.left  << " ║"<< std::endl;
+//    std::cout << "║ right : "    << keys_input.right << " ║"<< std::endl;
+//    std::cout << "║ enter : "    << keys_input.enter << " ║"<< std::endl;
+//    std::cout << "║ esc   : "    << keys_input.esc   << " ║"<< std::endl;
+//    std::cout << "╚═══════════╝" << std::endl;
 
     move_command keys_to_send;
     keys_to_send.forward = keys_input.up;
