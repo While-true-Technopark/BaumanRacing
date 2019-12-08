@@ -170,7 +170,7 @@ void game_map::make_move() {
         player.pos[0] += player.speed * cos(rad_angle);
         player.pos[1] += player.speed * sin(rad_angle);
         
-        std::cout << "v = " << player.speed << std::endl << std::flush;
+        // std::cout << "v = " << player.speed << std::endl << std::flush;
         // std::cout << "angle = " << angle << " cos(angle) = " << cos(angle) << " sin(angle) = " << sin(angle) << std::endl << std::flush; 
         // comm = move_command();
     }
