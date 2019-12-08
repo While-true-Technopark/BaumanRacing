@@ -9,15 +9,14 @@ application::application() :
     network_mngr(new network()),
     renderer_mngr(new renderer(&window)) {
         window.setFramerateLimit(60);
+        event e(application_run, { .empty = {} });
+        loader_mngr.handle_event(e);
 }
 
 bool application::run() {
 
-    event e(application_run, { .empty = {} });
-    loader_mngr.handle_event(e);
     event loaded = loader_mngr.throw_event();
     renderer_mngr.handle_event(loaded);
-
     event e_start(main_menu, { .empty = {} });
     renderer_mngr.handle_event(e_start);
 //    event e_start(game_start, { .empty = {} });

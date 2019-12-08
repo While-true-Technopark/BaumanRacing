@@ -4,29 +4,31 @@ loader_manager::loader_manager(loader_abst* abst) {
     module = abst;
 }
 
+loader_manager::~loader_manager() {
+    delete module;
+}
+
 int loader_manager::handle_event(const event& e) {
     switch (e.type) {
         case application_run:
             module->load_all();
             break;
         default:
-            return -1;
+            return LDR_MNGR_WRONG_EVENT_TYPE;
     }
-    return 0;
+    return LDR_MNGR_OK;
 }
 
 event loader_manager::throw_event() {
     event e;
     e.type = textures_loaded;
-    e.data.textures.map = module->get_texture("map");
-    e.data.textures.player_1 = module->get_texture("car_red");
-    e.data.textures.player_2 = module->get_texture("car_blue");
-    e.data.textures.player_3 = module->get_texture("car_yellow");
-    e.data.textures.logo = module->get_texture("logo");
-    e.data.textures.box = module->get_texture("box");
-    e.data.textures.arrow = module->get_texture("arrow");
-    
+    e.data.textures.logo = module->get_texture("logo.png");
     e.data.textures.main_font = module->get_font("Menlo");
-
+    e.data.textures.box = module->get_texture("box.png");
+    e.data.textures.arrow = module->get_texture("arrow.png");
+    e.data.textures.players[0] = module->get_texture("car_red.png");
+    e.data.textures.players[1] = module->get_texture("car_blue.png");
+    e.data.textures.players[2] = module->get_texture("car_yellow.png");
+    e.data.textures.map = module->get_texture("map.png");
     return e;
 }

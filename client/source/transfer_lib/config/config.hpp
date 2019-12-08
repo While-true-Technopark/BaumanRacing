@@ -5,7 +5,7 @@
 
 const size_t DIM = 2;
 const size_t DOF = DIM + 1;  // x, y, angle
-const size_t MAX_USERS = 2;
+const size_t MAX_USERS = 1;
 const int8_t NUM_CIRCLE = 1;
 
 const size_t PORT = 5555;
@@ -18,5 +18,6 @@ const sf::Time TIME_OUT_BEFORE_START = sf::seconds(5.0f);
 const sf::Time TLL_SIDE_OBJECT = sf::seconds(10.0f);
 
 const std::string STANDARD_MAP = "default_maps/map.tmx";
+const size_t CARS_TEXTURES_NUMBER = 3;  // set this to know how many cars textures we have
 
 #endif  // CONFIG_H_

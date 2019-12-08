@@ -140,16 +140,9 @@ void users_room::update_user() {
             clt.send(message::pos, manager.get_players_pos());
             clt.send(message::rating, manager.get_rating());
             clt.send(message::pos_s, manager.get_side_objects_pos());
-            // TODO:
-            // if (pos update)
-            // if (pos_s update) clt.send(message::pos_s, );
-            // if (raiting update) send(message::rating, );
+            
             if (manager.finished(idx)) {
-                // TODO: send rating
                 clt.send(message::finish, players_rating());
-                //selector.remove(clt.get_socket()); // ???
-                //connected[idx] = false;
-                //ready[idx] = false;
             }
 
         }
