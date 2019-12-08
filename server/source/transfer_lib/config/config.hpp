@@ -11,6 +11,7 @@ const int8_t NUM_CIRCLE = 1;
 const size_t PORT = 5555;
 const std::string LOCAL_IP = "127.0.0.1";
 
+const sf::Time WAIT_TIME_OUT = sf::seconds(0.05f);
 const sf::Time PING_TIME_OUT = sf::seconds(30.0f);
 const sf::Time CONNECT_TIME_OUT = 3.0f * PING_TIME_OUT;
 

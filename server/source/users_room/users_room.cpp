@@ -70,21 +70,14 @@ void users_room::before_session() {
     }
 
     if (all_ready) {
+        started = true;
+        manager.run();
         std::cout << "(room) game started" << std::endl;
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
             clt.send(message::start, idx);
-            players_position pos = manager.get_players_pos();
-            pos[0][0] = 1234;
-            pos[0][1] = 1234;
-            pos[0][2] = 1234;
-            pos[1][0] = 1134;
-            pos[1][1] = 1400;
-            pos[1][2] = 32;
-            clt.send(message::pos, pos);
+            clt.send(message::pos, manager.get_players_pos());
         }
-        started = true;
-        manager.run();
     }
 }
 
@@ -128,10 +121,13 @@ void users_room::session() {
         }
     }
 
-    update_user();
+    // update_user();
 }
 
 void users_room::update_user() {
+    if (!started) {
+        return;
+    }
     std::cout << "(room) manager update" << std::endl;
     manager.update();
     for (size_t idx = 0; idx < max_users; ++idx) {
@@ -173,6 +169,7 @@ bool users_room::ping() {
     if (finished) {
         return false;
     }
+    update_user();
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && !users[idx].ping()) {
             connected[idx] = false;

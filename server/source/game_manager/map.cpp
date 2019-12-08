@@ -13,6 +13,7 @@ car::car(): car(car_type::medium) {}
 
 car::car(car_type type) {
     pos.fill(0);
+    speed = 0;
     switch (type) {
         case car_type::small: {
             size[0] = 100;
@@ -20,8 +21,6 @@ car::car(car_type type) {
             mass = 1;
             num_side_objects = 1;
             num_accelerations = 1;
-            
-            speed = 0;
             max_speed = 30;
             break;
         }
@@ -31,8 +30,6 @@ car::car(car_type type) {
             mass = 3;
             num_side_objects = 3;
             num_accelerations = 3;
-            
-            speed = 0;
             max_speed = 30;
             break;
         }
@@ -42,8 +39,6 @@ car::car(car_type type) {
             mass = 2;
             num_side_objects = 2;
             num_accelerations = 2;
-            
-            speed = 0;
             max_speed = 30;
         }
     }
@@ -51,8 +46,6 @@ car::car(car_type type) {
 
 game_map::game_map() {
     num_circle.fill(-1);
-    //prev_pos.fill({0, 0});
-    // TODO: стартовая позиция
     load_map(STANDARD_MAP);
 }
 
@@ -88,6 +81,12 @@ bool game_map::load_map(const std::string& path) {
     }
     
     return true;
+}
+
+void game_map::set_start_pos() {
+    // TODO: стартовая позиция
+    players[0].pos = {3950, 7260, 0};
+    players[1].pos = {3950, 7380, 0};
 }
 
 players_position game_map::get_players_pos() const {
@@ -132,14 +131,8 @@ game_map::map_block::block_type game_map::get_pos_type(/*const position& pos*/) 
 }*/
 
 void game_map::make_move() {
-    //double h = 0.1;
     double a = 1;
     double angle = 4;
-    
-    //std::array<position, MAX_USERS> curr_pos = get_players_pos();
-    //std::array<position, MAX_USERS> next_pos = curr_pos;
-    
-    // (y_{i+1} - 2 * y_{i} + y_{i-1}) / h^2 ~= a''
     
     for (size_t idx = 0; idx < MAX_USERS; ++idx) {
         car& player = players[idx];
@@ -158,43 +151,15 @@ void game_map::make_move() {
         
         player.pos[0] += player.speed * cos(M_PI * player.pos[2] / 180.);
         player.pos[1] += player.speed * sin(M_PI * player.pos[2] / 180.);
-        
-        //double v_prev_x = (curr_pos[idx][0] - prev_pos[idx][0]) / h;
-        //double v_prev_y = (curr_pos[idx][1] - prev_pos[idx][1]) / h;
-        
-        //if (command[idx].forward) {
-        //    // player.mass
-       //     v_prev_x += h * a * cos(M_PI * curr_pos[idx][2] / 180.);
-       //     v_prev_y += h * a * sin(M_PI * curr_pos[idx][2] / 180.);
-       // }
-       // if (command[idx].back) {
-       //     v_prev_x -= h * a * cos(M_PI * curr_pos[idx][2] / 180.);
-       //     v_prev_y -= h * a * sin(M_PI * curr_pos[idx][2] / 180.);
-       // }
-        //else if (v_prev < 1e-5 && command[idx].forward) || (v_prev > 1e-5 && command[idx].back) {
-        //    next_pos[idx][0] = 2 * curr_pos[idx][0] - prev_pos[idx][0] - h * h * a * cos(M_PI * curr_pos[idx][2] / 180.);
-        //    next_pos[idx][1] = 2 * curr_pos[idx][1] - prev_pos[idx][1] - h * h * a * sin(M_PI * curr_pos[idx][2] / 180.);
-        //}
-        //next_pos[idx][0] += h * v_prev_x;
-        //next_pos[idx][1] += h * v_prev_y;
-        
-        //if (v > player.max_speed) {
-        //    next_pos[idx][0] = curr_pos[idx][0] + player.max_speed * cos(M_PI * curr_pos[idx][2] / 180.);
-        //    next_pos[idx][1] = curr_pos[idx][1] + player.max_speed * sin(M_PI * curr_pos[idx][2] / 180.);
-        //}
 
         // TODO: занос
-        if (command[idx].right_turn) {
+        if (command[idx].right_turn && fabs(player.speed) > 2.) {
             player.pos[2] += angle;
         }
-        if (command[idx].left_turn) {
+        if (command[idx].left_turn && fabs(player.speed) > 2.) {
             player.pos[2] -= angle;
         }
-        
-        
-        
-        //player.pos = next_pos[idx];
+        comm = move_command();
     }
-    
-    //prev_pos = curr_pos;
+
 }

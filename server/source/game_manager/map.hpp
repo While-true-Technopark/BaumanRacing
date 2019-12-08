@@ -28,7 +28,7 @@ class game_map {
  public:
     game_map();
     bool load_map(const std::string& path);
-    
+    void set_start_pos();
     players_position get_players_pos() const;
     players_rating get_rating() const;
     std::vector<position> get_side_objects_pos() const;
@@ -42,7 +42,6 @@ class game_map {
     
  private:
     std::array<car, MAX_USERS> players;
-    //std::array<position, MAX_USERS> prev_pos; // for acceleration
     
     std::vector<side_object> side_objects;
     std::array<int8_t, MAX_USERS> num_circle;

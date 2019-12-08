@@ -6,10 +6,6 @@
 class user final {
  public:
     user();
-    // поч с этим при линковке ругается на unique_ptr?
-    /*virtual ~user(){};
-    user(const user&) = default;
-    user& operator=(const user&) = default;*/
     template<class type>
     void send(message::header head, const type& body) const {
         json msg = message::get_message(head);
