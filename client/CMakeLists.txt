@@ -4,7 +4,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source")
+
 set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty")
+set(TRANSFER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../transfer_lib")
 
 set(CMAKE_CXX_COMPILER "g++")
 
@@ -24,8 +26,9 @@ set(ALL_SOURCES
     ${SOURCE_DIR}/Network/network_manager.cpp
     ${SOURCE_DIR}/Renderer/renderer.cpp
     ${SOURCE_DIR}/Renderer/renderer_manager.cpp
-    ${SOURCE_DIR}/transfer_lib/transfer/message.cpp
-    ${SOURCE_DIR}/transfer_lib/transfer/command.cpp
+    
+    ${TRANSFER_LIB_DIR}/transfer/message.cpp
+    ${TRANSFER_LIB_DIR}/transfer/command.cpp
 )
 
 set(ALL_HEADERS
@@ -38,8 +41,10 @@ set(ALL_HEADERS
     ${SOURCE_DIR}/Loader/
     ${SOURCE_DIR}/Network/
     ${SOURCE_DIR}/Renderer/
-    ${TINYXML_DIR}
-
+    
+    ${TINYXML_DIR}/
+    ${TRANSFER_LIB_DIR}/config/
+    ${TRANSFER_LIB_DIR}/transfer/
 )
 
 set(TEST_INTERNAL_SOURCES
@@ -70,9 +75,6 @@ if (Boost_FOUND AND SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     include_directories(${Boost_INCLUDE_DIR})
     include_directories(${ALL_HEADERS})
-
-    include_directories(${SOURCE_DIR}/transfer_lib/config) # TODO: подключать как отдельную либу
-    include_directories(${SOURCE_DIR}/transfer_lib/transfer)
 
     add_executable(Client.out ${SOURCE_DIR}/main.cpp ${ALL_SOURCES})
     target_link_libraries(Client.out ${Boost_LIBRARIES})
