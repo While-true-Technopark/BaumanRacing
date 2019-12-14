@@ -49,7 +49,7 @@ event network_manager::throw_event() {
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
             ev.type = update_position;
-            std::cout << "recieved coords" << std::flush << std::endl;
+            //std::cout << "recieved coords" << std::flush << std::endl;
             players_position coord = msg[message::body];
             for (int i = 0; i != coord.size(); i++) {
                 ev.data.players_positions.player[i].x = coord[i][0];

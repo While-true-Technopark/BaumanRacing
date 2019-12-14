@@ -10,7 +10,8 @@ class input_manager : public base_manager, event_throwable {
  public:
     explicit input_manager(input_abst *abst);
     int handle_event(const event & e);
-    bool nothing_pressed(const struct keys_pressed keys);
+    bool nothing_pressed(const struct keys_pressed *keys);
+    bool changed(const struct keys_pressed *keys, const struct keys_pressed *keys_old);
     event throw_event();
     input_abst *module;
 private:
@@ -30,6 +31,7 @@ private:
     scene_types current_scene;
     size_t box;
     std::string input;
+    struct keys_pressed keys_old = { };
 };
 
 #endif  // INPUT_MANAGER_H_

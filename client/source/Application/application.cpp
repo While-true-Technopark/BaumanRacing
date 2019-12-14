@@ -87,6 +87,7 @@ bool application::run() {
                 break;
             case game_start:
                 renderer_mngr.handle_event(e_network);
+                input_mngr.handle_event(e_network);
                 break;
             default:
                 break;

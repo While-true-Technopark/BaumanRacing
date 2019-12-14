@@ -10,8 +10,11 @@ class input : public input_abst {
     struct keys_pressed_variants get_pressed_keys();
     void start_control();
     void end_control();
+    void game();
 private:
     std::string playerInput;
+    struct keys_pressed_variants keys = { };
+    bool game_start = false;
 };
 
 #endif  // INPUT_H_

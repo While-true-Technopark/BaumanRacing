@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string.h>
 #include <SFML/Graphics.hpp>
-
+#include <array>
 #include "config.hpp"
 
 enum event_type {
