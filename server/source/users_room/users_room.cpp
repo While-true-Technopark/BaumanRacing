@@ -6,6 +6,7 @@ users_room::users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelecto
     , users(max_users)
     , connected(max_users, false)
     , ready(max_users, false)
+    , manager(max_users)
     , started{false}
     , finished{false}
 {
@@ -36,7 +37,7 @@ void users_room::before_session() {
                 switch (head) {
                     case message::setting: {
                         std::cout << "(room) player " << idx << " set car" << std::endl;
-                        car_type type = msg[message::body];
+                        game_object_type type = msg[message::body];
                         manager.set_setting(idx, type);
                         ready[idx] = true;
                         break;

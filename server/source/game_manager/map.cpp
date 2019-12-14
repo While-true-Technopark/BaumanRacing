@@ -10,13 +10,15 @@ side_object::side_object()
     pos.fill(0);
 }
 
-car::car(): car(car_type::medium) {}
+game_object::game_object()
+    : game_object(game_object_type::medium)
+{}
 
-car::car(car_type type) {
+game_object::game_object(game_object_type type) {
     pos.fill(0);
     speed = 0;
     switch (type) {
-        case car_type::small: {
+        case game_object_type::small: {
             radius = 30;
             mass = 1;
             num_side_objects = 1;
@@ -24,7 +26,7 @@ car::car(car_type type) {
             max_speed = 30;
             break;
         }
-        case car_type::big: {
+        case game_object_type::big: {
             radius = 30;
             mass = 3;
             num_side_objects = 3;
@@ -42,12 +44,15 @@ car::car(car_type type) {
     }
 }
 
-double car::dist(const position& p) {
+double game_object::dist(const position& p) {
     return sqrt(pow((pos[0] - p[0]), 2) + pow((pos[1] - p[1]), 2)); 
 }
 
-game_map::game_map() {
-    num_circle.fill(-1);
+game_map::game_map(size_t num_players)
+    : players(num_players)
+    , num_circle(num_players, -1)
+    , command(num_players)
+{
     load_map("default_maps/map.tmx");
 }
 
@@ -64,8 +69,8 @@ bool game_map::load_map(const std::string& path) {
     }
     size_t map_width = map_xml->IntAttribute("width", 0);
     size_t map_height = map_xml->IntAttribute("height", 0);
-    double block_width = map_xml->IntAttribute("tilewidth", 0);
-    double block_height = map_xml->IntAttribute("tileheight", 0);
+    h_x = map_xml->IntAttribute("tilewidth", 0);
+    h_y = map_xml->IntAttribute("tileheight", 0);
     
     start_pos = {3830, 7320, 0}; // TODO: из файла (Рома)
     road_width = 440;
@@ -73,12 +78,12 @@ bool game_map::load_map(const std::string& path) {
     std::cout << "map_width " << map_width << " map_height " << map_height << std::endl;
 
     tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data")->FirstChildElement("tile");
-    for (size_t col = 0; col < map_height; ++col) {
+    for (size_t i = 0; i < map_height; ++i) {
         std::vector<map_block> block_line(map_width);
-        for (size_t row = 0; row <  map_width; ++row) {
-            map_block& block = block_line[row];
+        for (size_t j = 0; j <  map_width; ++j) {
+            map_block& block = block_line[j];
             block.type = static_cast<map_block::block_type>(tile_xml->IntAttribute("gid", 1));
-            block.pos = {row * block_width, col * block_height, block_width, block_height};
+            block.pos = {j * h_x, i * h_y, h_x, h_y};
             tile_xml = tile_xml->NextSiblingElement("tile");
         }
         map_info.emplace_back(std::move(block_line));
@@ -92,9 +97,9 @@ void game_map::set_start_pos() {
     double dist = 60;
     position pos = start_pos;
     
-    for (size_t idx = 0; idx < MAX_USERS; idx += 2) {
+    for (size_t idx = 0; idx < players.size(); idx += 2) {
         pos[0] += 2 * dist;
-        if (idx + 1 < MAX_USERS) {
+        if (idx + 1 < players.size()) {
             pos[1] += dist;
             players[idx].pos = pos;
             pos[1] -= 2 * dist;
@@ -131,59 +136,53 @@ int8_t game_map::get_num_circle(size_t id) const {
     return num_circle[id];
 }
     
-void game_map::set_car(size_t id, car_type type) {
-    players[id] = car(type);
+void game_map::set_setting(size_t id, game_object_type type) {
+    players[id] = game_object(type);
 }
 
-void game_map::set_command(size_t id, const move_command& comm) {
+void game_map::set_setting(size_t id, const move_command& comm) {
     command[id] = comm;
 }
 
 void game_map::check_collision(size_t id) {
-    // врезание машинок
-    //bool has_collision = true;
-    //while (has_collision) {
-        //has_collision = false;
-        //for (size_t i = 0; i < MAX_USERS; ++i) {
-            car& player1 = players[id];
-            double rad_angle = player1.pos[2] * 2. * M_PI / GRAD_CIRCLE;
+    game_object& player1 = players[id];
+    double rad_angle = player1.pos[2] * 2. * M_PI / GRAD_CIRCLE;
+    size_t idx_x = player1.pos[0] / h_x;
+    size_t idx_y = player1.pos[1] / h_y;
+    map_block::block_type type = map_info[idx_x][idx_y].type;
+    std::cout << "block_type: " << type << std::endl << std::flush;
+    if (type == map_block::wall || type == map_block::grass) {
+    	int8_t sign = player1.speed > 1e-7 ? 1 : -1;
+    	player1.pos[0] -= sign * 0.1 * player1.radius * cos(rad_angle);
+        player1.pos[1] -= sign * 0.1 * player1.radius * sin(rad_angle);
+        player1.speed = 0;
+    }
             
-            for (size_t idx = 0/*i + 1*/; idx < MAX_USERS; ++idx) {
-                if (idx == id) {
-                    continue;
-                }
-                car& player2 = players[idx];
-                double dist = player1.dist(player2.pos) - (player1.radius + player2.radius); 
-                if (dist < 1e-4) {
-                    std::cout << "(map) fix collision" << std::endl << std::flush;
+    for (size_t idx = 0; idx < players.size(); ++idx) {
+        if (idx == id) {
+            continue;
+        }
+        game_object& player2 = players[idx];
+        double dist = player1.dist(player2.pos) - (player1.radius + player2.radius); 
+        if (dist < 1e-4) {
+            //int8_t sign = player1.speed > 1e-7 ? 1 : -1;
+            player1.pos[0] -= 0.5 * dist * cos(rad_angle);
+            player1.pos[1] -= 0.5 * dist * sin(rad_angle);
+
+            player2.pos[0] += 0.5 * dist * cos(rad_angle);
+            player2.pos[1] += 0.5 * dist * sin(rad_angle);
                     
-                    player1.pos[0] -= 0.5 * dist * cos(rad_angle);
-                    player1.pos[1] -= 0.5 * dist * sin(rad_angle);
-                    
-                    //rad_angle = player2.pos[2] * 2. * M_PI / GRAD_CIRCLE;
-                    player2.pos[0] += 0.5 * dist * cos(rad_angle);
-                    player2.pos[1] += 0.5 * dist * sin(rad_angle);
-                    //player2.pos[2] = -player1.pos[2];
-                    
-                    player1.speed = 0.5 * (player1.speed + player2.speed);
-                    player2.speed = player1.speed;
-                    
-                    //has_collision = true;
-                }
-            }
-            
-            //for (size_t i = 0; i < map_info.size();  )
-            // TODO: выезд за трассу
-        //}
-        
-    //}
+            player1.speed = 0.5 * (player1.speed + player2.speed);
+            player2.speed = player1.speed;
+        }
+    }
 }
 
 void game_map::make_move() {
     double a = 1;
     
-    for (size_t idx = 0; idx < MAX_USERS; ++idx) {
-        car& player = players[idx];
+    for (size_t idx = 0; idx < players.size(); ++idx) {
+        game_object& player = players[idx];
         move_command& comm = command[idx];
         
         if (comm.back) {
@@ -217,9 +216,6 @@ void game_map::make_move() {
         player.pos[1] += player.speed * sin(rad_angle);
         
         check_collision(idx);
-        // std::cout << "v = " << player.speed << std::endl << std::flush;
-        // std::cout << "angle = " << angle << " cos(angle) = " << cos(angle) << " sin(angle) = " << sin(angle) << std::endl << std::flush; 
-        // comm = move_command();
     }
     
 }

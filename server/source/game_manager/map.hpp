@@ -12,9 +12,9 @@ struct side_object {
     sf::Clock ttl;
 };
 
-struct car {
-    car();
-    explicit car(car_type type);
+struct game_object {
+    game_object();
+    explicit game_object(game_object_type type);
     double dist(const position& p);
     position pos;
     double radius;
@@ -28,7 +28,7 @@ struct car {
 
 class game_map {
  public:
-    game_map();
+    explicit game_map(size_t num_players);
     bool load_map(const std::string& path);
     void set_start_pos();
     players_position get_players_pos() const;
@@ -36,18 +36,20 @@ class game_map {
     std::vector<position> get_side_objects_pos() const;
     int8_t get_num_circle(size_t id) const;
     
-    void set_car(size_t id, car_type type);
-    void set_command(size_t id, const move_command& comm);
+    void set_setting(size_t id, game_object_type type);
+    void set_setting(size_t id, const move_command& comm);
     void make_move();
     // TODO: is update
     //bool player_finished(size_t player_id);
     
  private:
-    std::array<car, MAX_USERS> players;
-    
+    std::vector<game_object> players;
+    std::vector<int8_t> num_circle;
+    std::vector<move_command> command;
     std::vector<side_object> side_objects;
-    std::array<int8_t, MAX_USERS> num_circle;
-    std::array<move_command, MAX_USERS> command;
+
+    double h_x;
+    double h_y;
     struct map_block {
         enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
         sf::Rect<double> pos;
@@ -56,7 +58,6 @@ class game_map {
     };
     std::vector<std::vector<map_block>> map_info;
     position start_pos;
-    double start_angle;
     double road_width;
     
     void check_collision(size_t id);

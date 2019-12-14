@@ -1,7 +1,8 @@
 #include "game_manager.hpp"
 
-game_manager::game_manager() 
-    : start{false}
+game_manager::game_manager(size_t num_players) 
+    : map(num_players)
+    , start{false}
 {}
 
 void game_manager::run() {
@@ -42,10 +43,10 @@ void game_manager::update() {
     }
 }
 
-void game_manager::set_setting(size_t id, car_type type) {
-    map.set_car(id, type);
+void game_manager::set_setting(size_t id, game_object_type type) {
+    map.set_setting(id, type);
 }
 
 void game_manager::set_setting(size_t id, const move_command& comm) {
-    map.set_command(id, comm);
+    map.set_setting(id, comm);
 }

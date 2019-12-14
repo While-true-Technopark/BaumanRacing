@@ -6,7 +6,7 @@
 
 class game_manager {
  public:
-    game_manager();
+    explicit game_manager(size_t num_players);
     void run();
     players_position get_players_pos() const;
     players_rating get_rating() const;
@@ -14,7 +14,7 @@ class game_manager {
     bool finished(size_t id) const;
     bool finish();
     void update();
-    void set_setting(size_t id, car_type type);
+    void set_setting(size_t id, game_object_type type);
     void set_setting(size_t id, const move_command& comm);
     
  private:
