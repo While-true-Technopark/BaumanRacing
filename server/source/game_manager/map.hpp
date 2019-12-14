@@ -1,6 +1,7 @@
 #ifndef MAP_H_
 #define MAP_H_
 
+#include <SFML/Graphics/Rect.hpp>
 #include "command.hpp"
 
 struct side_object {
@@ -48,11 +49,14 @@ class game_map {
     std::array<move_command, MAX_USERS> command;
     struct map_block {
         enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
-        point coord;
-        point block_size;
+        sf::Rect<double> pos;
+        /*point coord;
+        point block_size;*/
     };
     std::vector<std::vector<map_block>> map_info;
-    map_block::block_type get_pos_type(/*const position& pos*/);
+    position start_pos;
+    double start_angle;
+    double road_width;
     //point start_coord;
     //bool started;
     //std::array<bool, MAX_USERS> finished;

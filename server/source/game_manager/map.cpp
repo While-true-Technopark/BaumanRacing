@@ -46,7 +46,7 @@ car::car(car_type type) {
 
 game_map::game_map() {
     num_circle.fill(-1);
-    load_map(STANDARD_MAP);
+    load_map("default_maps/map.tmx");
 }
 
 bool game_map::load_map(const std::string& path) {
@@ -62,8 +62,10 @@ bool game_map::load_map(const std::string& path) {
     }
     size_t map_width = map_xml->IntAttribute("width", 0);
     size_t map_height = map_xml->IntAttribute("height", 0);
-    size_t block_width = map_xml->IntAttribute("tilewidth", 0);
-    size_t block_height = map_xml->IntAttribute("tileheight", 0);
+    double block_width = map_xml->IntAttribute("tilewidth", 0);
+    double block_height = map_xml->IntAttribute("tileheight", 0);
+    
+    start_pos = {3830, 7320, 0}; // TODO: из файла (Рома)
     
     std::cout << "map_width " << map_width << " map_height " << map_height << std::endl;
 
@@ -73,8 +75,7 @@ bool game_map::load_map(const std::string& path) {
         for (size_t row = 0; row <  map_width; ++row) {
             map_block& block = block_line[row];
             block.type = static_cast<map_block::block_type>(tile_xml->IntAttribute("gid", 1));
-            block.coord[0] = row * block_width;
-            block.coord[1] = col * block_height;
+            block.pos = {row * block_width, col * block_height, block_width, block_height};
             tile_xml = tile_xml->NextSiblingElement("tile");
         }
         map_info.emplace_back(std::move(block_line));
@@ -84,9 +85,22 @@ bool game_map::load_map(const std::string& path) {
 }
 
 void game_map::set_start_pos() {
-    // TODO: стартовая позиция
-    players[0].pos = {3950, 7260, 0};
-    players[1].pos = {3950, 7380, 0};
+    // TODO: направление стартовой позиции по х и у
+    double dist = 60;
+    position pos = start_pos;
+    
+    for (size_t idx = 0; idx < MAX_USERS; idx += 2) {
+        pos[0] += 2 * dist;
+        if (idx + 1 < MAX_USERS) {
+            pos[1] += dist;
+            players[idx].pos = pos;
+            pos[1] -= 2 * dist;
+            players[idx + 1].pos = pos;
+            pos[1] += dist;
+        } else {
+            players[idx].pos = pos;
+        }
+    }
 }
 
 players_position game_map::get_players_pos() const {
@@ -120,10 +134,6 @@ void game_map::set_car(size_t id, car_type type) {
 
 void game_map::set_command(size_t id, const move_command& comm) {
     command[id] = comm;
-}
-
-game_map::map_block::block_type game_map::get_pos_type(/*const position& pos*/) {
-    return map_block::block_type::road; 
 }
 
 /*void game_map::check_collision() {
