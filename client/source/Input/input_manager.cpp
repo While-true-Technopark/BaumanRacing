@@ -29,7 +29,7 @@ bool input_manager::changed(const struct keys_pressed *keys, const struct keys_p
 bool input_manager::nothing_pressed(const struct keys_pressed *keys) {
     return !keys->up && !keys->down && !keys->left && !keys->right && !keys->enter && !keys->esc;
 }
-
+ 
 event input_manager::throw_event() {
     event ev_input(nothing_keys, { .empty = {} });
 
@@ -38,7 +38,7 @@ event input_manager::throw_event() {
     if (keys.closing == true) {
         ev_input.type = closing;
         ev_input.data.empty = { };
-    } else if ((changed(&keys.keys, &keys_old) || )&& current_scene == game_scene) {
+    } else if (changed(&keys.keys, &keys_old) && current_scene == game_scene) {
         std::cout << "changed " << "\n" << std::flush;
         ev_input.type = key_pressed;
         ev_input.data.keys = keys.keys;

@@ -5,9 +5,9 @@ loader::loader() {
     loaded = false;
     textures_paths = {
         "map.png",
-        "car_red.png",
-        "car_blue.png",
-        "car_yellow.png",
+        "red_taz.png",
+        "blue_taz.png",
+        "yellow_taz.png",
         "logo.png",
         "box.png",
         "arrow.png"
