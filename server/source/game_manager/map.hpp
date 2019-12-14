@@ -7,7 +7,7 @@
 struct side_object {
     side_object();
     position pos;
-    point size; // 0 - width, 1 - height
+    double radius;
     double mass;
     sf::Clock ttl;
 };
@@ -15,8 +15,9 @@ struct side_object {
 struct car {
     car();
     explicit car(car_type type);
+    double dist(const position& p);
     position pos;
-    point size; // 0 - width, 1 - height
+    double radius;
     double mass;
     size_t num_side_objects;
     size_t num_accelerations;
@@ -57,6 +58,8 @@ class game_map {
     position start_pos;
     double start_angle;
     double road_width;
+    
+    void check_collision(size_t id);
     //point start_coord;
     //bool started;
     //std::array<bool, MAX_USERS> finished;

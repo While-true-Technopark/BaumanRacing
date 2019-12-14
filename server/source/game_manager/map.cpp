@@ -1,12 +1,13 @@
 #include "map.hpp"
 #include "tinyxml2.hpp"
 
+static double GRAD_CIRCLE = 360; // в градусах
+
 side_object::side_object() 
-    : mass{1} 
+    : radius{15}
+    , mass{1}
 {
     pos.fill(0);
-    size[0] = 0.5;
-    size[1] = 0.5;
 }
 
 car::car(): car(car_type::medium) {}
@@ -16,8 +17,7 @@ car::car(car_type type) {
     speed = 0;
     switch (type) {
         case car_type::small: {
-            size[0] = 100;
-            size[1] = 40;
+            radius = 30;
             mass = 1;
             num_side_objects = 1;
             num_accelerations = 1;
@@ -25,8 +25,7 @@ car::car(car_type type) {
             break;
         }
         case car_type::big: {
-            size[0] = 100;
-            size[1] = 40;
+            radius = 30;
             mass = 3;
             num_side_objects = 3;
             num_accelerations = 3;
@@ -34,14 +33,17 @@ car::car(car_type type) {
             break;
         }
         default: { // medium
-            size[0] = 100;
-            size[1] = 40;
+            radius = 30;
             mass = 2;
             num_side_objects = 2;
             num_accelerations = 2;
             max_speed = 30;
         }
     }
+}
+
+double car::dist(const position& p) {
+    return sqrt(pow((pos[0] - p[0]), 2) + pow((pos[1] - p[1]), 2)); 
 }
 
 game_map::game_map() {
@@ -66,6 +68,7 @@ bool game_map::load_map(const std::string& path) {
     double block_height = map_xml->IntAttribute("tileheight", 0);
     
     start_pos = {3830, 7320, 0}; // TODO: из файла (Рома)
+    road_width = 440;
     
     std::cout << "map_width " << map_width << " map_height " << map_height << std::endl;
 
@@ -136,11 +139,45 @@ void game_map::set_command(size_t id, const move_command& comm) {
     command[id] = comm;
 }
 
-/*void game_map::check_collision() {
- // TODO:
- // врезание машинок
- // выезд за трассу
-}*/
+void game_map::check_collision(size_t id) {
+    // врезание машинок
+    //bool has_collision = true;
+    //while (has_collision) {
+        //has_collision = false;
+        //for (size_t i = 0; i < MAX_USERS; ++i) {
+            car& player1 = players[id];
+            double rad_angle = player1.pos[2] * 2. * M_PI / GRAD_CIRCLE;
+            
+            for (size_t idx = 0/*i + 1*/; idx < MAX_USERS; ++idx) {
+                if (idx == id) {
+                    continue;
+                }
+                car& player2 = players[idx];
+                double dist = player1.dist(player2.pos) - (player1.radius + player2.radius); 
+                if (dist < 1e-4) {
+                    std::cout << "(map) fix collision" << std::endl << std::flush;
+                    
+                    player1.pos[0] -= 0.5 * dist * cos(rad_angle);
+                    player1.pos[1] -= 0.5 * dist * sin(rad_angle);
+                    
+                    //rad_angle = player2.pos[2] * 2. * M_PI / GRAD_CIRCLE;
+                    player2.pos[0] += 0.5 * dist * cos(rad_angle);
+                    player2.pos[1] += 0.5 * dist * sin(rad_angle);
+                    //player2.pos[2] = -player1.pos[2];
+                    
+                    player1.speed = 0.5 * (player1.speed + player2.speed);
+                    player2.speed = player1.speed;
+                    
+                    //has_collision = true;
+                }
+            }
+            
+            //for (size_t i = 0; i < map_info.size();  )
+            // TODO: выезд за трассу
+        //}
+        
+    //}
+}
 
 void game_map::make_move() {
     double a = 1;
@@ -163,7 +200,6 @@ void game_map::make_move() {
         }
         
         double& angle = player.pos[2]; // в градусах
-        double circle = 360; // в градусах
         if (command[idx].right_turn && fabs(player.speed) > 2.) {
             angle += 4;
         }
@@ -171,18 +207,19 @@ void game_map::make_move() {
             angle -= 4;
         }
         
-        if (fabs(angle) > circle) {
-            int8_t sign = angle > circle ? 1 : -1;
-            angle -= sign * circle;
+        if (fabs(angle) > GRAD_CIRCLE) {
+            int8_t sign = angle > GRAD_CIRCLE ? 1 : -1;
+            angle -= sign * GRAD_CIRCLE;
         }
         
-        double rad_angle = angle * 2 * M_PI / circle;
+        double rad_angle = angle * 2. * M_PI / GRAD_CIRCLE;
         player.pos[0] += player.speed * cos(rad_angle);
         player.pos[1] += player.speed * sin(rad_angle);
         
+        check_collision(idx);
         // std::cout << "v = " << player.speed << std::endl << std::flush;
         // std::cout << "angle = " << angle << " cos(angle) = " << cos(angle) << " sin(angle) = " << sin(angle) << std::endl << std::flush; 
         // comm = move_command();
     }
-
+    
 }
