@@ -3,11 +3,14 @@
 
 #include "def.hpp"
 
-enum class car_type {
+enum class game_object_type {
     small,
     medium,
     big,
 };
+
+// TODO: исправить на клиенте
+using car_type = game_object_type;
 
 class move_command {
  public:

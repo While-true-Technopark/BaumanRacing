@@ -88,7 +88,6 @@ bool game_map::load_map(const std::string& path) {
         }
         map_info.emplace_back(std::move(block_line));
     }
-    
     return true;
 }
 
@@ -150,12 +149,14 @@ void game_map::check_collision(size_t id) {
     size_t idx_x = player1.pos[0] / h_x;
     size_t idx_y = player1.pos[1] / h_y;
     map_block::block_type type = map_info[idx_x][idx_y].type;
-    std::cout << "block_type: " << type << std::endl << std::flush;
+    std::cout << "(map) block_type: " << type << std::endl << std::flush;
     if (type == map_block::wall || type == map_block::grass) {
-    	int8_t sign = player1.speed > 1e-7 ? 1 : -1;
-    	player1.pos[0] -= sign * 0.1 * player1.radius * cos(rad_angle);
-        player1.pos[1] -= sign * 0.1 * player1.radius * sin(rad_angle);
+    	//int8_t sign = player1.speed > 1e-7 ? 1 : -1;
+    	//player1.pos[0] -= sign * 0.1 * player1.radius * cos(rad_angle);
+    	player1.pos[0] -= 0.5 * player1.speed * cos(rad_angle);
+        player1.pos[1] -= 0.5 * player1.speed * sin(rad_angle);
         player1.speed = 0;
+        //command[id] = move_command();
     }
             
     for (size_t idx = 0; idx < players.size(); ++idx) {
@@ -174,6 +175,9 @@ void game_map::check_collision(size_t id) {
                     
             player1.speed = 0.5 * (player1.speed + player2.speed);
             player2.speed = player1.speed;
+
+            //command[id] = move_command();
+            //command[idx] = move_command();
         }
     }
 }
@@ -193,7 +197,7 @@ void game_map::make_move() {
             player.speed = -next_speed < player.max_speed ? next_speed : -player.max_speed;
         } else if (fabs(player.speed) > 1e-7) { // inertion move
             int8_t sign = player.speed > 1e-7 ? 1 : -1;
-            player.speed -= sign * a / 2.;
+            player.speed -= sign * 0.5 * a;
         } else {
             player.speed = 0;
         }

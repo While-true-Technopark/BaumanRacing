@@ -87,7 +87,7 @@ json message::message_status() {
 }
 
 json message::message_setting() {
-    return json{{head, setting}, {body, car_type::medium}}; // body - small, medium, big
+    return json{{head, setting}, {body, game_object_type::medium}}; // body - small, medium, big
 }
 
 json message::message_wait() {
