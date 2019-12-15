@@ -76,8 +76,7 @@ void users_room::before_session() {
         std::cout << "(room) game started" << std::endl;
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
-            // clt.send(message::start, json{{message::settings, manager.get_setting()}, {message::id, idx}});
-            clt.send(message::start, idx);
+            clt.send(message::start, json{{message::id, idx}, {message::settings, manager.get_setting()}});
         }
     }
 }

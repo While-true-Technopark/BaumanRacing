@@ -89,7 +89,7 @@ json message::message_create() {
 }
 
 json message::message_join() {
-    return json{{head, join}, {body, "room name"}}; // body - имя комнаты
+    return json{{head, join}, {body, "name"}}; // body - имя комнаты
 }
 
 json message::message_status() {
@@ -106,9 +106,8 @@ json message::message_wait() {
 }
 
 json message::message_start() {
-    // return json{{head, start}, {body, json{{settings, std::vector<game_object_type>()}, {id, 0}}}}; 
+    return json{{head, start}, {body, json{{id, 0}, {settings, std::vector<game_object_type>()}}}}; 
     // body - настройки остальных игроков, личный номер в этом векторе [0,..., MAX_USERS)
-    return json{{head, start}, {body, 0}}; // body - игровой номер [0,..., MAX_USERS)
 }
 
 json message::message_command() {

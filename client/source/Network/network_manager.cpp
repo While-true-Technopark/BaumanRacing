@@ -45,7 +45,9 @@ event network_manager::throw_event() {
             std::cout << "new " << ev.data.box.select << "\n" << std::flush;
         } else if (msg[message::head] == message::start) {
             ev.type = game_start;
-            ev.data.box.select = msg[message::body];
+            json body = msg[message::body];
+            ev.data.box.select = body[message::id];
+            // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
             ev.type = update_position;
