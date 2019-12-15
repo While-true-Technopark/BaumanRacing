@@ -34,6 +34,9 @@ class message {
     static const std::string head;
     static const std::string body;
     
+    static const std::string room_name;
+    static const std::string size;
+      
     static const std::string ok;
     static const std::string fail;
 
@@ -46,7 +49,8 @@ class message {
     
  private:
     // guest
-    static json message_init(header _header);
+    static json message_create();
+    static json message_join();
     static json message_status();
     
     // before game

@@ -182,6 +182,10 @@ bool users_room::ping() {
     return size();
 }
 
+size_t users_room::max_size() const {
+    return max_users;
+}
+
 size_t users_room::size() const {
     size_t res = 0;
     for (size_t idx = 0; idx < max_users; ++idx) {

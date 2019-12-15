@@ -1,5 +1,7 @@
 #include "game_manager.hpp"
 
+const int8_t NUM_CIRCLE = 1;
+
 game_manager::game_manager(size_t num_players) 
     : map(num_players)
     , start{false}

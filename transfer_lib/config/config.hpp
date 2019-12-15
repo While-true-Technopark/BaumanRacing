@@ -5,8 +5,8 @@
 
 const size_t DIM = 2;
 const size_t DOF = DIM + 1;  // x, y, angle
+// TODO:
 const size_t MAX_USERS = 2;
-const int8_t NUM_CIRCLE = 1;
 
 const size_t PORT = 5555;
 const std::string LOCAL_IP = "127.0.0.1";

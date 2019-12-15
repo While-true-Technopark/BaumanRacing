@@ -45,5 +45,6 @@ include_directories(${SFML_INCLUDE_DIR})
 include_directories(${ALL_HEADERS})
 
 add_executable(server.out ${ALL_SOURCES} ${SOURCE_DIR}/start_server.cpp)
+target_link_libraries(server.out pthread)
 target_link_libraries(server.out ${SFML_LIBRARIES})
 target_link_libraries(server.out nlohmann_json::nlohmann_json)

@@ -47,16 +47,15 @@ class game_map {
     std::vector<int8_t> num_circle;
     std::vector<move_command> command;
     std::vector<side_object> side_objects;
-
-    double h_x;
-    double h_y;
-    struct map_block {
+    
+    /*struct map_block {
         enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
         sf::Rect<double> pos;
-        /*point coord;
-        point block_size;*/
-    };
-    std::vector<std::vector<map_block>> map_info;
+    };*/
+    
+    std::vector<std::vector<bool>> blocks_type;
+    double h_x;
+    double h_y;
     position start_pos;
     double road_width;
     

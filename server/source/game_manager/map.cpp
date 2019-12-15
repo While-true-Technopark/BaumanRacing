@@ -59,7 +59,7 @@ game_map::game_map(size_t num_players)
 bool game_map::load_map(const std::string& path) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(path.c_str())) {
-        std::cout << "not found map" << std::endl;
+        std::cout << "(map) not found map" << std::endl;
         return false;
     }
     
@@ -67,26 +67,23 @@ bool game_map::load_map(const std::string& path) {
     if (!map_xml) {
         return false;
     }
-    size_t map_width = map_xml->IntAttribute("width", 0);
-    size_t map_height = map_xml->IntAttribute("height", 0);
+    size_t num_block_x = map_xml->IntAttribute("width", 0);
+    size_t num_block_y = map_xml->IntAttribute("height", 0);
     h_x = map_xml->IntAttribute("tilewidth", 0);
     h_y = map_xml->IntAttribute("tileheight", 0);
     
     start_pos = {3830, 7320, 0}; // TODO: из файла (Рома)
     road_width = 440;
-    
-    std::cout << "map_width " << map_width << " map_height " << map_height << std::endl;
 
     tinyxml2::XMLElement* tile_xml = map_xml->FirstChildElement("layer")->FirstChildElement("data")->FirstChildElement("tile");
-    for (size_t i = 0; i < map_height; ++i) {
-        std::vector<map_block> block_line(map_width);
-        for (size_t j = 0; j <  map_width; ++j) {
-            map_block& block = block_line[j];
-            block.type = static_cast<map_block::block_type>(tile_xml->IntAttribute("gid", 1));
-            block.pos = {j * h_x, i * h_y, h_x, h_y};
+    for (size_t j = 0; j < num_block_y; ++j) {
+        std::vector<bool> row(num_block_x);
+        for (size_t i = 0; i <  num_block_x; ++i) {
+            size_t block_type = tile_xml->IntAttribute("gid", 1);
+            row[i] = (block_type == 1 || block_type == 4) ? true : false; // road - 1, finish - 4
             tile_xml = tile_xml->NextSiblingElement("tile");
         }
-        map_info.emplace_back(std::move(block_line));
+        blocks_type.emplace_back(std::move(row));
     }
     return true;
 }
@@ -146,17 +143,13 @@ void game_map::set_setting(size_t id, const move_command& comm) {
 void game_map::check_collision(size_t id) {
     game_object& player1 = players[id];
     double rad_angle = player1.pos[2] * 2. * M_PI / GRAD_CIRCLE;
-    size_t idx_x = player1.pos[0] / h_x;
-    size_t idx_y = player1.pos[1] / h_y;
-    map_block::block_type type = map_info[idx_x][idx_y].type;
-    std::cout << "(map) block_type: " << type << std::endl << std::flush;
-    if (type == map_block::wall || type == map_block::grass) {
-    	//int8_t sign = player1.speed > 1e-7 ? 1 : -1;
-    	//player1.pos[0] -= sign * 0.1 * player1.radius * cos(rad_angle);
-    	player1.pos[0] -= 0.5 * player1.speed * cos(rad_angle);
+    
+    size_t i = player1.pos[0] / h_x;
+    size_t j = player1.pos[1] / h_y;
+    if (!(j < blocks_type.size()) || !(i < blocks_type[j].size()) || !blocks_type[j][i]) {
+        player1.pos[0] -= 0.5 * player1.speed * cos(rad_angle);
         player1.pos[1] -= 0.5 * player1.speed * sin(rad_angle);
         player1.speed = 0;
-        //command[id] = move_command();
     }
             
     for (size_t idx = 0; idx < players.size(); ++idx) {
@@ -164,9 +157,8 @@ void game_map::check_collision(size_t id) {
             continue;
         }
         game_object& player2 = players[idx];
-        double dist = player1.dist(player2.pos) - (player1.radius + player2.radius); 
+        double dist = player1.dist(player2.pos) - (player1.radius + player2.radius);
         if (dist < 1e-4) {
-            //int8_t sign = player1.speed > 1e-7 ? 1 : -1;
             player1.pos[0] -= 0.5 * dist * cos(rad_angle);
             player1.pos[1] -= 0.5 * dist * sin(rad_angle);
 
@@ -175,9 +167,6 @@ void game_map::check_collision(size_t id) {
                     
             player1.speed = 0.5 * (player1.speed + player2.speed);
             player2.speed = player1.speed;
-
-            //command[id] = move_command();
-            //command[idx] = move_command();
         }
     }
 }
