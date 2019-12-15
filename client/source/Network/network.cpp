@@ -81,7 +81,8 @@ int network::create_room(const char (*str)[256]) {
     json msg;
     std::string room_name(*str);
     msg = message::get_message(message::create);
-    msg[message::body] = room_name;
+    msg[message::body][message::room_name] = room_name;
+    msg[message::body][message::size] = 2;
 
     sf::Packet packet = message::json_to_packet(msg);
     socket.send(packet);
