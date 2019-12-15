@@ -61,11 +61,11 @@ void server::guests_event_handler() {
             size_t head = msg[message::head];
             switch (head) {
                 case message::create: {
-                    std::string room_name = msg[message::body][message::room_name];
-                    size_t size = msg[message::body][message::size];
+                    json body = msg[message::body];
+                    std::string room_name = body[message::room_name];
                     if (!rooms.count(room_name)) {
                         clt.send(message::status, message::ok);
-                        rooms.emplace(room_name, users_room(std::move(clt), selector, size));
+                        rooms.emplace(room_name, users_room(std::move(clt), selector, body[message::size]));
                         guests.erase(guests.begin() + idx);
                         --idx;
                         std::cout << "room " << room_name << " created" << std::endl;
@@ -135,7 +135,6 @@ void server::ping_rooms() {
             del_rooms.push_back(room_name);
             std::vector<user> users = room.get_users();
             std::cout << users.size() << " members of the room became guests" << std::endl;
-            //guests.emplace(guests.end(), users.begin(), users.end()); -- не работает
             for (size_t idx = 0; idx < users.size(); ++idx) {
                 guests.emplace_back(std::move(users[idx]));
             }
