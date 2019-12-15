@@ -4,13 +4,14 @@
 // TODO: logger
 
 server::server(size_t port, const std::string& ip) 
-    : selector{std::make_shared<sf::SocketSelector>()}
+    : start{true}
+    , selector{std::make_shared<sf::SocketSelector>()}
+    
 {
     if (listener.listen(port, ip) != sf::Socket::Done) {
         // throw std::runtime_error(std::strerror(errno));
     }
     selector->add(listener);
-    std::cout << "server is started and waiting for clients" << std::endl;
 }
 
 server::~server() {
@@ -18,8 +19,9 @@ server::~server() {
 }
 
 void server::run() {
-    while (true) {
-        if (selector->wait(WAIT_TIME_OUT)) {
+    start = true;
+    while (start) {
+        if (selector->wait(UPDATE_TIME_OUT)) {
             if (selector->isReady(listener)) {
                 add_guest();
             } else {
@@ -30,6 +32,18 @@ void server::run() {
         ping_rooms();
         ping_guests();
     }
+}
+
+void server::stop() {
+    start = false;
+}
+
+json server::get_info() const {
+    std::map<std::string, size_t> rooms_info;
+    for(auto& room: rooms) {
+        rooms_info[room.first] = room.second.size();
+    }
+    return {{"rooms", rooms_info}, {"guests", guests.size()}};
 }
     
 void server::rooms_event_handler() {
@@ -47,10 +61,11 @@ void server::guests_event_handler() {
             size_t head = msg[message::head];
             switch (head) {
                 case message::create: {
-                    std::string room_name = msg[message::body];
+                    json body = msg[message::body];
+                    std::string room_name = body[message::room_name];
                     if (!rooms.count(room_name)) {
                         clt.send(message::status, message::ok);
-                        rooms.emplace(room_name, users_room(std::move(clt), selector, MAX_USERS));
+                        rooms.emplace(room_name, users_room(std::move(clt), selector, body[message::size]));
                         guests.erase(guests.begin() + idx);
                         --idx;
                         std::cout << "room " << room_name << " created" << std::endl;
@@ -62,7 +77,7 @@ void server::guests_event_handler() {
                 }
                 case message::join: {
                     std::string room_name = msg[message::body];
-                    if (rooms.count(room_name) && rooms.at(room_name).size() < MAX_USERS) {
+                    if (rooms.count(room_name) && rooms.at(room_name).size() < rooms.at(room_name).max_size()) {
                         clt.send(message::status, message::ok);
                         rooms.at(room_name).add_user(std::move(clt));
                         guests.erase(guests.begin() + idx);
@@ -120,7 +135,6 @@ void server::ping_rooms() {
             del_rooms.push_back(room_name);
             std::vector<user> users = room.get_users();
             std::cout << users.size() << " members of the room became guests" << std::endl;
-            //guests.emplace(guests.end(), users.begin(), users.end()); -- не работает
             for (size_t idx = 0; idx < users.size(); ++idx) {
                 guests.emplace_back(std::move(users[idx]));
             }
