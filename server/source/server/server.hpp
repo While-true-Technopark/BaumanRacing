@@ -7,11 +7,14 @@ class server {
  public:
     server(size_t port, const std::string& ip);
     void run();
+    void stop();
+    json get_info() const;
     virtual void rooms_event_handler();
     virtual void guests_event_handler();
     virtual ~server();
     
  private:
+    bool start;
     sf::TcpListener listener;
     std::shared_ptr<sf::SocketSelector> selector;
     std::unordered_map<std::string, users_room> rooms;

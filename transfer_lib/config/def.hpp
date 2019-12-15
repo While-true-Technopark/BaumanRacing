@@ -8,6 +8,7 @@
 using json = nlohmann::json;
 using point = std::array<double, DIM>;
 using position = std::array<double, DOF>;
+// TODO:
 using players_position = std::array<position, MAX_USERS>;
 using players_rating = std::array<size_t, MAX_USERS>;
 

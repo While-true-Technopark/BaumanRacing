@@ -10,6 +10,7 @@ class users_room {
     void event_handler();
     bool add_user(user&& clt);
     bool ping();
+    size_t max_size() const;
     size_t size() const;
     std::vector<user> get_users();
     

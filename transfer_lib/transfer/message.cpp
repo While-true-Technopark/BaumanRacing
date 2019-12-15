@@ -3,6 +3,9 @@
 const std::string message::head = "head";
 const std::string message::body = "body";
 
+const std::string message::room_name = "room_name";
+const std::string message::size = "size";
+
 const std::string message::ok = "ok";
 const std::string message::fail = "fail";
 
@@ -29,10 +32,10 @@ sf::Packet message::json_to_packet(json& msg) {
 json message::get_message(header _header) {
     switch (_header) {
         case create: {
-            return message_init(create);
+            return message_create();
         }
         case join: {
-            return message_init(join);
+            return message_join();
         }
         case status: {
             return message_status();
@@ -77,9 +80,14 @@ json message::get_message(header _header) {
     }
 }
 
-json message::message_init(header _header) {
-    return json{{head, _header}, {body, "room name"}}; // body - имя комнаты
-    // TODO: авторизация: имя пользователя, пароль
+// TODO: авторизация: имя пользователя, пароль
+
+json message::message_create() {
+    return json{{head, create}, {body, json{{room_name, "name"}, {size, 4}}}}; // body - имя комнаты, размер
+}
+
+json message::message_join() {
+    return json{{head, join}, {body, "room name"}}; // body - имя комнаты
 }
 
 json message::message_status() {
@@ -87,7 +95,7 @@ json message::message_status() {
 }
 
 json message::message_setting() {
-    return json{{head, setting}, {body, car_type::medium}}; // body - small, medium, big
+    return json{{head, setting}, {body, game_object_type::medium}}; // body - small, medium, big
 }
 
 json message::message_wait() {
