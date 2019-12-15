@@ -55,9 +55,10 @@ event network_manager::throw_event() {
             std::vector<position> coord = msg[message::body];
             for (size_t i = 0; i < coord.size(); ++i) {
                 auto& player = ev.data.players_positions.player[i];
-                player.x = coord[i][0];
-                player.y = coord[i][1];
-                player.angle = coord[i][2];
+                position& pos = coord[i];
+                player.x = pos[0];
+                player.y = pos[1];
+                player.angle = pos[2];
             }
         }
     }
