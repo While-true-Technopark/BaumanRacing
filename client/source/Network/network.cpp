@@ -15,9 +15,9 @@ void network::send(message::header head, const type& body) {
     socket.send(packet);
 }
 
-json network::receive() {
+json network::get() { // receive
     sf::Packet packet;
-    if (socket.receive(packet) == sf::Socket::NotReady) {
+    if (socket.receive(packet) != sf::Socket::Done) {
         return json();
     } else {
         return message::packet_to_json(packet);
@@ -59,72 +59,41 @@ void network::keys_send(struct keys_pressed keys_input) {
 void network::name_car_send(struct player_info) { }
 
 struct players_positions_info network::get_positions() {
-    // positions.player_1.x += speed * cos(M_PI * positions.player_1.angle / 180);
-    // positions.player_1.y += speed * sin(M_PI * positions.player_1.angle / 180);
     return positions;
 }
 
 bool network::connect(size_t port, const std::string& ip) {
     if (socket.connect(ip, port) != sf::Socket::Done) {
-        // throw std::runtime_error(std::strerror(errno));
         std::cout << "no connect\n" << std::flush;
         return false;
     }
     socket.setBlocking(false);
-
     std::cout << "connect\n" << std::flush;
     return true;
 }
 
 int network::create_room(const char (*str)[256]) {
     std::cout << "create\n" << std::flush;
-    json msg;
     std::string room_name(*str);
-    msg = message::get_message(message::create);
-    msg[message::body][message::room_name] = room_name;
-    msg[message::body][message::size] = 2;
-
-    sf::Packet packet = message::json_to_packet(msg);
-    socket.send(packet);
-    packet.clear();
-
-    return 0;
+    send(message::create, json{{message::room_name, room_name}, {message::size, MAX_USERS}}); // TODO: (Слава) удалить MAX_USERS из конфига 
+    return EXIT_SUCCESS;
 }
 
 int network::set_car(size_t index) {
     std::cout << "set car\n" << std::flush;
-    car_type model = (car_type)index;
-    send(message::setting, model);
-
-    return 0;
+    send(message::setting, static_cast<game_object_type>(index));
+    return EXIT_SUCCESS;
 }
 
 int network::join_room(const char (*str)[256]) {
     std::cout << "join\n" << std::flush;
-    json msg;
-
     std::string room_name(*str);
-    msg = message::get_message(message::join);
-
-    msg[message::body] = room_name;
-
-    sf::Packet packet = message::json_to_packet(msg);
-    socket.send(packet);
-    packet.clear();
-
-    return 0;
-}
-
-json network::get() {
-    json msg = receive();
-    return msg;
+    send(message::join, room_name);
+    return EXIT_SUCCESS;
 }
 
 int network::close() {
     std::cout << "delete it\n" << std::flush;
-    json msg = message::get_message(message::close);
-    sf::Packet packet = message::json_to_packet(msg);
-    socket.send(packet);
-
-    return 0;
+    send(message::close, EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }

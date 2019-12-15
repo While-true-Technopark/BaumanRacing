@@ -76,8 +76,8 @@ void users_room::before_session() {
         std::cout << "(room) game started" << std::endl;
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
+            // clt.send(message::start, json{{message::settings, manager.get_setting()}, {message::id, idx}});
             clt.send(message::start, idx);
-            //clt.send(message::pos, manager.get_players_pos());
         }
     }
 }
@@ -135,11 +135,11 @@ void users_room::update_user() {
         if (connected[idx]) {
             const user& clt = users[idx];
             clt.send(message::pos, manager.get_players_pos());
-            clt.send(message::rating, manager.get_rating());
             clt.send(message::pos_s, manager.get_side_objects_pos());
-            
             if (manager.finished(idx)) {
-                clt.send(message::finish, players_rating());
+                clt.send(message::finish, manager.get_rating());
+            } else {
+                clt.send(message::rating, manager.get_rating());
             }
 
         }

@@ -3,21 +3,26 @@
 const int8_t NUM_CIRCLE = 1;
 
 game_manager::game_manager(size_t num_players) 
-    : map(num_players)
+    : num_players{num_players}
+    , map(num_players)
     , start{false}
 {}
 
 void game_manager::run() {
     wait_before_start.restart();
     start = true;
-    map.set_start_pos();
+    map.start();
 }
 
-players_position game_manager::get_players_pos() const {
+std::vector<game_object_type> game_manager::get_setting() const {
+    return map.get_setting();
+}
+
+std::vector<position> game_manager::get_players_pos() const {
     return map.get_players_pos();
 }
 
-players_rating game_manager::get_rating() const {
+std::vector<size_t> game_manager::get_rating() const {
     return map.get_rating();
 }
 
@@ -30,7 +35,7 @@ bool game_manager::finished(size_t id) const {
 }
 
 bool game_manager::finish() {
-    for (size_t idx = 0; idx < MAX_USERS; ++idx) {
+    for (size_t idx = 0; idx < num_players; ++idx) {
         if (!finished(idx)) {
             return false;
         }

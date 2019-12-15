@@ -6,6 +6,9 @@ const std::string message::body = "body";
 const std::string message::room_name = "room_name";
 const std::string message::size = "size";
 
+const std::string message::id = "id";
+const std::string message::settings = "settings";
+
 const std::string message::ok = "ok";
 const std::string message::fail = "fail";
 
@@ -81,7 +84,6 @@ json message::get_message(header _header) {
 }
 
 // TODO: авторизация: имя пользователя, пароль
-
 json message::message_create() {
     return json{{head, create}, {body, json{{room_name, "name"}, {size, 4}}}}; // body - имя комнаты, размер
 }
@@ -98,12 +100,14 @@ json message::message_setting() {
     return json{{head, setting}, {body, game_object_type::medium}}; // body - small, medium, big
 }
 
+// TODO: вместо кол-ва присоед игроков писать их имена
 json message::message_wait() {
     return json{{head, wait}, {body, 0}}; // body - кол-во присоед игроков
-    // TODO: вместо кол-ва присоед игроков писать их имена
 }
 
 json message::message_start() {
+    // return json{{head, start}, {body, json{{settings, std::vector<game_object_type>()}, {id, 0}}}}; 
+    // body - настройки остальных игроков, личный номер в этом векторе [0,..., MAX_USERS)
     return json{{head, start}, {body, 0}}; // body - игровой номер [0,..., MAX_USERS)
 }
 
@@ -113,7 +117,7 @@ json message::message_command() {
 }
 
 json message::message_pos() {
-    return json{{head, pos}, {body, players_position()}}; // body - координаты всех игроков
+    return json{{head, pos}, {body, std::vector<position>()}}; // body - координаты всех игроков
 }
 
 json message::message_pos_s() {
@@ -121,7 +125,7 @@ json message::message_pos_s() {
 }
 
 json message::message_rating(header _header) { // _header - rating, finish
-    return json{{head, _header}, {body, players_rating()}}; // body - рейтинг игроков
+    return json{{head, _header}, {body, std::vector<size_t>()}}; // body - рейтинг игроков
 }
 
 json message::message_ping() {
@@ -131,5 +135,5 @@ json message::message_ping() {
 }
 
 json message::message_close() {
-    return json{{head, close}}; // нет body
+    return json{{head, close}, {body, EXIT_SUCCESS}}; // body - статус выхода
 }

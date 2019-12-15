@@ -2,6 +2,8 @@
 #include "tinyxml2.hpp"
 
 static double GRAD_CIRCLE = 360; // в градусах
+static float FLOAT_ZERO = 1e-4;
+static double DOUBLE_ZERO = 1e-7;
 
 side_object::side_object() 
     : radius{15}
@@ -14,9 +16,11 @@ game_object::game_object()
     : game_object(game_object_type::medium)
 {}
 
-game_object::game_object(game_object_type type) {
+game_object::game_object(game_object_type type) 
+    : type{type}
+    , speed{0}
+{
     pos.fill(0);
-    speed = 0;
     switch (type) {
         case game_object_type::small: {
             radius = 30;
@@ -88,7 +92,7 @@ bool game_map::load_map(const std::string& path) {
     return true;
 }
 
-void game_map::set_start_pos() {
+void game_map::start() {
     // TODO: направление стартовой позиции по х и у
     double dist = 60;
     position pos = start_pos;
@@ -107,17 +111,20 @@ void game_map::set_start_pos() {
     }
 }
 
-players_position game_map::get_players_pos() const {
-    players_position pos;
+std::vector<game_object_type> game_map::get_setting() const {
+    std::vector<game_object_type> setting(players.size());
+    for (size_t idx = 0; idx < setting.size(); ++idx) {
+        setting[idx] = players[idx].type;
+    }
+    return setting;
+}
+
+std::vector<position> game_map::get_players_pos() const {
+    std::vector<position> pos(players.size());
     for (size_t idx = 0; idx < pos.size(); ++idx) {
         pos[idx] = players[idx].pos;
     }
     return pos;
-}
-
-// TODO:
-players_rating game_map::get_rating() const {
-    return players_rating();   
 }
 
 std::vector<position> game_map::get_side_objects_pos() const {
@@ -126,6 +133,11 @@ std::vector<position> game_map::get_side_objects_pos() const {
         pos[idx] = side_objects[idx].pos;
     }
     return pos;
+}
+
+// TODO:
+std::vector<size_t> game_map::get_rating() const {
+    return std::vector<size_t>();   
 }
 
 int8_t game_map::get_num_circle(size_t id) const {
@@ -158,7 +170,7 @@ void game_map::check_collision(size_t id) {
         }
         game_object& player2 = players[idx];
         double dist = player1.dist(player2.pos) - (player1.radius + player2.radius);
-        if (dist < 1e-4) {
+        if (dist < FLOAT_ZERO) {
             player1.pos[0] -= 0.5 * dist * cos(rad_angle);
             player1.pos[1] -= 0.5 * dist * sin(rad_angle);
 
@@ -184,8 +196,8 @@ void game_map::make_move() {
         } else if (comm.forward) {
             double next_speed = player.speed - a;
             player.speed = -next_speed < player.max_speed ? next_speed : -player.max_speed;
-        } else if (fabs(player.speed) > 1e-7) { // inertion move
-            int8_t sign = player.speed > 1e-7 ? 1 : -1;
+        } else if (fabs(player.speed) > DOUBLE_ZERO) { // inertion move
+            int8_t sign = player.speed > DOUBLE_ZERO ? 1 : -1;
             player.speed -= sign * 0.5 * a;
         } else {
             player.speed = 0;

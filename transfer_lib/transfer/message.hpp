@@ -36,6 +36,9 @@ class message {
     
     static const std::string room_name;
     static const std::string size;
+    
+    static const std::string id;
+    static const std::string settings;
       
     static const std::string ok;
     static const std::string fail;

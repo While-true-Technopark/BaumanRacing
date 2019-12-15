@@ -2,7 +2,7 @@
 #include "server.hpp"
 
 int main() {
-    server srv(PORT, LOCAL_IP);
+    server srv(PORT, IP);
     std::cout << "server is started and waiting for clients" << std::endl << std::flush;
     std::thread srv_manager(
         [&srv]() {
