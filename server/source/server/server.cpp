@@ -1,7 +1,6 @@
 #include "server.hpp"
     
 // TODO: обработка исключений
-// TODO: logger
 
 server::server(size_t port, const std::string& ip) 
     : start{true}
@@ -22,6 +21,7 @@ server::~server() {
 }
 
 void server::run() {
+    logger::write_log("(server): run");
     start = true;
     while (start) {
         if (selector->wait(UPDATE_TIME_OUT)) {
@@ -38,6 +38,7 @@ void server::run() {
 }
 
 void server::stop() {
+    logger::write_log("(server): stop");
     start = false;
 }
 
@@ -71,7 +72,7 @@ void server::guests_event_handler() {
                         rooms.emplace(room_name, users_room(std::move(clt), selector, body[message::size]));
                         guests.erase(guests.begin() + idx);
                         --idx;
-                        logger::write_log(std::string("(server): room ") + room_name + std::string(" created"));
+                        logger::write_log("(server): room " + room_name + " created");
                     } else {
                         clt.send(message::status, message::fail);
                         logger::write_log("(server): create failed. a room with such names exists");
@@ -85,7 +86,7 @@ void server::guests_event_handler() {
                         rooms.at(room_name).add_user(std::move(clt));
                         guests.erase(guests.begin() + idx);
                         --idx;
-                        logger::write_log(std::string("(server): client joined in room ") + room_name);
+                        logger::write_log("(server): client joined in room " + room_name);
                     } else {
                         logger::write_log("(server): join failed. no room with that name exists or is already full");
                         clt.send(message::status, message::fail);
@@ -99,7 +100,7 @@ void server::guests_event_handler() {
                     break;
                 }
                 case message::close: {
-                    logger::write_log(std::string("(server): guest ") + std::to_string(idx) + std::string(" close connection"));
+                    logger::write_log("(server): guest " + std::to_string(idx) + " close connection");
                     selector->remove(clt.get_socket());
                     guests.erase(guests.begin() + idx);
                     --idx;
@@ -118,7 +119,7 @@ void server::ping_guests() {
     for (size_t idx = 0; idx < guests.size(); ++idx) {
         user& clt = guests[idx];
         if (!clt.ping()) {
-            logger::write_log(std::string("(server): disconnect guest ") + std::to_string(idx));
+            logger::write_log("(server): disconnect guest " + std::to_string(idx));
             selector->remove(clt.get_socket());
             guests.erase(guests.begin() + idx);
             --idx;
@@ -132,10 +133,10 @@ void server::ping_rooms() {
         const std::string& room_name = it->first;
         users_room& room = it->second;
         if (!room.ping()) {
-            logger::write_log(std::string("(server): disconnect room ") + room_name);
+            logger::write_log("(server): disconnect room " + room_name);
             del_rooms.push_back(room_name);
             std::vector<user> users = room.get_users();
-            logger::write_log(std::string("(server): ") + std::to_string(users.size()) + std::string(" members of the room became guests"));
+            logger::write_log("(server): " + std::to_string(users.size()) + " members of the room became guests");
             for (size_t idx = 0; idx < users.size(); ++idx) {
                 guests.emplace_back(std::move(users[idx]));
             }
