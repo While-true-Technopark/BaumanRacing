@@ -30,7 +30,7 @@ struct game_object {
 class game_map {
  public:
     explicit game_map(size_t num_players);
-    bool load_map(const std::string& path);
+    bool load(const std::string& path);
     void start();
     
     std::vector<game_object_type> get_setting() const;

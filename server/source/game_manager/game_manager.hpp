@@ -2,11 +2,11 @@
 #define GAME_MANAGER_H_
 
 #include "map.hpp"
-//#include "game_logic.hpp"
 
 class game_manager {
  public:
     explicit game_manager(size_t num_players);
+    bool load_map();
     void run();
     std::vector<game_object_type> get_setting() const;
     std::vector<position> get_players_pos() const;

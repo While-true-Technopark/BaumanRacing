@@ -8,6 +8,10 @@ game_manager::game_manager(size_t num_players)
     , start{false}
 {}
 
+bool game_manager::load_map(/*передавать id карты*/) {
+    return map.load("default_maps/map.tmx");
+}
+
 void game_manager::run() {
     wait_before_start.restart();
     start = true;

@@ -10,6 +10,11 @@ users_room::users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelecto
     , started{false}
     , finished{false}
 {
+    if (manager.load_map()) {
+        // log
+    } else {
+        // log
+    }
     users[0] = std::move(first_clt);
     connected[0] = true;
 }

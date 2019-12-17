@@ -56,14 +56,11 @@ game_map::game_map(size_t num_players)
     : players(num_players)
     , num_circle(num_players, -1)
     , command(num_players)
-{
-    load_map("default_maps/map.tmx");
-}
+{}
 
-bool game_map::load_map(const std::string& path) {
+bool game_map::load(const std::string& path) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(path.c_str())) {
-        std::cout << "(map) not found map" << std::endl;
         return false;
     }
     
