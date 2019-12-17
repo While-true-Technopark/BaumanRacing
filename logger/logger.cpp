@@ -11,10 +11,21 @@ void logger::init_logger(const std::string& file_name) {
         boost::log::keywords::file_name = file_name,
         boost::log::keywords::format = "[%TimeStamp%] %Message%"
     );
-     boost::log::add_common_attributes();
+    boost::log::core::get()->set_filter(
+        boost::log::trivial::severity >= boost::log::trivial::info
+    );
+    boost::log::add_common_attributes();
 }
-    
-void logger::write_log(const std::string& log) {
+
+void logger::write_trace(const std::string& log) {
+    BOOST_LOG_TRIVIAL(trace) << log;
+}
+
+void logger::write_debug(const std::string& log) {
+    BOOST_LOG_TRIVIAL(debug) << log;
+}
+
+void logger::write_info(const std::string& log) {
     BOOST_LOG_TRIVIAL(info) << log;
 }
 
