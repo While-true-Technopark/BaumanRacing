@@ -65,7 +65,8 @@ class message {
     static json message_command();
     static json message_pos();
     static json message_pos_s();
-    static json message_rating(header _header);
+    static json message_rating();
+    static json message_finish();
     
     // shared
     static json message_ping();

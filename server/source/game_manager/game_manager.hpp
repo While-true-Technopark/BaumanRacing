@@ -12,7 +12,7 @@ class game_manager {
     std::vector<position> get_players_pos() const;
     std::vector<position> get_side_objects_pos() const;
     std::vector<size_t> get_rating() const;
-    bool finished(size_t id) const;
+    size_t finished(size_t id);
     bool finish();
     void update();
     void set_setting(size_t id, game_object_type type);
@@ -23,6 +23,7 @@ class game_manager {
     game_map map;
     sf::Clock wait_before_start;
     bool start;
+    size_t num_finished;
 };
 
 #endif  // GAME_MANAGER_H_

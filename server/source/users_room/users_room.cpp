@@ -134,15 +134,18 @@ void users_room::update_user() {
     manager.update();
     logger::write_trace("update users");
     for (size_t idx = 0; idx < max_users; ++idx) {
-        if (connected[idx]) {
+        if (connected[idx] && ready[idx]) {
             const user& clt = users[idx];
             clt.send(message::pos, manager.get_players_pos());
-            clt.send(message::pos_s, manager.get_side_objects_pos());
-            if (manager.finished(idx)) {
-                clt.send(message::finish, manager.get_rating());
-            } else {
+            //clt.send(message::pos_s, manager.get_side_objects_pos());
+            size_t num_finished = manager.finished(idx);
+            if (num_finished) {
+                logger::write_info("(room) player " ++ std::to_string(idx) + " finished " + std::to_string(num_finished));
+                clt.send(message::finish, num_finished);
+                ready[idx] = false;
+            }/* else {
                 clt.send(message::rating, manager.get_rating());
-            }
+            }*/
 
         }
     }

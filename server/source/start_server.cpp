@@ -19,7 +19,6 @@ int main() {
                         std::cout << "room: " << room.first << ", size: " << room.second << std::endl;
                     }
                 } else if (command == "stop") {
-                    std::cout << "server is stopped" << std::endl;
                     srv.stop();
                     return;
                 } else {

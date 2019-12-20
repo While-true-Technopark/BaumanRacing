@@ -132,11 +132,6 @@ std::vector<position> game_map::get_side_objects_pos() const {
     return pos;
 }
 
-// TODO:
-std::vector<size_t> game_map::get_rating() const {
-    return std::vector<size_t>();   
-}
-
 int8_t game_map::get_num_circle(size_t id) const {
     return num_circle[id];
 }
@@ -180,6 +175,25 @@ void game_map::check_collision(size_t id) {
     }
 }
 
+void game_map::fix_num_circle() {
+    double x_beg = start_pos[0] - 10;
+    double x_end = start_pos[0] + 10;
+    double y_down = start_pos[1] - road_width / 2.;
+    double y_up = start_pos[1] + road_width / 2.;
+    
+    for (size_t idx = 0; idx < players.size(); ++idx) {
+        game_object& player = players[idx];
+        if (player.pos[0] > x_beg && player.pos[0] < x_end && player.pos[1] > y_down && player.pos[1] < y_up) {
+            double next_x = player.pos[0] + player.speed * cos(player.pos[2] * 2. * M_PI / GRAD_CIRCLE);
+            if (next_x < x_beg) {
+                ++num_circle[idx];
+            } else if (next_x > x_end) {
+                --num_circle[idx];
+            }
+        }
+    }
+}
+
 void game_map::make_move() {
     double a = 1;
     
@@ -219,5 +233,5 @@ void game_map::make_move() {
         
         check_collision(idx);
     }
-    
+    fix_num_circle();
 }

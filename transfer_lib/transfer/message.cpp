@@ -64,10 +64,10 @@ json message::get_message(header _header) {
             return message_pos_s();
         }
         case rating: {
-            return message_rating(rating);
+            return message_rating();
         }
         case finish:  {
-            return message_rating(finish);
+            return message_finish();
         }
         
         case ping: {
@@ -123,8 +123,12 @@ json message::message_pos_s() {
     return json{{head, pos_s}, {body, std::vector<position>()}}; // body - координаты сторонних объектов
 }
 
-json message::message_rating(header _header) { // _header - rating, finish
-    return json{{head, _header}, {body, std::vector<size_t>()}}; // body - рейтинг игроков
+json message::message_rating() {
+    return json{{head, rating}, {body, std::vector<size_t>()}}; // body - рейтинг игроков
+}
+
+json message::message_finish() {
+    return json{{head, finish}, {body, 0}}; // body - итоговое место
 }
 
 json message::message_ping() {

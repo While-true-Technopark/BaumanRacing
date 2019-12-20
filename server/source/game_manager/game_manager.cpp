@@ -6,6 +6,7 @@ game_manager::game_manager(size_t num_players)
     : num_players{num_players}
     , map(num_players)
     , start{false}
+    , num_finished{0}
 {}
 
 bool game_manager::load_map(/*передавать id карты*/) {
@@ -27,15 +28,18 @@ std::vector<position> game_manager::get_players_pos() const {
 }
 
 std::vector<size_t> game_manager::get_rating() const {
-    return map.get_rating();
+    return std::vector<size_t>();
 }
 
 std::vector<position> game_manager::get_side_objects_pos() const {
     return map.get_side_objects_pos();
 }
 
-bool game_manager::finished(size_t id) const {
-    return !(map.get_num_circle(id) < NUM_CIRCLE); // map.get_num_circle(id) >= NUM_CIRCLE;
+size_t game_manager::finished(size_t id) {
+    if (!(map.get_num_circle(id) < NUM_CIRCLE)) { // map.get_num_circle(id) >= NUM_CIRCLE;
+        return ++num_finished;
+    }
+    return 0;
 }
 
 bool game_manager::finish() {
@@ -43,6 +47,7 @@ bool game_manager::finish() {
         if (!finished(idx)) {
             return false;
         }
+        ++num_finished;
     }
     start = false;
     return true;

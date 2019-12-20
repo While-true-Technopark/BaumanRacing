@@ -1,7 +1,6 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-#include <SFML/Graphics/Rect.hpp>
 #include "command.hpp"
 
 struct side_object {
@@ -36,9 +35,7 @@ class game_map {
     std::vector<game_object_type> get_setting() const;
     std::vector<position> get_players_pos() const;
     std::vector<position> get_side_objects_pos() const;
-    std::vector<size_t> get_rating() const;
     int8_t get_num_circle(size_t id) const;
-    
 
     void set_setting(size_t id, game_object_type type);
     void set_setting(size_t id, const move_command& comm);
@@ -48,8 +45,13 @@ class game_map {
     
  private:
     std::vector<game_object> players;
+    
     std::vector<int8_t> num_circle;
+    position start_pos;
+    double road_width;
+    
     std::vector<move_command> command;
+    
     std::vector<side_object> side_objects;
     
     /*struct map_block {
@@ -60,13 +62,11 @@ class game_map {
     std::vector<std::vector<bool>> blocks_type;
     double h_x;
     double h_y;
-    position start_pos;
-    double road_width;
     
     void check_collision(size_t id);
+    void fix_num_circle();
     //point start_coord;
     //bool started;
-    //std::array<bool, MAX_USERS> finished;
 };
 
 #endif  // MAP_H_
