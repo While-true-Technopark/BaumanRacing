@@ -140,7 +140,7 @@ void users_room::update_user() {
             //clt.send(message::pos_s, manager.get_side_objects_pos());
             size_t num_finished = manager.finished(idx);
             if (num_finished) {
-                logger::write_info("(room) player " ++ std::to_string(idx) + " finished " + std::to_string(num_finished));
+                logger::write_info("(room) player " + std::to_string(idx) + " finished " + std::to_string(num_finished));
                 clt.send(message::finish, num_finished);
                 ready[idx] = false;
             }/* else {

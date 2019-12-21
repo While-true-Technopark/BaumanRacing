@@ -10,7 +10,7 @@ const size_t DIM = 2;
 const size_t DOF = DIM + 1;  // x, y, angle
 
 const size_t PORT = 5555;
-const std::string IP = "127.0.0.1";
+const std::string IP = "172.16.86.206";//"192.168.43.1"; //"127.0.0.1";
 
 const sf::Time UPDATE_TIME_OUT = sf::seconds(0.05f);
 const sf::Time PING_TIME_OUT = sf::seconds(30.0f);

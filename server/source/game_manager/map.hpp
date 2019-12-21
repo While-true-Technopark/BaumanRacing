@@ -35,7 +35,7 @@ class game_map {
     std::vector<game_object_type> get_setting() const;
     std::vector<position> get_players_pos() const;
     std::vector<position> get_side_objects_pos() const;
-    int8_t get_num_circle(size_t id) const;
+    int get_num_circle(size_t id) const;
 
     void set_setting(size_t id, game_object_type type);
     void set_setting(size_t id, const move_command& comm);
@@ -46,7 +46,7 @@ class game_map {
  private:
     std::vector<game_object> players;
     
-    std::vector<int8_t> num_circle;
+    std::vector<int> num_circle;
     position start_pos;
     double road_width;
     

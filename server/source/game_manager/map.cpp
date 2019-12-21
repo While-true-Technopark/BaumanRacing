@@ -132,7 +132,7 @@ std::vector<position> game_map::get_side_objects_pos() const {
     return pos;
 }
 
-int8_t game_map::get_num_circle(size_t id) const {
+int game_map::get_num_circle(size_t id) const {
     return num_circle[id];
 }
     
@@ -176,10 +176,10 @@ void game_map::check_collision(size_t id) {
 }
 
 void game_map::fix_num_circle() {
-    double x_beg = start_pos[0] - 10;
-    double x_end = start_pos[0] + 10;
-    double y_down = start_pos[1] - road_width / 2.;
-    double y_up = start_pos[1] + road_width / 2.;
+    double x_beg = start_pos[0] - 30;
+    double x_end = start_pos[0] + 30;
+    double y_down = start_pos[1] - road_width;
+    double y_up = start_pos[1] + road_width;
     
     for (size_t idx = 0; idx < players.size(); ++idx) {
         game_object& player = players[idx];

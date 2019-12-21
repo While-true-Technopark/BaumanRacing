@@ -36,7 +36,9 @@ std::vector<position> game_manager::get_side_objects_pos() const {
 }
 
 size_t game_manager::finished(size_t id) {
+    // std::cout << "num circle " << id <<  map.get_num_circle(id) << std::endl;
     if (!(map.get_num_circle(id) < NUM_CIRCLE)) { // map.get_num_circle(id) >= NUM_CIRCLE;
+        // std::cout << "(manager) finish " << id << std::endl;
         return ++num_finished;
     }
     return 0;
