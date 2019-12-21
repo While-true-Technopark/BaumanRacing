@@ -10,6 +10,11 @@ users_room::users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelecto
     , started{false}
     , finished{false}
 {
+    if (manager.load_map()) {
+        logger::write_info("(room): map loaded");
+    } else {
+        logger::write_info("(room): map not loaded");
+    }
     users[0] = std::move(first_clt);
     connected[0] = true;
 }
@@ -36,7 +41,7 @@ void users_room::before_session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::setting: {
-                        std::cout << "(room) player " << idx << " set car" << std::endl;
+                        logger::write_info("(room) player " + std::to_string(idx) + " set game object type");
                         game_object_type type = msg[message::body];
                         manager.set_setting(idx, type);
                         ready[idx] = true;
@@ -49,7 +54,7 @@ void users_room::before_session() {
                         break;
                     }
                     case message::close: {
-                        std::cout << "(room) user " << idx << " close connection before game" << std::endl;
+                        logger::write_info("(room) user " + std::to_string(idx) + " close connection before game");
                         connected[idx] = false;
                         ready[idx] = false;
                         selector->remove(clt.get_socket());
@@ -62,7 +67,7 @@ void users_room::before_session() {
             }
 
             size_t num_users = size();
-            std::cout << "(room) wait " << num_users << " users" << std::endl;
+            logger::write_debug("(room) wait " + std::to_string(num_users) + " users");
             clt.send(message::wait, num_users);
         }
         if (!ready[idx]) {
@@ -73,11 +78,10 @@ void users_room::before_session() {
     if (all_ready) {
         started = true;
         manager.run();
-        std::cout << "(room) game started" << std::endl;
+        logger::write_info("(room) game started");
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
-            clt.send(message::start, idx);
-            //clt.send(message::pos, manager.get_players_pos());
+            clt.send(message::start, json{{message::id, idx}, {message::settings, manager.get_setting()}});
         }
     }
 }
@@ -96,7 +100,7 @@ void users_room::session() {
                 size_t head = msg[message::head];
                 switch (head) {
                     case message::command: {
-                        std::cout << "(room) player " << idx << " set command" << std::endl;
+                        logger::write_trace("(room) player " + std::to_string(idx) + " set command");
                         move_command comm(msg[message::body]);
                         manager.set_setting(idx, comm);
                         break;
@@ -108,7 +112,7 @@ void users_room::session() {
                         break;
                     }
                     case message::close: {
-                        std::cout << "(room) user " << idx << " close connection during the game" << std::endl;
+                        logger::write_info("(room) user " + std::to_string(idx) + " close connection during the game");
                         connected[idx] = false;
                         ready[idx] = false;
                         selector->remove(clt.get_socket());
@@ -121,32 +125,33 @@ void users_room::session() {
             }
         }
     }
-
-    // update_user();
 }
 
 void users_room::update_user() {
     if (!started) {
         return;
     }
-    std::cout << "(room) manager update" << std::endl;
     manager.update();
+    logger::write_trace("update users");
     for (size_t idx = 0; idx < max_users; ++idx) {
-        if (connected[idx]) {
+        if (connected[idx] && ready[idx]) {
             const user& clt = users[idx];
             clt.send(message::pos, manager.get_players_pos());
-            clt.send(message::rating, manager.get_rating());
-            clt.send(message::pos_s, manager.get_side_objects_pos());
-            
-            if (manager.finished(idx)) {
-                clt.send(message::finish, players_rating());
-            }
+            //clt.send(message::pos_s, manager.get_side_objects_pos());
+            size_t num_finished = manager.finished(idx);
+            if (num_finished) {
+                logger::write_info("(room) player " + std::to_string(idx) + " finished " + std::to_string(num_finished));
+                clt.send(message::finish, num_finished);
+                ready[idx] = false;
+            }/* else {
+                clt.send(message::rating, manager.get_rating());
+            }*/
 
         }
     }
     
     if (manager.finish()) {
-        std::cout << "(room) game finish" << std::endl;
+        logger::write_info("(room) game finish");
         finished = true;
     }
 }
@@ -159,7 +164,7 @@ bool users_room::add_user(user&& clt) {
         if (!connected[idx]) {
             users[idx] = std::move(clt);
             connected[idx] = true;
-            std::cout << "(room) add user " << idx << std::endl;
+            logger::write_info("(room) add user " + std::to_string(idx));
             return true;
         }
     }
@@ -176,7 +181,7 @@ bool users_room::ping() {
             connected[idx] = false;
             ready[idx] = false;
             selector->remove(users[idx].get_socket());
-            std::cout << "(room) disconnect user " << idx << std::endl;
+            logger::write_info("(room) disconnect user " + std::to_string(idx));
         }
     }
     return size();

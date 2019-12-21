@@ -3,37 +3,53 @@
 const int8_t NUM_CIRCLE = 1;
 
 game_manager::game_manager(size_t num_players) 
-    : map(num_players)
+    : num_players{num_players}
+    , map(num_players)
     , start{false}
+    , num_finished{0}
 {}
+
+bool game_manager::load_map(/*передавать id карты*/) {
+    return map.load("default_maps/map.tmx");
+}
 
 void game_manager::run() {
     wait_before_start.restart();
     start = true;
-    map.set_start_pos();
+    map.start();
 }
 
-players_position game_manager::get_players_pos() const {
+std::vector<game_object_type> game_manager::get_setting() const {
+    return map.get_setting();
+}
+
+std::vector<position> game_manager::get_players_pos() const {
     return map.get_players_pos();
 }
 
-players_rating game_manager::get_rating() const {
-    return map.get_rating();
+std::vector<size_t> game_manager::get_rating() const {
+    return std::vector<size_t>();
 }
 
 std::vector<position> game_manager::get_side_objects_pos() const {
     return map.get_side_objects_pos();
 }
 
-bool game_manager::finished(size_t id) const {
-    return !(map.get_num_circle(id) < NUM_CIRCLE); // map.get_num_circle(id) >= NUM_CIRCLE;
+size_t game_manager::finished(size_t id) {
+    // std::cout << "num circle " << id <<  map.get_num_circle(id) << std::endl;
+    if (!(map.get_num_circle(id) < NUM_CIRCLE)) { // map.get_num_circle(id) >= NUM_CIRCLE;
+        // std::cout << "(manager) finish " << id << std::endl;
+        return ++num_finished;
+    }
+    return 0;
 }
 
 bool game_manager::finish() {
-    for (size_t idx = 0; idx < MAX_USERS; ++idx) {
+    for (size_t idx = 0; idx < num_players; ++idx) {
         if (!finished(idx)) {
             return false;
         }
+        ++num_finished;
     }
     start = false;
     return true;

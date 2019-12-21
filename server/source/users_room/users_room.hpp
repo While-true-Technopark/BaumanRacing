@@ -3,6 +3,7 @@
 
 #include "user.hpp"
 #include "game_manager.hpp"
+#include "logger.hpp"
 
 class users_room {
  public:

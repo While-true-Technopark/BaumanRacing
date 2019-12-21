@@ -9,9 +9,6 @@ enum class game_object_type {
     big,
 };
 
-// TODO: исправить на клиенте
-using car_type = game_object_type;
-
 class move_command {
  public:
     move_command();

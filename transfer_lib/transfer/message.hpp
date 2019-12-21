@@ -36,6 +36,9 @@ class message {
     
     static const std::string room_name;
     static const std::string size;
+    
+    static const std::string id;
+    static const std::string settings;
       
     static const std::string ok;
     static const std::string fail;
@@ -62,7 +65,8 @@ class message {
     static json message_command();
     static json message_pos();
     static json message_pos_s();
-    static json message_rating(header _header);
+    static json message_rating();
+    static json message_finish();
     
     // shared
     static json message_ping();

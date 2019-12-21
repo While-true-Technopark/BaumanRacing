@@ -10,12 +10,12 @@ int network_manager::handle_event(const event & e) {
             module->keys_send(e.data.keys);
             break;
         case connect_create:
-            module->connect(PORT, LOCAL_IP);
+            module->connect(PORT, IP);
             network = true;
             module->create_room(&e.data.input_ev.str);
             break;
         case connect_join:
-            module->connect(PORT, LOCAL_IP);
+            module->connect(PORT, IP);
             network = true;
             module->join_room(&e.data.input_ev.str);
             break;
@@ -28,12 +28,12 @@ int network_manager::handle_event(const event & e) {
         default:
             return -1;
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 event network_manager::throw_event() {
     event ev(nothing_recieve, { .empty = {} });
-    if (network == true) {
+    if (network) {
         json msg = module->get();
         if (msg[message::head] == message::ping && msg[message::body] == message::to) {
             module->ping();
@@ -45,16 +45,20 @@ event network_manager::throw_event() {
             std::cout << "new " << ev.data.box.select << "\n" << std::flush;
         } else if (msg[message::head] == message::start) {
             ev.type = game_start;
-            ev.data.box.select = msg[message::body];
+            json body = msg[message::body];
+            ev.data.box.select = body[message::id];
+            // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
             ev.type = update_position;
-            //std::cout << "recieved coords" << std::flush << std::endl;
-            players_position coord = msg[message::body];
-            for (int i = 0; i != coord.size(); i++) {
-                ev.data.players_positions.player[i].x = coord[i][0];
-                ev.data.players_positions.player[i].y = coord[i][1];
-                ev.data.players_positions.player[i].angle = coord[i][2];
+            //std::cout << "recieved coords\n" << std::flush;
+            std::vector<position> coord = msg[message::body];
+            for (size_t i = 0; i < coord.size(); ++i) {
+                auto& player = ev.data.players_positions.player[i];
+                position& pos = coord[i];
+                player.x = pos[0];
+                player.y = pos[1];
+                player.angle = pos[2];
             }
         }
     }

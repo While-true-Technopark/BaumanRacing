@@ -23,7 +23,6 @@ class network : public network_abst {
     void run();
     template<class type>
     void send(message::header head, const type& body);
-    json receive();
     struct keys_pressed keys;
     float speed;
  private:

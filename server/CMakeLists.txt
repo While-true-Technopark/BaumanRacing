@@ -11,12 +11,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 set(TINYXML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tinyxml2")
 set(TRANSFER_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../transfer_lib")
+set(LOGGER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../logger")
 
 set(ALL_SOURCES
 
         ${TINYXML_DIR}/tinyxml2.cpp  # TODO: подключать как отдельную либу
         ${TRANSFER_LIB_DIR}/transfer/message.cpp
         ${TRANSFER_LIB_DIR}/transfer/command.cpp
+        ${LOGGER_DIR}/logger.cpp
         
         ${SOURCE_DIR}/user/user.cpp
         
@@ -32,6 +34,7 @@ set(ALL_HEADERS
     ${TINYXML_DIR}/ # TODO: подключать как отдельную либу
     ${TRANSFER_LIB_DIR}/config/
     ${TRANSFER_LIB_DIR}/transfer/
+    ${LOGGER_DIR}/
     
     ${SOURCE_DIR}/user/
     ${SOURCE_DIR}/game_manager/
@@ -39,12 +42,15 @@ set(ALL_HEADERS
     ${SOURCE_DIR}/server/
 )
 
+find_package(Boost REQUIRED COMPONENTS system log)
 find_package(SFML COMPONENTS graphics audio network window system REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIR})
 include_directories(${SFML_INCLUDE_DIR})
 include_directories(${ALL_HEADERS})
 
 add_executable(server.out ${ALL_SOURCES} ${SOURCE_DIR}/start_server.cpp)
-target_link_libraries(server.out pthread)
+target_link_libraries(server.out ${Boost_SYSTEM_LIBRARY} boost_log boost_log_setup boost_thread pthread)
 target_link_libraries(server.out ${SFML_LIBRARIES})
 target_link_libraries(server.out nlohmann_json::nlohmann_json)
