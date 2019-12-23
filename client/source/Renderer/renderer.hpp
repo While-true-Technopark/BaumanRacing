@@ -2,6 +2,10 @@
 #define RENDERER_H_
 
 #include <SFML/Graphics.hpp>
+
+#include <cmath>
+#include <string>
+
 #include "renderer_abst.hpp"
 #include "event.hpp"
 
@@ -12,6 +16,7 @@ class renderer : public renderer_abst {
     explicit renderer(sf::RenderWindow *win);
     int init(init_data data) override;
     int build_game_scene(game_render_data data) override;
+    int build_start_scene(game_render_data data) override;
     int car_choose_menu() override;
     int connect_to_open(size_t box_select) override;
     int connect_to_room(const char (*str)[256]) override;
@@ -61,6 +66,7 @@ class renderer : public renderer_abst {
     sf::Text play_text;
     sf::Text settings_text;
     sf::Text waiting_text;
+    sf::Text digit_text;
 
     sf::Text build_text(const text_props props);
     sf::Sprite build_sprite(const sprite_props props);

@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "base_manager.hpp"
-
 #include "game_context.hpp"
 #include "game_context_manager.hpp"
 #include "input.hpp"

@@ -12,6 +12,7 @@ class renderer_abst {
  public:
     virtual int init(init_data data) = 0;
     virtual int build_game_scene(game_render_data data) = 0;
+    virtual int build_start_scene(game_render_data data) = 0;
     virtual int connect_to_open(size_t box_select) = 0;
     virtual int create_room(const char (*str)[256] = &STR256) = 0;
     virtual int connect_to_room(const char (*str)[256]) = 0;

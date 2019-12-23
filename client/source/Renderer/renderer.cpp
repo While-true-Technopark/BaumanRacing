@@ -1,6 +1,7 @@
 #include "renderer.hpp"
-#include <cmath>
-#include <string>
+#include <chrono>
+#include <thread>
+#include <iostream>
 
 renderer::renderer(sf::RenderWindow* win) {
     window = win;
@@ -67,6 +68,13 @@ int renderer::init(init_data data) {
             "center",
             sf::Vector2f(window_size.x / 2, 344),
             ""
+        });
+        digit_text = build_text({
+            sf::Color::Yellow,
+            data.main_font,
+            "center",
+            sf::Vector2f(0, 0),
+            "3"
         });
     }
 
@@ -136,9 +144,33 @@ int renderer::init(init_data data) {
     return RNDR_OK;
 }
 
+int renderer::build_start_scene(game_render_data data) {
+    view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    digit_text.setPosition(view.getCenter());
+    window->setView(view);
+    std::array<std::string, 3> timeout_text = {"3","2","1"};
+    int wait_time = TIME_OUT_BEFORE_START.asMilliseconds();
+    for (size_t i = 0; i != timeout_text.size(); i++) {
+        window->clear();
+        window->draw(map);
+        for (size_t i = 0; i != players.size(); i++) {
+            players[i].setPosition(data.players[i].position.x, data.players[i].position.y);
+            players[i].setRotation(data.players[i].position.angle);
+            window->draw(players[i]);
+        }
+        digit_text.setString(timeout_text[i]);
+        window->draw(digit_text);
+        window->display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time / timeout_text.size()));
+    }
+    std::cout << "Unsleep" << std::endl;
+    return RNDR_OK;
+}
+
 int renderer::build_game_scene(game_render_data data) {
     window->clear();
     view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    view.rotate(0.1f);
     window->setView(view);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {

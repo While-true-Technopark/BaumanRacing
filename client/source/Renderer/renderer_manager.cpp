@@ -3,6 +3,7 @@
 renderer_manager::renderer_manager(renderer_abst *abst) {
     module = abst;
     my_client_id = -1;
+    first_update_pos = true;
 }
 
 renderer_manager::~renderer_manager() {
@@ -32,16 +33,16 @@ int renderer_manager::handle_event(const event & e) {
             break;
         }
         case create_room: { // новая комната
-             module->create_room(&e.data.input_ev.str);
-             break;
+            module->create_room(&e.data.input_ev.str);
+            break;
         }
         case connect_to_room: { // существующая
-             module->connect_to_room(&e.data.input_ev.str);
-             break;
+            module->connect_to_room(&e.data.input_ev.str);
+            break;
         }
         case show_car: { // окно выбора машинки
-             module->show_car(e.data.box.select);
-             break;
+            module->show_car(e.data.box.select);
+            break;
         }
         case waiting: { // окно ожидания
             module->show_wait(e.data.box.select);
@@ -49,8 +50,9 @@ int renderer_manager::handle_event(const event & e) {
         }
         case game_start: {
             my_client_id = e.data.box.select;
-            game_render_data data = { };
-            module->build_game_scene(data);
+            //game_render_data data = { };
+            //module->build_game_scene(data);
+            //module->build_start_scene(data);
             break;
         }
         case update_position: {
@@ -59,7 +61,12 @@ int renderer_manager::handle_event(const event & e) {
                 data.players[i].position = e.data.players_positions.player[i];
             }
             std::swap(data.players[0], data.players[my_client_id]);
-            module->build_game_scene(data);
+            if (first_update_pos) {
+                first_update_pos = false;
+                module->build_start_scene(data);
+            } else {
+                module->build_game_scene(data);
+            }
             break;
         }
         default:
