@@ -14,7 +14,7 @@ class game_manager {
     std::vector<size_t> get_rating() const;
     size_t finished(size_t id);
     bool finish();
-    void update();
+    bool update();
     void set_setting(size_t id, game_object_type type);
     void set_setting(size_t id, const move_command& comm);
     
