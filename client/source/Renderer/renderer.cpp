@@ -9,9 +9,9 @@ renderer::renderer(sf::RenderWindow* win) {
     view = window->getView();
     // minimap_view.setSize(window_size.x * 0.13, window_size.y * 0.25);
     minimap_view.setSize(100, 100);
-    float viewport_width = 25.f * window_size.y / window_size.x;
-    float viewport_left = 100.f - viewport_width;
-    minimap_view.setViewport(sf::FloatRect(viewport_left / 100, 0.f, viewport_width / 100, 0.24f));
+    float viewport_width = 0.25f * window_size.y / window_size.x;
+    // float viewport_left = 1.f - viewport_width;
+    minimap_view.setViewport(sf::FloatRect(0, 0.75f, viewport_width, 0.25f));
     // minimap_view.setViewport(sf::FloatRect(0.87, 0.f, 0.13, 0.25f));
     minimap_view.zoom(35);
 }
@@ -214,6 +214,10 @@ int renderer::build_game_scene(game_render_data data) {
 int renderer::draw_minimap() {
     minimap_view.setCenter(players[0].getPosition());
     window->setView(minimap_view);
+    sf::RectangleShape background(sf::Vector2f(10000.f, 10000.f));
+    background.setFillColor(sf::Color(45,140,42));
+    background.setPosition(-1000,-1000);
+    window->draw(background);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {
         window->draw(players[i]);
