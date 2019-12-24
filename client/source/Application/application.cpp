@@ -72,6 +72,7 @@ bool application::run() {
             case waiting:
                 renderer_mngr.handle_event(e_network);
                 break;
+            case game_end:
             case game_start:
                 renderer_mngr.handle_event(e_network);
                 input_mngr.handle_event(e_network);

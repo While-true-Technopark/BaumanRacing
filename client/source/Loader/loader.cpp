@@ -60,6 +60,7 @@ int loader::load_all_static() {
         if (!texture.loadFromFile(static_dir + path)) {
             return LDR_FILE_NOT_LOADED;
         }
+        texture.setSmooth(true);
         textures.emplace(std::make_pair(path, texture));
     }
     for (size_t i = 0; i != fonts_paths.size(); i++) {

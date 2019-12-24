@@ -14,20 +14,19 @@
 class renderer : public renderer_abst {
  public:
     explicit renderer(sf::RenderWindow *win);
-    int init(init_data data) override;
     int build_game_scene(game_render_data data) override;
     int build_start_scene(game_render_data data) override;
     int car_choose_menu() override;
     int connect_to_open(size_t box_select) override;
     int connect_to_room(const char (*str)[256]) override;
     int create_room(const char (*str)[256]) override;
-    int end_game_menu() override;
+    int end_game_menu(int position) override;
+    int init(init_data data) override;
     int lobby_scene() override;
     int main_menu(size_t box_select) override;
     int settings_menu() override;
     int show_car(size_t index) override;
     int show_wait(size_t waiting) override;
-    int wait_scene() override;
     ~renderer() override;
 
  private:
@@ -67,6 +66,8 @@ class renderer : public renderer_abst {
     sf::Text settings_text;
     sf::Text waiting_text;
     sf::Text digit_text;
+    sf::Text finish_pos_text;
+    sf::Text press_enter_text;
 
     sf::Text build_text(const text_props props);
     sf::Sprite build_sprite(const sprite_props props);

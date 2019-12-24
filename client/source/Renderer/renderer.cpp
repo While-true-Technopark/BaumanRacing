@@ -7,6 +7,7 @@ renderer::renderer(sf::RenderWindow* win) {
     window = win;
     window_size = window->getSize();
     view = window->getView();
+    view.setRotation(25);
 }
 
 renderer::~renderer() {}
@@ -75,6 +76,21 @@ int renderer::init(init_data data) {
             "center",
             sf::Vector2f(0, 0),
             "3"
+        });
+
+        finish_pos_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 244),
+            "Your position is "
+        });
+        press_enter_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 344),
+            "Press enter to continue..."
         });
     }
 
@@ -146,31 +162,35 @@ int renderer::init(init_data data) {
 
 int renderer::build_start_scene(game_render_data data) {
     view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
-    digit_text.setPosition(view.getCenter());
+    digit_text.setCharacterSize(250);
+    sf::FloatRect text_bounds = digit_text.getLocalBounds();
+    digit_text.setOrigin(text_bounds.width / 2, text_bounds.height / 2);
+    digit_text.setPosition(view.getCenter().x, view.getCenter().y - 50);
+    digit_text.setOutlineColor(sf::Color::Black);
+    digit_text.setOutlineThickness(12);
+    digit_text.setRotation(25);
     window->setView(view);
     std::array<std::string, 3> timeout_text = {"3","2","1"};
-    int wait_time = TIME_OUT_BEFORE_START.asMilliseconds();
+    int wait_time = TIME_OUT_BEFORE_START.asMilliseconds() / timeout_text.size();
     for (size_t i = 0; i != timeout_text.size(); i++) {
         window->clear();
         window->draw(map);
-        for (size_t i = 0; i != players.size(); i++) {
-            players[i].setPosition(data.players[i].position.x, data.players[i].position.y);
-            players[i].setRotation(data.players[i].position.angle);
-            window->draw(players[i]);
+        for (size_t j = 0; j != players.size(); j++) {
+            players[j].setPosition(data.players[j].position.x, data.players[j].position.y);
+            players[j].setRotation(data.players[j].position.angle);
+            window->draw(players[j]);
         }
         digit_text.setString(timeout_text[i]);
         window->draw(digit_text);
         window->display();
-        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time / timeout_text.size()));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
-    std::cout << "Unsleep" << std::endl;
     return RNDR_OK;
 }
 
 int renderer::build_game_scene(game_render_data data) {
     window->clear();
     view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
-    view.rotate(0.1f);
     window->setView(view);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {
@@ -183,10 +203,6 @@ int renderer::build_game_scene(game_render_data data) {
 }
 
 int renderer::car_choose_menu() {
-    return RNDR_OK;
-}
-
-int renderer::end_game_menu() {
     return RNDR_OK;
 }
 
@@ -271,11 +287,24 @@ int renderer::connect_to_room(const char (*str)[256]) {
     return RNDR_OK;
 }
 
-int renderer::settings_menu() {
+int renderer::end_game_menu(int position) {
+    window->clear();
+    window->draw(logo);
+    view.setCenter(sf::Vector2f(window_size.x / 2, window_size.y /2));
+    view.setRotation(0.f);
+    window->setView(view);
+
+    std::string text = finish_pos_text.getString();
+    text += std::to_string(position);
+    finish_pos_text.setString(text);
+
+    window->draw(finish_pos_text);
+    window->draw(press_enter_text);
+    window->display();
     return RNDR_OK;
 }
 
-int renderer::wait_scene() {
+int renderer::settings_menu() {
     return RNDR_OK;
 }
 
@@ -307,21 +336,5 @@ sf::Sprite renderer::build_sprite(const sprite_props props) {
     return_sprite.setRotation(props.rotation);
     return_sprite.setScale(props.scale);
     return return_sprite;
-}
-
-int renderer::build_map() {
-    return RNDR_OK;
-}
-
-int renderer::build_rating() {
-    return RNDR_OK;
-}
-
-int renderer::build_car() {
-    return RNDR_OK;
-}
-
-int renderer::build_cars() {
-    return RNDR_OK;
 }
 

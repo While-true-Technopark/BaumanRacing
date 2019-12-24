@@ -59,8 +59,10 @@ event network_manager::throw_event() {
                 player.y = pos[1];
                 player.angle = pos[2];
             }
+        } else if (msg[message::head] == message::finish) {
+            ev.type = game_end;
+            ev.data.game_end.position = msg[message::body];
         }
     }
-
     return ev;
 }

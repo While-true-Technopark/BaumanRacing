@@ -119,6 +119,10 @@ struct textures_loaded_event {
     sf::Font* main_font;
 };
 
+struct game_end_event {
+    int position;
+};
+
 struct info_select {
     size_t select;
 };
@@ -139,6 +143,7 @@ union event_data {
     textures_loaded_event    textures;
     info_select              box;
     input_data               input_ev;
+    game_end_event           game_end;
 };
 
 class event {

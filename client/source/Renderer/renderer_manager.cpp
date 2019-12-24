@@ -26,6 +26,7 @@ int renderer_manager::handle_event(const event & e) {
         }
         case main_menu: {
             module->main_menu(e.data.box.select);
+//            module->end_game_menu(56);
             break;
         }
         case connect_to_open: { // окно выбора
@@ -53,6 +54,10 @@ int renderer_manager::handle_event(const event & e) {
             //game_render_data data = { };
             //module->build_game_scene(data);
             //module->build_start_scene(data);
+            break;
+        }
+        case game_end: {
+            module->end_game_menu(e.data.game_end.position);
             break;
         }
         case update_position: {
