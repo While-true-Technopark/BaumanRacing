@@ -37,8 +37,7 @@ event network_manager::throw_event() {
         json msg = module->get();
         if (msg[message::head] == message::ping && msg[message::body] == message::to) {
             module->ping();
-            std::cout << "send on ping\n" << std::flush;
-            std::cout << msg[message::head] << std::flush;
+            std::cout << "ping from server\n" << std::flush;
         } else if (msg[message::head] == message::wait) {
             ev.type = waiting;
             ev.data.box.select = msg[message::body];

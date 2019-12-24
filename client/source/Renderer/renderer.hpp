@@ -30,6 +30,7 @@ class renderer : public renderer_abst {
     ~renderer() override;
 
  private:
+    int draw_minimap();
     sf::Vector2u window_size;
 
     struct sprite_props {
@@ -44,7 +45,10 @@ class renderer : public renderer_abst {
     sf::Sprite box;
     sf::Sprite logo;
     sf::Sprite map;
+
     sf::View view;
+    sf::View minimap_view;
+
     std::vector<sf::Sprite> cars_choose;
     std::vector<sf::Sprite> players;
 

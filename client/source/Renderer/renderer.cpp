@@ -7,6 +7,13 @@ renderer::renderer(sf::RenderWindow* win) {
     window = win;
     window_size = window->getSize();
     view = window->getView();
+    // minimap_view.setSize(window_size.x * 0.13, window_size.y * 0.25);
+    minimap_view.setSize(100, 100);
+    float viewport_width = 25.f * window_size.y / window_size.x;
+    float viewport_left = 100.f - viewport_width;
+    minimap_view.setViewport(sf::FloatRect(viewport_left / 100, 0.f, viewport_width / 100, 0.24f));
+    // minimap_view.setViewport(sf::FloatRect(0.87, 0.f, 0.13, 0.25f));
+    minimap_view.zoom(35);
 }
 
 renderer::~renderer() {}
@@ -167,13 +174,13 @@ int renderer::build_start_scene(game_render_data data) {
     digit_text.setPosition(view.getCenter().x, view.getCenter().y - 50);
     digit_text.setOutlineColor(sf::Color::Black);
     digit_text.setOutlineThickness(12);
-    digit_text.setRotation(25);
-    view.setRotation(25);
-    window->setView(view);
+    //digit_text.setRotation(25);
+    //view.setRotation(25);
     std::array<std::string, 3> timeout_text = {"3","2","1"};
     int wait_time = TIME_OUT_BEFORE_START.asMilliseconds() / timeout_text.size();
     for (size_t i = 0; i != timeout_text.size(); i++) {
         window->clear();
+        window->setView(view);
         window->draw(map);
         for (size_t j = 0; j != players.size(); j++) {
             players[j].setPosition(data.players[j].position.x, data.players[j].position.y);
@@ -182,6 +189,7 @@ int renderer::build_start_scene(game_render_data data) {
         }
         digit_text.setString(timeout_text[i]);
         window->draw(digit_text);
+        draw_minimap();
         window->display();
         std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
@@ -190,7 +198,7 @@ int renderer::build_start_scene(game_render_data data) {
 
 int renderer::build_game_scene(game_render_data data) {
     window->clear();
-    view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    view.setCenter(data.players[0].position.x, data.players[0].position.y);
     window->setView(view);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {
@@ -198,7 +206,18 @@ int renderer::build_game_scene(game_render_data data) {
         players[i].setRotation(data.players[i].position.angle);
         window->draw(players[i]);
     }
+    draw_minimap();
     window->display();
+    return RNDR_OK;
+}
+
+int renderer::draw_minimap() {
+    minimap_view.setCenter(players[0].getPosition());
+    window->setView(minimap_view);
+    window->draw(map);
+    for (size_t i = 0; i != players.size(); i++) {
+        window->draw(players[i]);
+    }
     return RNDR_OK;
 }
 
