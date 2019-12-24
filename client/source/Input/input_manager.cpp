@@ -58,7 +58,6 @@ event input_manager::throw_event() {
             box--;
         else if (keys.keys.down && box != 1)
             box++;
-
         ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == connect_to_scene && box == 0) {
         ev_input.type = create_room;

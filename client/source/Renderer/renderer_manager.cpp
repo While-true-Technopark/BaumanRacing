@@ -58,6 +58,7 @@ int renderer_manager::handle_event(const event & e) {
         }
         case game_end: {
             module->end_game_menu(e.data.game_end.position);
+            first_update_pos = true;
             break;
         }
         case update_position: {

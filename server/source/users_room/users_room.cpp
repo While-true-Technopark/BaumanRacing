@@ -82,6 +82,7 @@ void users_room::before_session() {
         for (size_t idx = 0; idx < max_users; ++idx) {
             const user& clt = users[idx];
             clt.send(message::start, json{{message::id, idx}, {message::settings, manager.get_setting()}});
+            clt.send(message::pos, manager.get_players_pos());
         }
     }
 }
@@ -127,11 +128,13 @@ void users_room::session() {
     }
 }
 
-void users_room::update_user() {
+void users_room::update_users() {
     if (!started) {
         return;
     }
-    manager.update();
+    if (!manager.update()) {
+        return;
+    }
     logger::write_trace("update users");
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && ready[idx]) {
@@ -175,7 +178,7 @@ bool users_room::ping() {
     if (finished) {
         return false;
     }
-    update_user();
+    update_users();
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx] && !users[idx].ping()) {
             connected[idx] = false;

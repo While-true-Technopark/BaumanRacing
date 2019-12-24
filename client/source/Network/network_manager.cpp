@@ -50,6 +50,7 @@ event network_manager::throw_event() {
             // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
+            // std::cout << "pos" << std::endl;
             ev.type = update_position;
             std::vector<position> coord = msg[message::body];
             for (size_t i = 0; i < coord.size(); ++i) {

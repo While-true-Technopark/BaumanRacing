@@ -7,7 +7,6 @@ renderer::renderer(sf::RenderWindow* win) {
     window = win;
     window_size = window->getSize();
     view = window->getView();
-    view.setRotation(25);
 }
 
 renderer::~renderer() {}
@@ -169,6 +168,7 @@ int renderer::build_start_scene(game_render_data data) {
     digit_text.setOutlineColor(sf::Color::Black);
     digit_text.setOutlineThickness(12);
     digit_text.setRotation(25);
+    view.setRotation(25);
     window->setView(view);
     std::array<std::string, 3> timeout_text = {"3","2","1"};
     int wait_time = TIME_OUT_BEFORE_START.asMilliseconds() / timeout_text.size();
