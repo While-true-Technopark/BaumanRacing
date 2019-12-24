@@ -8,10 +8,14 @@ void input::game() {
     game_start = true;
 }
 
+void input::end_game() {
+    game_start = false;
+}
+
 struct keys_pressed_variants input::get_pressed_keys() {
     if (!game_start)
         keys = { };
-    
+
     sf::Event event = sf::Event();
     while (window->pollEvent(event)) {
         switch (event.type) {

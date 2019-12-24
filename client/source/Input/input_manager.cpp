@@ -14,6 +14,7 @@ int input_manager::handle_event(const event & e) {
 
         case game_end:
             current_scene = end_game_scene;
+            module->end_game();
             break;
 
         default:

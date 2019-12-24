@@ -10,6 +10,7 @@ class input_abst {
     virtual void start_control() = 0;
     virtual void end_control() = 0;
     virtual void game() = 0;
+    virtual void end_game() = 0;
  protected:
     sf::RenderWindow *window;
     bool controlling;

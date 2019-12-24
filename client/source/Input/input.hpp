@@ -11,6 +11,7 @@ class input : public input_abst {
     void start_control();
     void end_control();
     void game();
+    void end_game();
 private:
     std::string playerInput;
     struct keys_pressed_variants keys = { };
