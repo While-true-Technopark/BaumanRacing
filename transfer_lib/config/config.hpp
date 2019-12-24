@@ -4,7 +4,7 @@
 #include <SFML/Network.hpp>
 
 // TODO: убрать на клиенте
-const size_t MAX_USERS = 1;
+const size_t MAX_USERS = 2;
 
 const size_t DIM = 2;
 const size_t DOF = DIM + 1;  // x, y, angle
