@@ -135,8 +135,12 @@ void server::ping_rooms() {
         if (!room.ping()) {
             del_rooms.push_back(room_name);
             std::vector<user> users = room.get_users();
-            logger::write_info("(server): disconnect room " + room_name + ", " 
-            + std::to_string(users.size()) + " members of the room became guests");
+            logger::write_info("(server): disconnect room " + room_name);
+        }
+        
+        std::vector<user> users = room.get_users();
+        if (!users.empty()) {
+            logger::write_info("(server): " + std::to_string(users.size()) + " user(s) leave the room " + room_name);
             for (size_t idx = 0; idx < users.size(); ++idx) {
                 guests.emplace_back(std::move(users[idx]));
             }

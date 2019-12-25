@@ -141,21 +141,19 @@ void users_room::update_users() {
             const user& clt = users[idx];
             clt.send(message::pos, manager.get_players_pos());
             //clt.send(message::pos_s, manager.get_side_objects_pos());
-            size_t num_finished = manager.finished(idx);
+            size_t num_finished = manager.is_finished(idx);
             if (num_finished) {
                 logger::write_info("(room) player " + std::to_string(idx) + " finished " + std::to_string(num_finished));
                 clt.send(message::finish, num_finished);
                 ready[idx] = false;
+                if (num_finished == max_users) {
+                    logger::write_info("(room) game finish");
+                    finished = true;
+                }
             }/* else {
                 clt.send(message::rating, manager.get_rating());
             }*/
-
         }
-    }
-    
-    if (manager.finish()) {
-        logger::write_info("(room) game finish");
-        finished = true;
     }
 }
 
@@ -206,11 +204,10 @@ size_t users_room::size() const {
 
 std::vector<user> users_room::get_users() {
     std::vector<user> res;
-    if (finished) {
+    if (started) {
         for (size_t idx = 0; idx < max_users; ++idx) {
-            if (connected[idx]) {
+            if (connected[idx] && !ready[idx]) {
                 connected[idx] = false;
-                ready[idx] = false;
                 res.emplace_back(std::move(users[idx]));
             }
         }

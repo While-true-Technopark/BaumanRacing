@@ -216,10 +216,12 @@ void game_map::make_move() {
         
         double& angle = player.pos[2]; // в градусах
         if (command[idx].right_turn && fabs(player.speed) > 2.) {
-            angle += 4;
+            int8_t sign_angle = comm.back ? -1 : 1;
+            angle += sign_angle * 4;
         }
         if (command[idx].left_turn && fabs(player.speed) > 2.) {
-            angle -= 4;
+            int8_t sign_angle = comm.back ? -1 : 1;
+            angle -= sign_angle * 4;
         }
         
         if (fabs(angle) > GRAD_CIRCLE) {
