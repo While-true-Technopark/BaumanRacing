@@ -5,7 +5,7 @@
 
 class server {
  public:
-    server(size_t port, const std::string& ip);
+    server(size_t port, const std::string& ip) noexcept;
     void run();
     void stop();
     json get_info() const;

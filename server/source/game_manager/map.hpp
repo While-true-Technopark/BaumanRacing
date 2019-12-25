@@ -23,7 +23,6 @@ struct game_object {
     size_t num_accelerations;
     double speed;
     double max_speed;
-    // double handleability;
 };
 
 class game_map {
@@ -31,42 +30,27 @@ class game_map {
     explicit game_map(size_t num_players);
     bool load(const std::string& path);
     void start();
-    
     std::vector<game_object_type> get_setting() const;
     std::vector<position> get_players_pos() const;
     std::vector<position> get_side_objects_pos() const;
     int get_num_circle(size_t id) const;
-
     void set_setting(size_t id, game_object_type type);
     void set_setting(size_t id, const move_command& comm);
     void make_move();
-    // TODO: is update
-    //bool player_finished(size_t player_id);
     
  private:
     std::vector<game_object> players;
-    
     std::vector<int> num_circle;
     position start_pos;
     double road_width;
-    
     std::vector<move_command> command;
-    
-    std::vector<side_object> side_objects;
-    
-    /*struct map_block {
-        enum block_type {road = 1, wall = 2, grass = 3, finish = 4} type;
-        sf::Rect<double> pos;
-    };*/
-    
+    std::vector<side_object> side_objects;    
     std::vector<std::vector<bool>> blocks_type;
     double h_x;
-    double h_y;
-    
+    double h_y;    
     void check_collision(size_t id);
     void fix_num_circle();
-    //point start_coord;
-    //bool started;
+
 };
 
 #endif  // MAP_H_

@@ -23,6 +23,4 @@ class user final {
     sf::Clock time_last_activity;
 };
 
-//#include "message.inl"
-
 #endif  // USER_H_
