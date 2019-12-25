@@ -14,11 +14,19 @@ renderer::renderer(sf::RenderWindow* win) {
     minimap_view.setViewport(sf::FloatRect(0, 0.75f, viewport_width, 0.25f));
     // minimap_view.setViewport(sf::FloatRect(0.87, 0.f, 0.13, 0.25f));
     minimap_view.zoom(35);
+
+    race_soundtrack = nullptr;
+    menu_soundtrack = nullptr;
 }
 
 renderer::~renderer() {}
 
 int renderer::init(init_data data) {
+    if (data.soundtracks.size()) {
+        menu_soundtrack = data.soundtracks[0];
+        race_soundtrack = data.soundtracks[1];
+    }
+
     if (data.main_font) {
         play_text = build_text({
             sf::Color::White,
@@ -167,6 +175,13 @@ int renderer::init(init_data data) {
 }
 
 int renderer::build_start_scene(game_render_data data) {
+    if (menu_soundtrack->getStatus() == sf::SoundSource::Playing) {
+        menu_soundtrack->stop();
+    }
+    if (race_soundtrack->getStatus() != sf::SoundSource::Playing) {
+        race_soundtrack->play();
+        race_soundtrack->setPlayingOffset(sf::seconds(60.f));
+    }
     view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
     digit_text.setCharacterSize(250);
     sf::FloatRect text_bounds = digit_text.getLocalBounds();
@@ -213,10 +228,16 @@ int renderer::build_game_scene(game_render_data data) {
 
 int renderer::draw_minimap() {
     minimap_view.setCenter(players[0].getPosition());
+    sf::RectangleShape minimap_outline(sf::Vector2f(window_size.y * 0.25f, window_size.y * 0.25f));
+    minimap_outline.setOutlineColor(sf::Color(227, 172, 34));
+    minimap_outline.setOutlineThickness(10);
+    sf::Vector2f global_coords = window->mapPixelToCoords(sf::Vector2i(0, window_size.y * 0.75));
+    minimap_outline.setPosition(global_coords);
+    window->draw(minimap_outline);
     window->setView(minimap_view);
-    sf::RectangleShape background(sf::Vector2f(10000.f, 10000.f));
+    sf::RectangleShape background(sf::Vector2f(20000.f, 20000.f));
     background.setFillColor(sf::Color(45,140,42));
-    background.setPosition(-1000,-1000);
+    background.setPosition(-2000,-2000);
     window->draw(background);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {
@@ -244,6 +265,12 @@ int renderer::show_car(size_t index) {
 }
 
 int renderer::main_menu(size_t box_select) {
+    if (race_soundtrack->getStatus() == sf::SoundSource::Playing) {
+        race_soundtrack->stop();
+    }
+    if (menu_soundtrack->getStatus() != sf::SoundSource::Playing) {
+        menu_soundtrack->play();
+    }
     window->clear();
     box.setPosition(window_size.x / 2, box_select * 100 + 250);
 

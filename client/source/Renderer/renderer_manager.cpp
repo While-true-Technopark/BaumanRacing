@@ -14,8 +14,10 @@ int renderer_manager::handle_event(const event & e) {
     switch (e.type) {
         case textures_loaded: {
             std::vector<sf::Texture*> cars_textures(e.data.textures.players.begin(), e.data.textures.players.end());
+            std::vector<sf::Music*> soundtracks(e.data.textures.soundtracks.begin(), e.data.textures.soundtracks.end());
             module->init({
                 cars_textures,
+                soundtracks,
                 e.data.textures.map,
                 e.data.textures.logo,
                 e.data.textures.box,

@@ -73,6 +73,9 @@ class renderer : public renderer_abst {
     sf::Text finish_pos_text;
     sf::Text press_enter_text;
 
+    sf::Music* race_soundtrack;
+    sf::Music* menu_soundtrack;
+
     sf::Text build_text(const text_props props);
     sf::Sprite build_sprite(const sprite_props props);
     int build_car();

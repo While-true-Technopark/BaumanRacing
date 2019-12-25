@@ -1,10 +1,12 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#include <iostream>
-#include <string.h>
-#include <SFML/Graphics.hpp>
 #include <array>
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <string.h>
+
 #include "config.hpp"
 
 enum event_type {
@@ -112,6 +114,7 @@ struct empty_event {};
 
 struct textures_loaded_event {
     std::array<sf::Texture*, CARS_TEXTURES_NUMBER> players;
+    std::array<sf::Music*, 2> soundtracks;
     sf::Texture* map;
     sf::Texture* logo;
     sf::Texture* box;
