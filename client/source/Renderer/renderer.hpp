@@ -72,6 +72,7 @@ class renderer : public renderer_abst {
     sf::Text digit_text;
     sf::Text finish_pos_text;
     sf::Text press_enter_text;
+    sf::Text exit_text;
 
     sf::Music* race_soundtrack;
     sf::Music* menu_soundtrack;

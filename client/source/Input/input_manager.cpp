@@ -53,11 +53,15 @@ event input_manager::throw_event() {
         ev_input.data.empty = { };
         current_scene = connect_to_scene;
         box = 0;
+    } else if (keys.keys.enter && current_scene == main_menu_scene && box == 2) {
+        ev_input.type = closing;
+        ev_input.data.empty = { };
+        box = 0;
     } else if (!nothing_pressed(&keys.keys) && current_scene == main_menu_scene) {
         ev_input.type = main_menu;
         if (keys.keys.up && box != 0)
             box--;
-        else if (keys.keys.down && box != 1)
+        else if (keys.keys.down && box != 2)
             box++;
         ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == connect_to_scene && box == 0) {

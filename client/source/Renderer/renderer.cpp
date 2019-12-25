@@ -42,6 +42,13 @@ int renderer::init(init_data data) {
             sf::Vector2f(window_size.x / 2, 344),
             "Settings"
         });
+        exit_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 444),
+            "Exit"
+        });
         new_room_text = build_text({
             sf::Color::White,
             data.main_font,
@@ -278,6 +285,7 @@ int renderer::main_menu(size_t box_select) {
     window->draw(box);
     window->draw(play_text);
     window->draw(settings_text);
+    window->draw(exit_text);
     window->display();
     return RNDR_OK;
 }
