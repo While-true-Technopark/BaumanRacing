@@ -16,7 +16,7 @@ class users_room {
     std::vector<user> get_users();
     
  private:
-    void update_user();
+    void update_users();
     std::shared_ptr<sf::SocketSelector> selector;
     const size_t max_users;
     std::vector<user> users;

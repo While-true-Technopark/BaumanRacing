@@ -3,6 +3,7 @@
 loader::loader() {
     static_dir = "static/";
     loaded = false;
+    sound_loaded = false;
     textures_paths = {
         "map.png",
         "red_taz.png",
@@ -15,6 +16,11 @@ loader::loader() {
     fonts_paths = {
         "Menlo-Regular.ttf"
     };
+    sounds_paths = {
+        "menu_theme.ogg",
+        "race_theme.ogg"
+    };
+    sounds = std::vector<sf::Music>(sounds_paths.size());
     load_thread = nullptr;
 }
 
@@ -49,17 +55,41 @@ sf::Font* loader::get_font(const std::string & name) {
     return nullptr;
 }
 
+sf::Music* loader::get_sound(const std::string & name) {
+    if (name == "menu_theme.ogg") {
+        if (load_thread->joinable()) {
+            while(!sound_loaded) {}
+        }
+        sounds[0].setLoop(true);
+        sounds[0].play();
+        sounds[0].setPlayingOffset(sf::seconds(22.f));
+        return &sounds[0];
+    }
+    if (name == "race_theme.ogg") {
+        sounds[1].setLoop(true);
+        return &sounds[1];
+    }
+    return nullptr;
+}
+
 bool loader::is_loaded() {
     return loaded;
 }
 
 int loader::load_all_static() {
-    std::cout << "Textures loading..." << std::endl;
+    std::cout << "Static loading..." << std::endl;
+    for (size_t i = 0; i != sounds_paths.size(); i++) {
+        if (!sounds[i].openFromFile(static_dir + sounds_paths[i])) {
+            return LDR_FILE_NOT_LOADED;
+        }
+    }
+    sound_loaded = true;
     for (auto& path : textures_paths) {
         sf::Texture texture;
         if (!texture.loadFromFile(static_dir + path)) {
             return LDR_FILE_NOT_LOADED;
         }
+        texture.setSmooth(true);
         textures.emplace(std::make_pair(path, texture));
     }
     for (size_t i = 0; i != fonts_paths.size(); i++) {
@@ -69,7 +99,7 @@ int loader::load_all_static() {
         }
         fonts.push_back(font);
     }
-    std::cout << "Textures loaded" << std::endl;
+    std::cout << "Static loaded" << std::endl;
 
     loaded = true;
     return LDR_OK;

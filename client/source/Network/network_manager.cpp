@@ -37,8 +37,7 @@ event network_manager::throw_event() {
         json msg = module->get();
         if (msg[message::head] == message::ping && msg[message::body] == message::to) {
             module->ping();
-            std::cout << "send on ping\n" << std::flush;
-            std::cout << msg[message::head] << std::flush;
+            std::cout << "ping from server\n" << std::flush;
         } else if (msg[message::head] == message::wait) {
             ev.type = waiting;
             ev.data.box.select = msg[message::body];
@@ -50,8 +49,8 @@ event network_manager::throw_event() {
             // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
+            // std::cout << "pos" << std::endl;
             ev.type = update_position;
-            //std::cout << "recieved coords\n" << std::flush;
             std::vector<position> coord = msg[message::body];
             for (size_t i = 0; i < coord.size(); ++i) {
                 auto& player = ev.data.players_positions.player[i];
@@ -60,8 +59,10 @@ event network_manager::throw_event() {
                 player.y = pos[1];
                 player.angle = pos[2];
             }
+        } else if (msg[message::head] == message::finish) {
+            ev.type = game_end;
+            ev.data.game_end.position = msg[message::body];
         }
     }
-
     return ev;
 }

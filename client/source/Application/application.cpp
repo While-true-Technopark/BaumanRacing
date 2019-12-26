@@ -1,8 +1,9 @@
 #include "application.hpp"
 
 application::application() :
+    window(sf::VideoMode(1920, 1080), "Bauman Racing"),
     // window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
-    window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
+    // window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
     game_context_mngr(new game_context()),
     input_mngr(new input(&window)),
     loader_mngr(new loader()),
@@ -19,8 +20,8 @@ bool application::run() {
     renderer_mngr.handle_event(loaded);
     event e_start(main_menu, { .empty = {} });
     renderer_mngr.handle_event(e_start);
-//    event e_start(game_start, { .empty = {} });
-//    renderer_mngr.handle_event(e_start);
+    //  event e_start(game_start, { .empty = {} });
+    //  renderer_mngr.handle_event(e_start);
 
     while (window.isOpen()) {
         event e_input = input_mngr.throw_event();
@@ -34,18 +35,12 @@ bool application::run() {
             case key_pressed:
                 network_mngr.handle_event(e_input);
                 break;
+
             case main_menu:
-                renderer_mngr.handle_event(e_input);
-                break;
             case connect_to_open:
-                renderer_mngr.handle_event(e_input);
-                break;
             case create_room:
-                renderer_mngr.handle_event(e_input);
-                break;
             case connect_to_room:
-                renderer_mngr.handle_event(e_input);
-                break;
+            case show_car:
             case input_ev: // TODO: обработка строки >256
                 renderer_mngr.handle_event(e_input);
                 break;
@@ -61,12 +56,8 @@ bool application::run() {
                 e_start.data.box.select = 0;
                 renderer_mngr.handle_event(e_start);
                 break;
-            case show_car:
-                renderer_mngr.handle_event(e_input);
-                break;
             case car_chosen:
                 network_mngr.handle_event(e_input);
-
                 e_start.type = waiting;
                 e_start.data.box.select = 0;
                 renderer_mngr.handle_event(e_start);
@@ -79,12 +70,10 @@ bool application::run() {
 
         switch (e_network.type) {
             case update_position:
-                renderer_mngr.handle_event(e_network);
-                //  + game_context
-                break;
             case waiting:
                 renderer_mngr.handle_event(e_network);
                 break;
+            case game_end:
             case game_start:
                 renderer_mngr.handle_event(e_network);
                 input_mngr.handle_event(e_network);

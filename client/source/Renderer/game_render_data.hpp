@@ -18,6 +18,7 @@ struct game_render_data {
 
 struct init_data {
     std::vector<sf::Texture*> cars_textures;
+    std::vector<sf::Music*> soundtracks;
     sf::Texture* map_texture;
     sf::Texture* logo_texture;
     sf::Texture* box_texture;

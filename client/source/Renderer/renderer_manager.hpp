@@ -15,6 +15,7 @@ class renderer_manager : public base_manager {
     int handle_event(const event & e) override;
     renderer_abst *module;
  private:
+    bool first_update_pos;  // start positions
     int my_client_id;
 };
 

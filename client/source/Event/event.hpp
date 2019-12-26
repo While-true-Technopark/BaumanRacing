@@ -1,10 +1,12 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-#include <iostream>
-#include <string.h>
-#include <SFML/Graphics.hpp>
 #include <array>
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <string.h>
+
 #include "config.hpp"
 
 enum event_type {
@@ -112,11 +114,16 @@ struct empty_event {};
 
 struct textures_loaded_event {
     std::array<sf::Texture*, CARS_TEXTURES_NUMBER> players;
+    std::array<sf::Music*, 2> soundtracks;
     sf::Texture* map;
     sf::Texture* logo;
     sf::Texture* box;
     sf::Texture* arrow;
     sf::Font* main_font;
+};
+
+struct game_end_event {
+    int position;
 };
 
 struct info_select {
@@ -139,6 +146,7 @@ union event_data {
     textures_loaded_event    textures;
     info_select              box;
     input_data               input_ev;
+    game_end_event           game_end;
 };
 
 class event {

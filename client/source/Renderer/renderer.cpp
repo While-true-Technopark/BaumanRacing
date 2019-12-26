@@ -1,16 +1,32 @@
 #include "renderer.hpp"
-#include <cmath>
-#include <string>
+#include <chrono>
+#include <thread>
+#include <iostream>
 
 renderer::renderer(sf::RenderWindow* win) {
     window = win;
     window_size = window->getSize();
     view = window->getView();
+    // minimap_view.setSize(window_size.x * 0.13, window_size.y * 0.25);
+    minimap_view.setSize(100, 100);
+    float viewport_width = 0.25f * window_size.y / window_size.x;
+    // float viewport_left = 1.f - viewport_width;
+    minimap_view.setViewport(sf::FloatRect(0, 0.75f, viewport_width, 0.25f));
+    // minimap_view.setViewport(sf::FloatRect(0.87, 0.f, 0.13, 0.25f));
+    minimap_view.zoom(35);
+
+    race_soundtrack = nullptr;
+    menu_soundtrack = nullptr;
 }
 
 renderer::~renderer() {}
 
 int renderer::init(init_data data) {
+    if (data.soundtracks.size()) {
+        menu_soundtrack = data.soundtracks[0];
+        race_soundtrack = data.soundtracks[1];
+    }
+
     if (data.main_font) {
         play_text = build_text({
             sf::Color::White,
@@ -25,6 +41,13 @@ int renderer::init(init_data data) {
             "center",
             sf::Vector2f(window_size.x / 2, 344),
             "Settings"
+        });
+        exit_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 444),
+            "Exit"
         });
         new_room_text = build_text({
             sf::Color::White,
@@ -67,6 +90,28 @@ int renderer::init(init_data data) {
             "center",
             sf::Vector2f(window_size.x / 2, 344),
             ""
+        });
+        digit_text = build_text({
+            sf::Color::Yellow,
+            data.main_font,
+            "center",
+            sf::Vector2f(0, 0),
+            "3"
+        });
+
+        finish_pos_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 244),
+            "Your position is "
+        });
+        press_enter_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 344),
+            "Press enter to continue..."
         });
     }
 
@@ -136,9 +181,46 @@ int renderer::init(init_data data) {
     return RNDR_OK;
 }
 
+int renderer::build_start_scene(game_render_data data) {
+    if (menu_soundtrack->getStatus() == sf::SoundSource::Playing) {
+        menu_soundtrack->stop();
+    }
+    if (race_soundtrack->getStatus() != sf::SoundSource::Playing) {
+        race_soundtrack->play();
+        race_soundtrack->setPlayingOffset(sf::seconds(60.f));
+    }
+    view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    digit_text.setCharacterSize(250);
+    sf::FloatRect text_bounds = digit_text.getLocalBounds();
+    digit_text.setOrigin(text_bounds.width / 2, text_bounds.height / 2);
+    digit_text.setPosition(view.getCenter().x, view.getCenter().y - 50);
+    digit_text.setOutlineColor(sf::Color::Black);
+    digit_text.setOutlineThickness(12);
+    //digit_text.setRotation(25);
+    //view.setRotation(25);
+    std::array<std::string, 3> timeout_text = {"3","2","1"};
+    int wait_time = TIME_OUT_BEFORE_START.asMilliseconds() / timeout_text.size();
+    for (size_t i = 0; i != timeout_text.size(); i++) {
+        window->clear();
+        window->setView(view);
+        window->draw(map);
+        for (size_t j = 0; j != players.size(); j++) {
+            players[j].setPosition(data.players[j].position.x, data.players[j].position.y);
+            players[j].setRotation(data.players[j].position.angle);
+            window->draw(players[j]);
+        }
+        digit_text.setString(timeout_text[i]);
+        window->draw(digit_text);
+        draw_minimap();
+        window->display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
+    }
+    return RNDR_OK;
+}
+
 int renderer::build_game_scene(game_render_data data) {
     window->clear();
-    view.setCenter(sf::Vector2f(data.players[0].position.x, data.players[0].position.y));
+    view.setCenter(data.players[0].position.x, data.players[0].position.y);
     window->setView(view);
     window->draw(map);
     for (size_t i = 0; i != players.size(); i++) {
@@ -146,15 +228,32 @@ int renderer::build_game_scene(game_render_data data) {
         players[i].setRotation(data.players[i].position.angle);
         window->draw(players[i]);
     }
+    draw_minimap();
     window->display();
     return RNDR_OK;
 }
 
-int renderer::car_choose_menu() {
+int renderer::draw_minimap() {
+    minimap_view.setCenter(players[0].getPosition());
+    sf::RectangleShape minimap_outline(sf::Vector2f(window_size.y * 0.25f, window_size.y * 0.25f));
+    minimap_outline.setOutlineColor(sf::Color(227, 172, 34));
+    minimap_outline.setOutlineThickness(10);
+    sf::Vector2f global_coords = window->mapPixelToCoords(sf::Vector2i(0, window_size.y * 0.75));
+    minimap_outline.setPosition(global_coords);
+    window->draw(minimap_outline);
+    window->setView(minimap_view);
+    sf::RectangleShape background(sf::Vector2f(20000.f, 20000.f));
+    background.setFillColor(sf::Color(45,140,42));
+    background.setPosition(-2000,-2000);
+    window->draw(background);
+    window->draw(map);
+    for (size_t i = 0; i != players.size(); i++) {
+        window->draw(players[i]);
+    }
     return RNDR_OK;
 }
 
-int renderer::end_game_menu() {
+int renderer::car_choose_menu() {
     return RNDR_OK;
 }
 
@@ -173,6 +272,12 @@ int renderer::show_car(size_t index) {
 }
 
 int renderer::main_menu(size_t box_select) {
+    if (race_soundtrack->getStatus() == sf::SoundSource::Playing) {
+        race_soundtrack->stop();
+    }
+    if (menu_soundtrack->getStatus() != sf::SoundSource::Playing) {
+        menu_soundtrack->play();
+    }
     window->clear();
     box.setPosition(window_size.x / 2, box_select * 100 + 250);
 
@@ -180,6 +285,7 @@ int renderer::main_menu(size_t box_select) {
     window->draw(box);
     window->draw(play_text);
     window->draw(settings_text);
+    window->draw(exit_text);
     window->display();
     return RNDR_OK;
 }
@@ -239,11 +345,24 @@ int renderer::connect_to_room(const char (*str)[256]) {
     return RNDR_OK;
 }
 
-int renderer::settings_menu() {
+int renderer::end_game_menu(int position) {
+    window->clear();
+    window->draw(logo);
+    view.setCenter(sf::Vector2f(window_size.x / 2, window_size.y /2));
+    view.setRotation(0.f);
+    window->setView(view);
+
+    std::string text = finish_pos_text.getString();
+    text += std::to_string(position);
+    finish_pos_text.setString(text);
+
+    window->draw(finish_pos_text);
+    window->draw(press_enter_text);
+    window->display();
     return RNDR_OK;
 }
 
-int renderer::wait_scene() {
+int renderer::settings_menu() {
     return RNDR_OK;
 }
 
@@ -275,21 +394,5 @@ sf::Sprite renderer::build_sprite(const sprite_props props) {
     return_sprite.setRotation(props.rotation);
     return_sprite.setScale(props.scale);
     return return_sprite;
-}
-
-int renderer::build_map() {
-    return RNDR_OK;
-}
-
-int renderer::build_rating() {
-    return RNDR_OK;
-}
-
-int renderer::build_car() {
-    return RNDR_OK;
-}
-
-int renderer::build_cars() {
-    return RNDR_OK;
 }
 

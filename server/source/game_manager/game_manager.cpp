@@ -6,7 +6,7 @@ game_manager::game_manager(size_t num_players)
     : num_players{num_players}
     , map(num_players)
     , start{false}
-    , num_finished{0}
+    , finished(num_players, false)
 {}
 
 bool game_manager::load_map(/*передавать id карты*/) {
@@ -35,30 +35,30 @@ std::vector<position> game_manager::get_side_objects_pos() const {
     return map.get_side_objects_pos();
 }
 
-size_t game_manager::finished(size_t id) {
-    // std::cout << "num circle " << id <<  map.get_num_circle(id) << std::endl;
+size_t game_manager::is_finished(size_t id) {
     if (!(map.get_num_circle(id) < NUM_CIRCLE)) { // map.get_num_circle(id) >= NUM_CIRCLE;
-        // std::cout << "(manager) finish " << id << std::endl;
-        return ++num_finished;
+        finished[id] = true;
+    } else {
+        return 0;
     }
-    return 0;
-}
-
-bool game_manager::finish() {
+    size_t num_finished = 0;
     for (size_t idx = 0; idx < num_players; ++idx) {
-        if (!finished(idx)) {
-            return false;
+        if (finished[idx]) {
+            ++num_finished;
         }
-        ++num_finished;
     }
-    start = false;
-    return true;
+    if (num_finished == num_players) {
+        start = false;
+    }
+    return num_finished;
 }
 
-void game_manager::update() {
-    if (start && wait_before_start.getElapsedTime() > TIME_OUT_BEFORE_START && !finish()) {
+bool game_manager::update() {
+    if (start && wait_before_start.getElapsedTime() > TIME_OUT_BEFORE_START) {
         map.make_move();
+        return true;
     }
+    return false;
 }
 
 void game_manager::set_setting(size_t id, game_object_type type) {
