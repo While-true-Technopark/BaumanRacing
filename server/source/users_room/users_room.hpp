@@ -8,8 +8,6 @@
 class users_room final {
  public:
     users_room(user&& first_clt, const std::shared_ptr<sf::SocketSelector>& selector, size_t max_users);
-    // users_room(const users_room&) = delete;
-    // ~users_room();
     void event_handler();
     bool add_user(user&& clt);
     bool ping();
