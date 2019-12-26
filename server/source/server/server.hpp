@@ -3,15 +3,20 @@
 
 #include "users_room.hpp"
 
-class server {
+class server final {
  public:
     server(size_t port, const std::string& ip) noexcept;
+    ~server();
+    server() = delete;
+    server(const server&) = delete;
+    server& operator=(const server&) = delete;
+    server(server&&) = delete;
+    server& operator=(server&&) = delete;
     void run();
     void stop();
     json get_info() const;
-    virtual void rooms_event_handler();
-    virtual void guests_event_handler();
-    virtual ~server();
+    void rooms_event_handler();
+    void guests_event_handler();
     
  private:
     bool start;

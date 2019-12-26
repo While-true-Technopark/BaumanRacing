@@ -38,9 +38,9 @@ void server::stop() {
 }
 
 json server::get_info() const {
-    std::map<std::string, size_t> rooms_info;
-    for(auto& room: rooms) {
-        rooms_info[room.first] = room.second.size();
+    std::unordered_map<std::string, size_t> rooms_info;
+    for(const auto& [room_name, room]: rooms) {
+        rooms_info[room_name] = room.size();
     }
     return {{"rooms", rooms_info}, {"guests", guests.size()}};
 }
