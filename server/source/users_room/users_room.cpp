@@ -30,7 +30,6 @@ void users_room::before_session() {
     if (started) {
         return;
     }
-
     bool all_ready = true;
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
@@ -65,7 +64,6 @@ void users_room::before_session() {
                     }
                 }
             }
-
             size_t num_users = size();
             logger::write_debug("(room) wait " + std::to_string(num_users) + " users");
             clt.send(message::wait, num_users);
@@ -74,7 +72,6 @@ void users_room::before_session() {
             all_ready = false;
         }
     }
-
     if (all_ready) {
         started = true;
         manager.run();
@@ -91,7 +88,6 @@ void users_room::session() {
     if (!started) {
         return;
     }
-
     for (size_t idx = 0; idx < max_users; ++idx) {
         if (connected[idx]) {
             user& clt = users[idx];
@@ -129,10 +125,7 @@ void users_room::session() {
 }
 
 void users_room::update_users() {
-    if (!started) {
-        return;
-    }
-    if (!manager.update()) {
+    if (!started || !manager.update()) {
         return;
     }
     logger::write_trace("update users");
@@ -140,7 +133,9 @@ void users_room::update_users() {
         if (connected[idx] && ready[idx]) {
             const user& clt = users[idx];
             clt.send(message::pos, manager.get_players_pos());
-            //clt.send(message::pos_s, manager.get_side_objects_pos());
+            // TODO:
+            // clt.send(message::pos_s, manager.get_side_objects_pos());
+            // clt.send(message::rating, manager.get_rating());
             size_t num_finished = manager.is_finished(idx);
             if (num_finished) {
                 logger::write_info("(room) player " + std::to_string(idx) + " finished " + std::to_string(num_finished));
@@ -150,9 +145,7 @@ void users_room::update_users() {
                     logger::write_info("(room) game finish");
                     finished = true;
                 }
-            }/* else {
-                clt.send(message::rating, manager.get_rating());
-            }*/
+            }
         }
     }
 }

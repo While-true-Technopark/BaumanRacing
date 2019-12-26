@@ -1,17 +1,12 @@
 #include "server.hpp"
     
-// TODO: обработка исключений
-
-server::server(size_t port, const std::string& ip) 
+server::server(size_t port, const std::string& ip) noexcept
     : start{true}
     , selector{std::make_shared<sf::SocketSelector>()}
     
 {
-    if (listener.listen(port, ip) != sf::Socket::Done) {
-        // throw std::runtime_error(std::strerror(errno));
-    }
+    listener.listen(port, ip);
     selector->add(listener);
-    
     logger::init_logger("server.log");
     logger::write_info("(server): init");
 }
@@ -43,9 +38,9 @@ void server::stop() {
 }
 
 json server::get_info() const {
-    std::map<std::string, size_t> rooms_info;
-    for(auto& room: rooms) {
-        rooms_info[room.first] = room.second.size();
+    std::unordered_map<std::string, size_t> rooms_info;
+    for(const auto& [room_name, room]: rooms) {
+        rooms_info[room_name] = room.size();
     }
     return {{"rooms", rooms_info}, {"guests", guests.size()}};
 }
@@ -137,7 +132,6 @@ void server::ping_rooms() {
             std::vector<user> users = room.get_users();
             logger::write_info("(server): disconnect room " + room_name);
         }
-        
         std::vector<user> users = room.get_users();
         if (!users.empty()) {
             logger::write_info("(server): " + std::to_string(users.size()) + " user(s) leave the room " + room_name);
@@ -146,7 +140,6 @@ void server::ping_rooms() {
             }
         }
     }
-    
     for (const std::string& room_name: del_rooms) {
         rooms.erase(room_name);
     }
