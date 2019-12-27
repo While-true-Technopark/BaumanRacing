@@ -13,11 +13,14 @@ install:
     - sudo apt install valgrind
     - sudo apt install cmake
     - sudo apt-get install clang-format
+    - git clone https://github.com/nlohmann/json
+    - cd json
+    - cmake .
+    - sudo make install
     - sudo apt-get install lcov
     - sudo apt-get install libgtest-dev
     - sudo apt-get install libsfml-dev
     - sudo apt-get install libboost-all-dev
-    - sudo apt-get install nlohmann-json-dev
     - cd /usr/src/gtest
     - sudo cmake .
     - sudo make
