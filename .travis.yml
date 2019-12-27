@@ -26,12 +26,6 @@ install:
     - sudo make
     - sudo cp *.a /usr/lib
     - cd -
-    - sudo apt-get install -y google-mock
-    - cd /usr/src/gmock/
-    - sudo cmake .
-    - sudo make
-    - sudo cp *.a /usr/lib
-    - cd -
 
 before_script:
     - cd client
