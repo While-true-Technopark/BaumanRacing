@@ -17,6 +17,7 @@ install:
     - sudo apt-get install libgtest-dev
     - sudo apt-get install libsfml-dev
     - sudo apt-get install libboost-all-dev
+    - sudo apt-get install nlohmann-json-dev
     - cd /usr/src/gtest
     - sudo cmake .
     - sudo make
@@ -33,12 +34,10 @@ before_script:
     - cd client
     - cmake .
     - make
-    - ./linters/run.sh
     - cd -
     - cd server
     - cmake .
     - make
-    - ./linters/run.sh
     - cd -
 
 after_script:
