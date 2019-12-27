@@ -27,14 +27,9 @@ install:
     - sudo cmake .
     - sudo make
     - sudo cp *.a /usr/lib
-    - cd -
-    - ls
-    - pwd
+    - cd /home/travis/build/While-true-Technopark/BaumanRacing
 
 before_script:
-    - cd -
-    - ls
-    - pwd
     - cd client
     - cmake .
     - make
