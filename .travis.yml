@@ -30,10 +30,6 @@ install:
     - cd /home/travis/build/While-true-Technopark/BaumanRacing
 
 before_script:
-    - cd client
-    - cmake .
-    - make
-    - cd -
     - cd server
     - cmake .
     - make

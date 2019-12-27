@@ -60,7 +60,8 @@ int renderer_manager::handle_event(const event & e) {
             break;
         }
         case game_start: {
-            my_client_id = e.data.box.select;
+            my_client_id = e.data.box2.select;
+            module->update_id(e.data.box2.id1, e.data.box2.id2, e.data.box2.id3, e.data.box2.id4);
             //game_render_data data = { };
             //module->build_game_scene(data);
             //module->build_start_scene(data);

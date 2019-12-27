@@ -138,6 +138,14 @@ struct game_end_event {
 struct info_select {
     size_t select;
 };
+struct info_select2 {
+    size_t select;
+    size_t id1;
+    size_t id2;
+    size_t id3;
+    size_t id4;
+    
+};
 
 union event_data {
     player_id                id;
@@ -154,6 +162,7 @@ union event_data {
     empty_event              empty;
     textures_loaded_event    textures;
     info_select              box;
+    info_select2             box2;
     input_data               input_ev;
     input_data2               input_ev2;
     game_end_event           game_end;

@@ -29,6 +29,7 @@ class renderer : public renderer_abst {
     int show_wait(size_t waiting) override;
     int users(size_t box_select) override;
     int show_bad() override;
+    int update_id(size_t id1, size_t id2, size_t id3, size_t id4) override;
     ~renderer() override;
 
  private:
@@ -87,6 +88,7 @@ class renderer : public renderer_abst {
     int build_cars();
     int build_map();
     int build_rating();
+    init_data data_t;
 };
 
 #endif  // RENDERER_H_

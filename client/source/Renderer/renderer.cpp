@@ -26,7 +26,9 @@ int renderer::init(init_data data) {
         menu_soundtrack = data.soundtracks[0];
         race_soundtrack = data.soundtracks[1];
     }
-
+    
+    data_t = data;
+    
     if (data.main_font) {
         play_text = build_text({
             sf::Color::White,
@@ -130,9 +132,13 @@ int renderer::init(init_data data) {
     }
 
     if (data.cars_textures.size()) {
-        for (size_t i = 0; i != data.cars_textures.size(); i++) { // TODO gavroman: Сделать загрузку тесктур в спрайты согласно данным с сервера
-            sf::Sprite car(*data.cars_textures[i]);
-            car.setOrigin(data.cars_textures[i]->getSize().x / 2, data.cars_textures[i]->getSize().y / 2);
+        for (size_t i = 0; i != 4; i++) { // TODO gavroman: Сделать загрузку тесктур в спрайты согласно данным с сервера
+            int n = i;
+            if (n == 3) {
+                n--;
+            }
+            sf::Sprite car(*data.cars_textures[n]);
+            car.setOrigin(data.cars_textures[n]->getSize().x / 2, data.cars_textures[n]->getSize().y / 2);
             players.push_back(car);
         }
         for (size_t i = 0; i != data.cars_textures.size(); i++) {
@@ -193,6 +199,13 @@ int renderer::init(init_data data) {
     }
 
     return RNDR_OK;
+}
+
+int renderer::update_id(size_t id1, size_t id2, size_t id3, size_t id4) {
+    players[0].setTexture(*data_t.cars_textures[id1]);
+    players[1].setTexture(*data_t.cars_textures[id2]);
+    players[2].setTexture(*data_t.cars_textures[id3]);
+    players[3].setTexture(*data_t.cars_textures[id4]);
 }
 
 int renderer::build_start_scene(game_render_data data) {

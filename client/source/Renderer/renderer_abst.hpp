@@ -25,6 +25,7 @@ class renderer_abst {
     virtual int show_wait(size_t waiting) = 0;
     virtual int users(size_t box_select) = 0;
     virtual int show_bad() = 0;
+    virtual int update_id(size_t id1, size_t id2, size_t id3, size_t id4) = 0;
     virtual ~renderer_abst() = default;
 
  protected:

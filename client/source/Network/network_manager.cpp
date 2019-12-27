@@ -45,7 +45,21 @@ event network_manager::throw_event() {
         } else if (msg[message::head] == message::start) {
             ev.type = game_start;
             json body = msg[message::body];
-            ev.data.box.select = body[message::id];
+            ev.data.box2.select = body[message::id];
+            for (int i = 0; i < body[message::settings].size(); i++) {
+                if (i == 0) {
+                    ev.data.box2.id1 = body[message::settings][0];
+                }
+                if (i == 1) {
+                    ev.data.box2.id2 = body[message::settings][1];
+                }
+                if (i == 2) {
+                    ev.data.box2.id3 = body[message::settings][2];
+                }
+                if (i == 3) {
+                    ev.data.box2.id4 = body[message::settings][3];
+                }
+            }
             
             // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
