@@ -1,7 +1,7 @@
 #include "application.hpp"
 
 application::application() :
-    window(sf::VideoMode(1920, 1080), "Bauman Racing"),
+    window(sf::VideoMode(720, 720), "Bauman Racing"),
     // window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
     // window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
     game_context_mngr(new game_context()),
@@ -41,6 +41,7 @@ bool application::run() {
             case create_room:
             case connect_to_room:
             case show_car:
+            case users:
             case input_ev: // TODO: обработка строки >256
                 renderer_mngr.handle_event(e_input);
                 break;
@@ -75,6 +76,10 @@ bool application::run() {
                 break;
             case game_end:
             case game_start:
+                renderer_mngr.handle_event(e_network);
+                input_mngr.handle_event(e_network);
+                break;
+            case bad_name:
                 renderer_mngr.handle_event(e_network);
                 input_mngr.handle_event(e_network);
                 break;

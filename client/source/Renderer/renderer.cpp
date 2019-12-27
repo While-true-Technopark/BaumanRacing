@@ -49,6 +49,13 @@ int renderer::init(init_data data) {
             sf::Vector2f(window_size.x / 2, 444),
             "Exit"
         });
+        bad_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 244),
+            "Error with create/join room"
+        });
         new_room_text = build_text({
             sf::Color::White,
             data.main_font,
@@ -90,6 +97,13 @@ int renderer::init(init_data data) {
             "center",
             sf::Vector2f(window_size.x / 2, 344),
             ""
+        });
+        users_text = build_text({
+            sf::Color::White,
+            data.main_font,
+            "center",
+            sf::Vector2f(window_size.x / 2, 244),
+            "Choose room max users"
         });
         digit_text = build_text({
             sf::Color::Yellow,
@@ -327,6 +341,27 @@ int renderer::show_wait(size_t waiting) {
     waiting_text.setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
     window->draw(logo);
     window->draw(waiting_text);
+    window->display();
+    return RNDR_OK;
+}
+
+int renderer::users(size_t box_select) {
+    window->clear();
+    box.setPosition(window_size.x / 2, box_select * 100 + 250);
+
+    window->draw(logo);
+   window->draw(users_text);
+   input_text.setString(std::to_string(box_select));
+    window->draw(input_text);
+    window->display();
+    return RNDR_OK;
+}
+
+int renderer::show_bad() {
+    window->clear();
+    
+    window->draw(bad_text);
+    window->draw(press_enter_text);
     window->display();
     return RNDR_OK;
 }

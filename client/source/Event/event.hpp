@@ -42,7 +42,9 @@ enum event_type {
     textures_loaded, // throw it to get all textures
     key_pressed_menu,
     input_ev,
-    connect_create
+    connect_create,
+    users,
+    bad_name
 };
 
 struct player_id {
@@ -93,6 +95,11 @@ struct keys_pressed_variants {
 
 struct input_data {
     char str[256];
+};
+
+struct input_data2 {
+    char str[256];
+    int box;
 };
 
 struct lap_event {
@@ -146,6 +153,7 @@ union event_data {
     textures_loaded_event    textures;
     info_select              box;
     input_data               input_ev;
+    input_data2               input_ev2;
     game_end_event           game_end;
 };
 

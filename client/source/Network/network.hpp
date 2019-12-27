@@ -13,7 +13,7 @@ class network : public network_abst {
     void name_car_send(struct player_info);
     struct players_positions_info get_positions();
     bool connect(size_t port, const std::string& ip);
-    int create_room(const char (*str)[256]);
+    int create_room(const char (*str)[256], int box);
     int join_room(const char (*str)[256]);
     int connect_room(const char (*str)[256]);
     int set_car(size_t index);
