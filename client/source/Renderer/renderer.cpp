@@ -118,7 +118,7 @@ int renderer::init(init_data data) {
             data.main_font,
             "center",
             sf::Vector2f(window_size.x / 2, 244),
-            "Your position is "
+            "Your position is  "
         });
         press_enter_text = build_text({
             sf::Color::White,
@@ -359,7 +359,7 @@ int renderer::users(size_t box_select) {
 
 int renderer::show_bad() {
     window->clear();
-    
+
     window->draw(bad_text);
     window->draw(press_enter_text);
     window->display();
@@ -387,7 +387,7 @@ int renderer::end_game_menu(int position) {
     view.setRotation(0.f);
     window->setView(view);
 
-    std::string text = finish_pos_text.getString();
+    std::string text = "Your position is ";
     text += std::to_string(position);
     finish_pos_text.setString(text);
 
