@@ -10,6 +10,8 @@ before_install:
     - sudo apt update
 
 install:
+    - ls
+    - pwd
     - sudo apt install valgrind
     - sudo apt install cmake
     - sudo apt-get install clang-format
@@ -25,9 +27,14 @@ install:
     - sudo cmake .
     - sudo make
     - sudo cp *.a /usr/lib
-    - cd /
+    - cd -
+    - ls
+    - pwd
 
 before_script:
+    - cd -
+    - ls
+    - pwd
     - cd client
     - cmake .
     - make
