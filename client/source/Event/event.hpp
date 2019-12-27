@@ -9,6 +9,8 @@
 
 #include "config.hpp"
 
+const size_t MAX_USERS = 4;
+
 enum event_type {
     application_run,
     main_menu,

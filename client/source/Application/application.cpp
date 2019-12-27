@@ -1,9 +1,9 @@
 #include "application.hpp"
 
 application::application() :
-    window(sf::VideoMode(720, 720), "Bauman Racing"),
+    // window(sf::VideoMode(720, 720), "Bauman Racing"),
     // window(sf::VideoMode(1920, 1080), "Bauman Racing", sf::Style::Fullscreen),
-    // window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
+    window(sf::VideoMode(WIDTH, HEIGHT), "Bauman Racing"),
     game_context_mngr(new game_context()),
     input_mngr(new input(&window)),
     loader_mngr(new loader()),
