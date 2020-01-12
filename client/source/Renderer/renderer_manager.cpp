@@ -43,12 +43,20 @@ int renderer_manager::handle_event(const event & e) {
             module->connect_to_room(&e.data.input_ev.str);
             break;
         }
+        case users: {
+            module->users(e.data.box.select);
+            break;
+        }
         case show_car: { // окно выбора машинки
             module->show_car(e.data.box.select);
             break;
         }
         case waiting: { // окно ожидания
             module->show_wait(e.data.box.select);
+            break;
+        }
+        case bad_name: { // окно ошибки
+            module->show_bad();
             break;
         }
         case game_start: {

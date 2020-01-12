@@ -72,10 +72,10 @@ bool network::connect(size_t port, const std::string& ip) {
     return true;
 }
 
-int network::create_room(const char (*str)[256]) {
-    std::cout << "create\n" << std::flush;
+int network::create_room(const char (*str)[256], int box) {
+    std::cout << "create " << box << "\n" << std::flush;
     std::string room_name(*str);
-    send(message::create, json{{message::room_name, room_name}, {message::size, MAX_USERS}}); // TODO: (Слава) удалить MAX_USERS из конфига 
+    send(message::create, json{{message::room_name, room_name}, {message::size, box}});
     return EXIT_SUCCESS;
 }
 

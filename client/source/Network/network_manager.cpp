@@ -12,7 +12,7 @@ int network_manager::handle_event(const event & e) {
         case connect_create:
             module->connect(PORT, IP);
             network = true;
-            module->create_room(&e.data.input_ev.str);
+            module->create_room(&e.data.input_ev2.str, e.data.input_ev2.box);
             break;
         case connect_join:
             module->connect(PORT, IP);
@@ -46,6 +46,7 @@ event network_manager::throw_event() {
             ev.type = game_start;
             json body = msg[message::body];
             ev.data.box.select = body[message::id];
+            
             // TODO: body[message::settings];
             std::cout << "Let's go!\n" << std::flush;
         } else if (msg[message::head] == message::pos) {
@@ -59,6 +60,8 @@ event network_manager::throw_event() {
                 player.y = pos[1];
                 player.angle = pos[2];
             }
+        } else if (msg[message::body] == message::fail) {
+            ev.type = bad_name;
         } else if (msg[message::head] == message::finish) {
             ev.type = game_end;
             ev.data.game_end.position = msg[message::body];

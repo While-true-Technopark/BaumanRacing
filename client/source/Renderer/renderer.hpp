@@ -27,6 +27,8 @@ class renderer : public renderer_abst {
     int settings_menu() override;
     int show_car(size_t index) override;
     int show_wait(size_t waiting) override;
+    int users(size_t box_select) override;
+    int show_bad() override;
     ~renderer() override;
 
  private:
@@ -73,6 +75,8 @@ class renderer : public renderer_abst {
     sf::Text finish_pos_text;
     sf::Text press_enter_text;
     sf::Text exit_text;
+    sf::Text users_text;
+    sf::Text bad_text;
 
     sf::Music* race_soundtrack;
     sf::Music* menu_soundtrack;

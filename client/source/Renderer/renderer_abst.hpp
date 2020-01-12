@@ -23,6 +23,8 @@ class renderer_abst {
     virtual int settings_menu() = 0;
     virtual int show_car(size_t index) = 0;
     virtual int show_wait(size_t waiting) = 0;
+    virtual int users(size_t box_select) = 0;
+    virtual int show_bad() = 0;
     virtual ~renderer_abst() = default;
 
  protected:

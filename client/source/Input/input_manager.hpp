@@ -25,7 +25,9 @@ private:
         lobby_scene,
         waiting_scene,
         game_scene,
-        end_game_scene
+        end_game_scene,
+        users_scene,
+        bad_name_scene
     };
     
     scene_types current_scene;

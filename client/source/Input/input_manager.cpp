@@ -16,6 +16,10 @@ int input_manager::handle_event(const event & e) {
             current_scene = end_game_scene;
             module->end_game();
             break;
+            
+        case bad_name:
+            current_scene = bad_name_scene;
+            break;
 
         default:
             return -1;
@@ -65,11 +69,29 @@ event input_manager::throw_event() {
             box++;
         ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == connect_to_scene && box == 0) {
+        box = 1;
+        ev_input.type = users;
+        ev_input.data.box.select = box;
+        current_scene = users_scene;//create_room_scene;
+        
+        input = "";
+    }   else if (keys.keys.enter && current_scene == bad_name_scene) {
+        ev_input.type = connect_to_open;
+        ev_input.data.empty = { };
+        current_scene = connect_to_scene;
+        box = 0;
+        input = "";
+    }   else if (keys.keys.enter && current_scene == users_scene) {
         ev_input.type = create_room;
         ev_input.data.empty = { };
         current_scene = create_room_scene;
-        box = 0;
-        input = "";
+    } else if (!nothing_pressed(&keys.keys) && current_scene == users_scene) {
+        ev_input.type = users;
+        if (keys.keys.left && box != 1)
+            box--;
+        else if (keys.keys.right && box != 4)
+            box++;
+        ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == connect_to_scene && box == 1) {
         ev_input.type = connect_to_room;
         ev_input.data.empty = { };
@@ -85,7 +107,10 @@ event input_manager::throw_event() {
         ev_input.data.box.select = box;
     } else if (keys.keys.enter && current_scene == create_room_scene) {
         ev_input.type = connect_create;
-        strcpy(ev_input.data.input_ev.str, input.c_str());
+        strcpy(ev_input.data.input_ev2.str, input.c_str());
+        
+        ev_input.data.input_ev2.box = box;
+        
         current_scene = car_choose_scene;
         input = "";
     } else if (keys.keys.enter && current_scene == connect_to_room) {
@@ -119,12 +144,13 @@ event input_manager::throw_event() {
             box = (box + 1) % 3;
 
         ev_input.data.box.select = box;
-    } else if (keys.keys.enter && current_scene == end_game_scene && box == 0) {
+    } else if (keys.keys.enter && current_scene == end_game_scene) {
         ev_input.type = main_menu;
         ev_input.data.empty = { };
         current_scene = main_menu_scene;
         box = 0;
         input = "";
+        std::cout << "ENTER WAS" << std::endl;
     }
 
     return ev_input;

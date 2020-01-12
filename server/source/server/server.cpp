@@ -1,9 +1,9 @@
 #include "server.hpp"
-    
+
 server::server(size_t port, const std::string& ip) noexcept
     : start{true}
     , selector{std::make_shared<sf::SocketSelector>()}
-    
+
 {
     listener.listen(port, ip);
     selector->add(listener);
@@ -44,7 +44,7 @@ json server::get_info() const {
     }
     return {{"rooms", rooms_info}, {"guests", guests.size()}};
 }
-    
+
 void server::rooms_event_handler() {
     for(auto& room: rooms) {
         room.second.event_handler();
@@ -62,9 +62,10 @@ void server::guests_event_handler() {
                 case message::create: {
                     json body = msg[message::body];
                     std::string room_name = body[message::room_name];
-                    if (!rooms.count(room_name)) {
+                    size_t room_size = body[message::size];
+                    if (room_size && !rooms.count(room_name)) {
                         clt.send(message::status, message::ok);
-                        rooms.emplace(room_name, users_room(std::move(clt), selector, body[message::size]));
+                        rooms.emplace(room_name, users_room(std::move(clt), selector, room_size));
                         guests.erase(guests.begin() + idx);
                         --idx;
                         logger::write_info("(server): room " + room_name + " created");
@@ -100,7 +101,7 @@ void server::guests_event_handler() {
                     guests.erase(guests.begin() + idx);
                     --idx;
                     break;
-                } 
+                }
                 default: {
                     clt.send(message::status, message::fail);
                     logger::write_info("(server): fail in massage");
@@ -109,7 +110,7 @@ void server::guests_event_handler() {
         }
     }
 }
-    
+
 void server::ping_guests() {
     for (size_t idx = 0; idx < guests.size(); ++idx) {
         user& clt = guests[idx];
@@ -121,7 +122,7 @@ void server::ping_guests() {
         }
     }
 }
-    
+
 void server::ping_rooms() {
     std::vector<std::string> del_rooms;
     for (auto it = rooms.begin(); it != rooms.end(); ++it) {
