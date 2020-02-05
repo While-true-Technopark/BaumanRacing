@@ -26,7 +26,7 @@ void server::run() {
                 rooms_event_handler();
                 guests_event_handler();
             }
-        }
+        } 
         ping_rooms();
         ping_guests();
     }
